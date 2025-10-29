@@ -7,4 +7,5 @@ export const Colors = {
   subtitle: 'rgba(255, 255, 255, 0.8)',
   card: 'rgba(255, 255, 255, 0.05)',
   alert: '#F75353',
+  secondary: '#6E6E70',
 };

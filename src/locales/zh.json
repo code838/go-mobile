@@ -3,5 +3,168 @@
   "tab2": "U购",
   "tab3": "最新揭晓",
   "tab4": "心愿单",
-  "tab5": "我的"
+  "tab5": "我的",
+  "login": {
+    "usernamePlaceholder": "用户名/手机号/邮箱",
+    "passwordPlaceholder": "密码",
+    "rememberMe": "记住账户",
+    "forgotPassword": "忘记密码？",
+    "loginButton": "登录",
+    "orContinueWith": "Or Continue With",
+    "noAccount": "还没有账户？",
+    "register": "注册"
+  },
+  "register": {
+    "phonePlaceholder": "手机号/邮箱",
+    "verifyCodePlaceholder": "验证码",
+    "sendCode": "发送验证码",
+    "resendCode": "重新发送",
+    "passwordPlaceholder": "密码",
+    "confirmPasswordPlaceholder": "密码确认",
+    "inviteCodePlaceholder": "邀请码",
+    "agreeTerms": "我已阅读并同意",
+    "userAgreement": "<用户协议>",
+    "registerButton": "注册",
+    "hasAccount": "已有账户？",
+    "login": "登录"
+  },
+  "forgetPassword": {
+    "phonePlaceholder": "手机号/邮箱",
+    "verifyCodePlaceholder": "验证码",
+    "sendCode": "发送验证码",
+    "newPasswordPlaceholder": "新密码",
+    "confirmPasswordPlaceholder": "密码确认",
+    "confirmButton": "确认",
+    "hasAccount": "已有账户？",
+    "login": "登录"
+  },
+  "profile": {
+    "guestName": "--",
+    "pleaseLogin": "请登录后查看",
+    "loginButton": "登录",
+    "freeReceiveCoin": "免费领币",
+    "balance": "余额",
+    "points": "积分",
+    "recharge": "充值",
+    "withdraw": "提现",
+    "flashExchange": "闪兑",
+    "record": "记录",
+    "inviteFriends": "邀请有奖",
+    "accountSecurity": "账号与安全",
+    "language": "语言",
+    "serviceCenter": "客服中心",
+    "aboutUs": "关于我们"
+  },
+  "userInfo": {
+    "title": "我的资料",
+    "nickname": "昵称",
+    "email": "邮箱",
+    "phone": "手机号",
+    "addressManagement": "地址管理",
+    "logout": "退出账户"
+  },
+  "accountSecurity": {
+    "title": "账户安全",
+    "email": "邮箱",
+    "phone": "手机号",
+    "changePassword": "修改密码",
+    "deleteAccount": "删除账户",
+    "deleteConfirmTitle": "确认删除",
+    "deleteConfirmContent": "删除您的账户数据将清除，是否确认？",
+    "cancel": "取消",
+    "confirm": "确认"
+  },
+  "changePassword": {
+    "title": "修改密码",
+    "oldPassword": "旧密码",
+    "newPassword": "新密码",
+    "confirmPassword": "确认密码",
+    "placeholder": "请输入",
+    "cancel": "取消",
+    "confirm": "确认"
+  },
+  "editNickname": {
+    "title": "修改昵称",
+    "placeholder": "请输入昵称",
+    "hint": "昵称限制 1 - 20 个字符",
+    "save": "保存"
+  },
+  "bindEmail": {
+    "title": "绑定邮箱",
+    "emailPlaceholder": "请输入邮箱",
+    "codePlaceholder": "请输入验证码",
+    "confirm": "确认"
+  },
+  "bindPhone": {
+    "title": "绑定手机号码",
+    "phonePlaceholder": "请输入手机号",
+    "codePlaceholder": "请输入验证码",
+    "confirm": "确认"
+  },
+  "language": {
+    "title": "语言",
+    "english": "English",
+    "chinese": "简体中文"
+  },
+  "addressBook": {
+    "title": "地址管理",
+    "addAddress": "添加地址",
+    "edit": "编辑",
+    "delete": "删除",
+    "deleteConfirmTitle": "确认删除",
+    "deleteConfirmContent": "确认删除此地址？",
+    "cancel": "取消",
+    "confirm": "确认",
+    "myAddress": "我的地址",
+    "copySuccess": "复制成功"
+  },
+  "addAddress": {
+    "title": "添加地址",
+    "editTitle": "编辑地址",
+    "coin": "币种",
+    "network": "网络",
+    "address": "地址",
+    "addressPlaceholder": "0x....",
+    "remark": "备注（非必填）",
+    "remarkPlaceholder": "",
+    "save": "保存",
+    "selectCoin": "选择币种",
+    "selectNetwork": "选择网络"
+  },
+  "invite": {
+    "title": "邀请有奖",
+    "inviteTitle": "邀请好友，获取额外收益",
+    "invitedCount": "已邀请人数：",
+    "inviteCode": "您的邀请码：",
+    "copy": "复制",
+    "copyLink": "复制链接",
+    "commissionEarned": "获得的返佣收益：",
+    "points": "积分",
+    "inviteRecord": "邀请记录",
+    "commissionRecord": "返佣记录",
+    "rulesTitle": "邀请规则",
+    "rule1Title": "1、邀请资格",
+    "rule1Content": "当前已注册并完成实名认证的用户均可发起邀请，新用户需完成账号注册后才能成为被邀请人。",
+    "rule2Title": "2、邀请方式",
+    "rule2Content": "进入个人中心获取专属邀请链接",
+    "rule3Title": "3、奖励说明",
+    "rule3Content": "每成功邀请 1 位好友，邀请人可获得 XX 积分",
+    "tipsTitle": "温馨提示",
+    "tip1Title": "1、在哪里可以看到我的佣金",
+    "tip1Content": "在【我的个人中心】的【佣金明细】里可看到您的每次返现记录。佣金可充值到云购帐户参与购买商品或提现。",
+    "tip2Title": "2、哪些情况会导致佣金失效？",
+    "tip2Content": "借助网站及其他平台，恶意获取佣金，一经查实，扣除一切佣金，清除福分账户且封号。",
+    "tip3Title": "3、自己邀请自己也能获得佣金吗？",
+    "tip3Content": "不可以。我们会人工核查，对于查实的作弊行为，扣除一切佣金，取消邀请佣金的资格并清除您的福分账户。",
+    "tip4Title": "4、如何知道我有没有邀请成功",
+    "tip4Content": "您可以在【我的个人中心】的【邀请明细】里面查看。",
+    "copySuccess": "复制成功"
+  },
+  "aboutUs": {
+    "title": "关于我们",
+    "version": "v1.0.0",
+    "privacyPolicy": "隐私政策",
+    "userAgreement": "用户协议",
+    "versionUpdate": "版本更新"
+  }
 }

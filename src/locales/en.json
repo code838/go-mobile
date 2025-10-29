@@ -3,5 +3,107 @@
   "tab2": "Trade",
   "tab3": "Ecosystem",
   "tab4": "Community",
-  "tab5": "My"
+  "tab5": "My",
+  "login": {
+    "usernamePlaceholder": "Username/Phone/Email",
+    "passwordPlaceholder": "Password",
+    "rememberMe": "Remember Me",
+    "forgotPassword": "Forgot Password?",
+    "loginButton": "Login",
+    "orContinueWith": "Or Continue With",
+    "noAccount": "Don't have an account? ",
+    "register": "Sign up"
+  },
+  "register": {
+    "phonePlaceholder": "Phone/Email",
+    "verifyCodePlaceholder": "Verification Code",
+    "sendCode": "Send Code",
+    "resendCode": "Resend",
+    "passwordPlaceholder": "Password",
+    "confirmPasswordPlaceholder": "Confirm Password",
+    "inviteCodePlaceholder": "Invite Code",
+    "agreeTerms": "I have read and agree to the ",
+    "userAgreement": "<User Agreement>",
+    "registerButton": "Sign up",
+    "hasAccount": "Already have an account? ",
+    "login": "Login"
+  },
+  "forgetPassword": {
+    "phonePlaceholder": "Phone/Email",
+    "verifyCodePlaceholder": "Verification Code",
+    "sendCode": "Send Code",
+    "newPasswordPlaceholder": "New Password",
+    "confirmPasswordPlaceholder": "Confirm Password",
+    "confirmButton": "Confirm",
+    "hasAccount": "Already have an account? ",
+    "login": "Login"
+  },
+  "profile": {
+    "guestName": "--",
+    "pleaseLogin": "Please login to view",
+    "loginButton": "Login",
+    "freeReceiveCoin": "Free Coins",
+    "balance": "Balance",
+    "points": "Points",
+    "recharge": "Recharge",
+    "withdraw": "Withdraw",
+    "flashExchange": "Exchange",
+    "record": "Record",
+    "inviteFriends": "Invite Friends",
+    "accountSecurity": "Account Security",
+    "language": "Language",
+    "serviceCenter": "Service Center",
+    "aboutUs": "About Us"
+  },
+  "userInfo": {
+    "title": "My Profile",
+    "nickname": "Nickname",
+    "email": "Email",
+    "phone": "Phone",
+    "addressManagement": "Address Management",
+    "logout": "Logout"
+  },
+  "accountSecurity": {
+    "title": "Account Security",
+    "email": "Email",
+    "phone": "Phone",
+    "changePassword": "Change Password",
+    "deleteAccount": "Delete Account",
+    "deleteConfirmTitle": "Confirm Deletion",
+    "deleteConfirmContent": "Your account data will be cleared. Are you sure?",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "changePassword": {
+    "title": "Change Password",
+    "oldPassword": "Old Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "placeholder": "Please enter",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "editNickname": {
+    "title": "Edit Nickname",
+    "placeholder": "Please enter nickname",
+    "hint": "Nickname must be 1 - 20 characters",
+    "save": "Save"
+  },
+  "bindEmail": {
+    "title": "Bind Email",
+    "emailPlaceholder": "Please enter email",
+    "codePlaceholder": "Please enter verification code",
+    "confirm": "Confirm"
+  },
+  "bindPhone": {
+    "title": "Bind Phone",
+    "phonePlaceholder": "Please enter phone number",
+    "codePlaceholder": "Please enter verification code",
+    "confirm": "Confirm"
+  },
+  "language": {
+    "title": "Language",
+    "english": "English",
+    "chinese": "简体中文"
+  }
 }

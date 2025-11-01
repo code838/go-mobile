@@ -10,12 +10,9 @@ import ConfirmModal from '@/components/ConfirmModal';
 import NavigationBar from '@/components/NavigationBar';
 import PageDecoration from '@/components/PageDecoration';
 import { Colors } from '@/constants/colors';
-
-// 模拟用户数据，实际应该从 store 获取
-const MOCK_USER = {
-  email: '12312@qq.com',
-  phone: '',
-};
+import { userApi } from '@/services/api';
+import { useBoundStore } from '@/store';
+import { toast } from '@/utils/toast';
 
 interface SecurityItem {
   label: string;
@@ -27,6 +24,9 @@ interface SecurityItem {
 export default function AccountSecurityPage() {
   const { t } = useTranslation();
   const router = useRouter();
+  const user = useBoundStore(state => state.user);
+  const refreshUserInfo = useBoundStore(state => state.refreshUserInfo);
+  const deleteAccount = useBoundStore(state => state.deleteAccount);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showBindEmail, setShowBindEmail] = useState(false);
   const [showBindPhone, setShowBindPhone] = useState(false);
@@ -41,11 +41,32 @@ export default function AccountSecurityPage() {
   /**
    * 确认绑定邮箱
    */
-  function handleConfirmEmail(email: string, code: string) {
-    console.log('绑定邮箱:', email, '验证码:', code);
-    // TODO: 调用绑定邮箱 API
-    // 绑定成功后关闭弹窗
-    setShowBindEmail(false);
+  async function handleConfirmEmail(email: string, code: string) {
+    if (!user?.userId) {
+      console.error('用户未登录');
+      return;
+    }
+
+    try {
+      const { data } = await userApi.updateEmailOrPhone({
+        userId: user.userId,
+        type: 1, // 1：邮箱
+        content: email,
+        captha: code
+      });
+
+      if (data.code === 0) {
+        console.log('邮箱更新成功');
+        toast.success(t('accountSecurity.updateSuccess'));
+        // 更新成功后刷新用户信息
+        await refreshUserInfo();
+        setShowBindEmail(false);
+      } else {
+        toast.error(data.msg || t('accountSecurity.updateFailed'));
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   }
 
   /**
@@ -58,11 +79,32 @@ export default function AccountSecurityPage() {
   /**
    * 确认绑定手机号
    */
-  function handleConfirmPhone(phone: string, code: string) {
-    console.log('绑定手机号:', phone, '验证码:', code);
-    // TODO: 调用绑定手机号 API
-    // 绑定成功后关闭弹窗
-    setShowBindPhone(false);
+  async function handleConfirmPhone(phone: string, code: string) {
+    if (!user?.userId) {
+      console.error('用户未登录');
+      return;
+    }
+
+    try {
+      const { data } = await userApi.updateEmailOrPhone({
+        userId: user.userId,
+        type: 2, // 2：手机号
+        content: phone,
+        captha: code
+      });
+
+      if (data.code === 0) {
+        console.log('手机号更新成功');
+        toast.success(t('accountSecurity.updateSuccess'));
+        // 更新成功后刷新用户信息
+        await refreshUserInfo();
+        setShowBindPhone(false);
+      } else {
+        toast.error(data.msg || t('accountSecurity.updateFailed'));
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   }
 
   /**
@@ -71,13 +113,13 @@ export default function AccountSecurityPage() {
   const securityItems: SecurityItem[] = [
     {
       label: t('accountSecurity.email'),
-      value: MOCK_USER.email,
+      value: user?.email || '',
       onPress: handleBindEmail,
       showArrow: true,
     },
     {
       label: t('accountSecurity.phone'),
-      value: MOCK_USER.phone || '',
+      value: user?.mobile || '',
       onPress: handleBindPhone,
       showArrow: true,
     },
@@ -99,14 +141,20 @@ export default function AccountSecurityPage() {
   /**
    * 确认删除账户
    */
-  function handleConfirmDelete() {
-    console.log('确认删除账户');
-    setShowDeleteModal(false);
-    // 实际应该：
-    // 1. 调用删除账户 API
-    // 2. 清除用户数据
-    // 3. 跳转到登录页
-    // router.replace('/login');
+  async function handleConfirmDelete() {
+    try {
+      const result = await deleteAccount();
+      
+      if (result.code === 0) {
+        console.log('账户删除成功');
+        setShowDeleteModal(false);
+        router.back();
+      } else {
+        console.error('删除账户失败:', result.msg);
+      }
+    } catch (error) {
+      console.error('删除账户失败:', error);
+    }
   }
 
   return (

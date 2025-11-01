@@ -6,23 +6,21 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import NavigationBar from '@/components/NavigationBar';
 import PageDecoration from '@/components/PageDecoration';
 import { Colors } from '@/constants/colors';
+import { router } from 'expo-router';
 
 export default function AboutUsScreen() {
   const { t } = useTranslation();
 
   function handlePrivacyPolicy() {
-    // TODO: 跳转到隐私政策页面
-    console.log('隐私政策');
+    router.push('/setting/protocol?type=2');
   }
 
   function handleUserAgreement() {
-    // TODO: 跳转到用户协议页面
-    console.log('用户协议');
+    router.push('/setting/protocol?type=1');
   }
 
   function handleVersionUpdate() {
     // TODO: 检查版本更新
-    console.log('版本更新');
   }
 
   return (

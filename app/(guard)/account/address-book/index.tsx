@@ -1,70 +1,99 @@
-import * as Clipboard from 'expo-clipboard';
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import Toast from 'react-native-toast-message';
-
 import ConfirmModal from '@/components/ConfirmModal';
 import NavigationBar from '@/components/NavigationBar';
 import PageDecoration from '@/components/PageDecoration';
 import { Colors } from '@/constants/colors';
-
-interface AddressItem {
-  id: string;
-  coin: string;
-  network: string;
-  remark: string;
-  address: string;
-}
+import { AddressBookItem } from '@/model/AddressBook';
+import { addressBookApi } from '@/services/api';
+import { useBoundStore } from '@/store';
+import { toast } from '@/utils/toast';
+import * as Clipboard from 'expo-clipboard';
+import { Image } from 'expo-image';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function AddressBookPage() {
   const { t } = useTranslation();
   const router = useRouter();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
+  const coins = useBoundStore(state => state.coins);
+  const user = useBoundStore(state => state.user);
 
-  // 模拟地址数据
-  const [addresses, setAddresses] = useState<AddressItem[]>([
-    {
-      id: '1',
-      coin: 'USDT',
-      network: 'Solana',
-      remark: '我的地址 1',
-      address: 'meth6XLfTKT28Vq3JPqzva1ePBazo7...',
-    },
-  ]);
+  // 地址列表数据
+  const [addresses, setAddresses] = useState<AddressBookItem[]>([]);
+
+  /**
+   * 获取地址本列表
+   */
+  const fetchAddressList = useCallback(async () => {
+    if (!user) return;
+    
+    try {
+      setLoading(true);
+      const response = await addressBookApi.getAddressBookList({ userId: user.userId });
+      if (response.data.code === 0 && response.data.data) {
+        setAddresses(response.data.data);
+      }
+    } catch (error: any) {
+      console.error('获取地址本列表失败:', error);
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  /**
+   * 根据networkId获取network名称
+   */
+  function getNetworkNameById(networkId: number): string {
+    for (const coin of coins) {
+      const network = coin.networks.find(n => n.networkId === networkId);
+      if (network) {
+        return network.network;
+      }
+    }
+    return 'Unknown';
+  }
+
+  // 页面聚焦时获取地址列表
+  useFocusEffect(
+    useCallback(() => {
+      fetchAddressList();
+    }, [])
+  );
 
   /**
    * 跳转到添加地址页面
    */
   function handleAddAddress() {
-    router.push('/(guard)/account/address-book/add');
+    router.push('/account/address-book/add');
   }
 
   /**
    * 编辑地址
    */
-  function handleEdit(addressId: string) {
-    const address = addresses.find((addr) => addr.id === addressId);
-    if (address) {
-      router.push({
-        pathname: '/(guard)/account/address-book/add',
-        params: {
-          id: address.id,
-          coin: address.coin,
-          network: address.network,
-          address: address.address,
-          remark: address.remark,
-        },
-      });
-    }
+  function handleEdit(addressItem: AddressBookItem) {
+    router.push({
+      pathname: '/account/address-book/add',
+      params: {
+        id: addressItem.id.toString(),
+        coinId: addressItem.coinId.toString(),
+        coinName: addressItem.coinName,
+        networkId: addressItem.networkId.toString(),
+        network: addressItem.network,
+        address: addressItem.address,
+        remark: addressItem.remark,
+      },
+    });
   }
 
   /**
    * 删除地址 - 显示确认弹窗
    */
-  function handleDeletePress(addressId: string) {
+  function handleDeletePress(addressId: number) {
     setSelectedAddressId(addressId);
     setShowDeleteConfirm(true);
   }
@@ -72,13 +101,26 @@ export default function AddressBookPage() {
   /**
    * 确认删除地址
    */
-  function handleConfirmDelete() {
-    if (selectedAddressId) {
-      setAddresses(addresses.filter((addr) => addr.id !== selectedAddressId));
-      Toast.show({
-        type: 'success',
-        text1: '删除成功',
-      });
+  async function handleConfirmDelete() {
+    if (selectedAddressId && user) {
+      try {
+        const addressItem = addresses.find(addr => addr.id === selectedAddressId);
+        if (addressItem) {
+          await addressBookApi.manageAddressBook({
+            userId: user.userId,
+            id: addressItem.id,
+            operate: 2, // 2:删除
+          });
+
+          toast.success(t('addressBook.deleteSuccess'));
+
+          // 重新获取列表
+          fetchAddressList();
+        }
+      } catch (error: any) {
+        console.error('删除地址失败:', error);
+        toast.error(error.message);
+      }
     }
     setShowDeleteConfirm(false);
     setSelectedAddressId(null);
@@ -89,10 +131,7 @@ export default function AddressBookPage() {
    */
   async function handleCopy(address: string) {
     await Clipboard.setStringAsync(address);
-    Toast.show({
-      type: 'success',
-      text1: t('addressBook.copySuccess'),
-    });
+    toast.success(t('addressBook.copySuccess'));
   }
 
   return (
@@ -109,49 +148,49 @@ export default function AddressBookPage() {
         showsVerticalScrollIndicator={false}>
         {/* 地址列表 */}
         <View style={styles.addressList}>
-          {addresses.map((address) => (
-            <View key={address.id} style={styles.addressGroup}>
-              {/* 标题行：币种-网络，编辑、删除按钮 */}
-              <View style={styles.addressHeader}>
-                <Text style={styles.addressTitle}>
-                  {address.network} - {address.coin}
-                </Text>
-                <View style={styles.actionButtons}>
-                  <Pressable
-                    style={styles.editButton}
-                    onPress={() => handleEdit(address.id)}
-                    android_ripple={{ color: 'rgba(255, 255, 255, 0.1)' }}>
-                    <Text style={styles.editButtonText}>{t('addressBook.edit')}</Text>
-                  </Pressable>
-                  <Pressable
-                    style={styles.deleteButton}
-                    onPress={() => handleDeletePress(address.id)}
-                    android_ripple={{ color: 'rgba(247, 83, 83, 0.1)' }}>
-                    <Text style={styles.deleteButtonText}>{t('addressBook.delete')}</Text>
-                  </Pressable>
-                </View>
-              </View>
-
-              {/* 地址卡片 */}
-              <View style={styles.addressCard}>
-                <Text style={styles.remarkText}>{address.remark}</Text>
-                <View style={styles.addressRow}>
-                  <Text style={styles.addressText} numberOfLines={1} ellipsizeMode="middle">
-                    {address.address}
+          {addresses.map((address) => {
+            const networkName = getNetworkNameById(address.networkId);
+            return (
+              <View key={address.id} style={styles.addressGroup}>
+                {/* 标题行：币种-网络，编辑、删除按钮 */}
+                <View style={styles.addressHeader}>
+                  <Text style={styles.addressTitle}>
+                    {networkName} - {address.coinName}
                   </Text>
-                  <Pressable
-                    onPress={() => handleCopy(address.address)}
-                    hitSlop={8}
-                    android_ripple={{ color: 'rgba(255, 255, 255, 0.1)', radius: 16 }}>
-                    <View style={styles.copyIcon}>
-                      <View style={styles.copyIconRect1} />
-                      <View style={styles.copyIconRect2} />
-                    </View>
-                  </Pressable>
+                  <View style={styles.actionButtons}>
+                    <Pressable
+                      style={styles.editButton}
+                      onPress={() => handleEdit(address)}
+                      android_ripple={{ color: 'rgba(255, 255, 255, 0.1)' }}>
+                      <Text style={styles.editButtonText}>{t('addressBook.edit')}</Text>
+                    </Pressable>
+                    <Pressable
+                      style={styles.deleteButton}
+                      onPress={() => handleDeletePress(address.id)}
+                      android_ripple={{ color: 'rgba(247, 83, 83, 0.1)' }}>
+                      <Text style={styles.deleteButtonText}>{t('addressBook.delete')}</Text>
+                    </Pressable>
+                  </View>
+                </View>
+
+                {/* 地址卡片 */}
+                <View style={styles.addressCard}>
+                  {!!address.remark && <Text style={styles.remarkText}>{address.remark}</Text>}
+                  <View style={styles.addressRow}>
+                    <Text style={styles.addressText} numberOfLines={1} ellipsizeMode="middle">
+                      {address.address}
+                    </Text>
+                    <Pressable
+                      onPress={() => handleCopy(address.address)}
+                      hitSlop={8}
+                      android_ripple={{ color: 'rgba(255, 255, 255, 0.1)', radius: 16 }}>
+                      <Image source={require('@/assets/images/copy.png')} style={styles.copyIcon} contentFit="contain" />
+                    </Pressable>
+                  </View>
                 </View>
               </View>
-            </View>
-          ))}
+            );
+          })}
 
           {/* 添加地址按钮 */}
           <Pressable
@@ -214,8 +253,10 @@ const styles = StyleSheet.create({
   editButton: {
     backgroundColor: Colors.card,
     paddingHorizontal: 12,
-    paddingVertical: 4,
+    height: 26,
     borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   editButtonText: {
     fontSize: 12,
@@ -225,8 +266,10 @@ const styles = StyleSheet.create({
   deleteButton: {
     backgroundColor: Colors.card,
     paddingHorizontal: 12,
-    paddingVertical: 4,
+    height: 26,
     borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   deleteButtonText: {
     fontSize: 12,
@@ -260,35 +303,14 @@ const styles = StyleSheet.create({
   copyIcon: {
     width: 20,
     height: 20,
-    position: 'relative',
-  },
-  copyIconRect1: {
-    position: 'absolute',
-    top: 0,
-    left: 4,
-    width: 12,
-    height: 12,
-    borderWidth: 1.5,
-    borderColor: Colors.subtitle,
-    borderRadius: 2,
-  },
-  copyIconRect2: {
-    position: 'absolute',
-    top: 6,
-    left: 0,
-    width: 12,
-    height: 12,
-    backgroundColor: Colors.background,
-    borderWidth: 1.5,
-    borderColor: Colors.subtitle,
-    borderRadius: 2,
   },
   addButton: {
     backgroundColor: Colors.card,
-    paddingVertical: 8,
+    height: 40,
     paddingHorizontal: 16,
     borderRadius: 8,
     alignItems: 'center',
+    alignSelf: 'flex-start',
     justifyContent: 'center',
   },
   addButtonText: {

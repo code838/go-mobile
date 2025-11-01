@@ -1,4 +1,5 @@
 import { LANGUAGE_KEY } from '@/constants/keys';
+import { financeApi } from '@/services/api';
 import { Store, UtilsSlice } from '@/store/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import i18next from 'i18next';
@@ -11,6 +12,7 @@ export const createUtilsSlice: StateCreator<
   [['zustand/immer', never], never],
   UtilsSlice
 > = immer(set => ({
+  coins: [],
   hasHydrated: false,
   setHasHydrated: (hasHydrated: boolean) => {
     set(state => {
@@ -25,6 +27,10 @@ export const createUtilsSlice: StateCreator<
       state.language = language;
     });
   },
+
+  /**
+   * 从本地存储获取语言
+   */
   getLanguageFromStorage: async () => {
     try {
       const language = await AsyncStorage.getItem(LANGUAGE_KEY);
@@ -39,4 +45,17 @@ export const createUtilsSlice: StateCreator<
       return 'zh';
     }
   },
+
+  /**
+   * 获取币种信息列表
+   */
+  getCoinsMessage: async () => {
+    const { data } = await financeApi.getCoins();
+    if (data.data) {
+      set(state => {
+        state.coins = data.data;
+      });
+    }
+  },
+
 }));

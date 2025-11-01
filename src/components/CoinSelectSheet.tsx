@@ -3,54 +3,30 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import BottomSheet from './BottomSheet';
 
 import { Colors } from '@/constants/colors';
-
-interface Coin {
-  id: string;
-  symbol: string;
-  name: string;
-  balance: string;
-  color: string; // 用于首字母背景色
-}
+import { getImageUrl } from '@/constants/urls';
+import { CoinMessage } from '@/model/CoinMessage';
+import { Image } from 'expo-image';
 
 interface CoinSelectSheetProps {
   visible: boolean;
   onClose: () => void;
-  onSelect: (coin: Coin) => void;
-  selectedCoinId?: string;
+  onSelect: (coin: CoinMessage) => void;
+  selectedCoinId?: number;
+  coins: CoinMessage[];
 }
 
-/**
- * 选择币种弹窗
- * 显示币种列表，每个币种用首字母+背景色表示logo
- *
- * @example
- * ```tsx
- * <CoinSelectSheet
- *   visible={visible}
- *   onClose={() => setVisible(false)}
- *   onSelect={(coin) => console.log(coin)}
- *   selectedCoinId={selectedCoin?.id}
- * />
- * ```
- */
 export default function CoinSelectSheet({
   visible,
   onClose,
   onSelect,
   selectedCoinId,
+  coins
 }: CoinSelectSheetProps) {
-  // 模拟币种数据
-  const coins: Coin[] = [
-    { id: '1', symbol: 'USDT', name: 'USDT', balance: '112.21', color: '#26a17b' },
-    { id: '2', symbol: 'BTC', name: 'Bitcoin', balance: '0.05', color: '#f7931a' },
-    { id: '3', symbol: 'ETH', name: 'Ethereum', balance: '1.23', color: '#627eea' },
-    { id: '4', symbol: 'BNB', name: 'BNB', balance: '5.67', color: '#f3ba2f' },
-  ];
 
   /**
    * 选择币种
    */
-  function handleSelect(coin: Coin) {
+  function handleSelect(coin: CoinMessage) {
     onSelect(coin);
     onClose();
   }
@@ -61,26 +37,35 @@ export default function CoinSelectSheet({
         style={styles.scrollView}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}>
-        {coins.map((coin) => (
-          <Pressable
-            key={coin.id}
-            style={styles.coinItem}
-            onPress={() => handleSelect(coin)}
-            android_ripple={{ color: 'rgba(255, 255, 255, 0.1)' }}>
-            {/* 币种logo（首字母） */}
-            <View style={[styles.coinLogo, { backgroundColor: coin.color }]}>
-              <Text style={styles.coinLogoText}>{coin.symbol[0]}</Text>
-            </View>
+        {coins.map((coin) => {
+          const isSelected = coin.coinId === selectedCoinId;
+          return (
+            <Pressable
+              key={coin.coinId}
+              style={[styles.coinItem, isSelected && styles.coinItemSelected]}
+              onPress={() => handleSelect(coin)}
+              android_ripple={{ color: 'rgba(255, 255, 255, 0.1)' }}>
+              {/* 币种logo（首字母） */}
+              <Image source={{uri: getImageUrl(coin.logo)}} style={styles.coinLogo} contentFit="contain"></Image>
 
-            {/* 币种信息 */}
-            <View style={styles.coinInfo}>
-              <Text style={styles.coinName}>{coin.symbol}</Text>
-            </View>
+              {/* 币种信息 */}
+              <View style={styles.coinInfo}>
+                <Text style={[styles.coinName, isSelected && styles.coinNameSelected]}>
+                  {coin.coinName}
+                </Text>
+              </View>
 
-            {/* 余额 */}
-            <Text style={styles.coinBalance}>{coin.balance}</Text>
-          </Pressable>
-        ))}
+              {/* 选中标记 */}
+              {isSelected && (
+                <View style={styles.checkMark}>
+                  <View style={styles.checkCircle}>
+                    <Text style={styles.checkText}>✓</Text>
+                  </View>
+                </View>
+              )}
+            </Pressable>
+          );
+        })}
       </ScrollView>
     </BottomSheet>
   );
@@ -100,6 +85,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  coinItemSelected: {
+    borderColor: Colors.brand,
   },
   coinLogo: {
     width: 24,
@@ -126,9 +116,26 @@ const styles = StyleSheet.create({
     color: Colors.title,
     width: '100%',
   },
-  coinBalance: {
-    fontSize: 16,
-    fontWeight: '500',
+  coinNameSelected: {
+    color: Colors.brand,
+  },
+  checkMark: {
+    width: 20,
+    height: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: Colors.brand,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkText: {
+    fontSize: 12,
+    fontWeight: '700',
     color: Colors.title,
   },
 });

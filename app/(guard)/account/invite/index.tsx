@@ -1,61 +1,50 @@
 import * as Clipboard from 'expo-clipboard';
-import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import Toast from 'react-native-toast-message';
 
 import NavigationBar from '@/components/NavigationBar';
 import PageDecoration from '@/components/PageDecoration';
 import { Colors } from '@/constants/colors';
+import { getImageUrl } from '@/constants/urls';
+import { useBoundStore } from '@/store';
+import { toast } from '@/utils/toast';
+import { Image } from 'expo-image';
 
-// 模拟邀请数据，实际应该从 API 获取
-const MOCK_INVITE_DATA = {
-  invitedCount: 5,
-  inviteCode: 'XASDASX',
-  inviteLink: 'https://example.com/invite/XASDASX',
-  commissionEarned: 123,
-};
 
 export default function InvitePage() {
   const { t } = useTranslation();
-  const [inviteData] = useState(MOCK_INVITE_DATA);
+  const user = useBoundStore(state => state.user);
+  const inviteCode = user!.inviteLink.replace('/invite?invite=', '');
 
   /**
    * 复制邀请码
    */
   async function handleCopyCode() {
-    await Clipboard.setStringAsync(inviteData.inviteCode);
-    Toast.show({
-      type: 'success',
-      text1: t('invite.copySuccess'),
-    });
+    await Clipboard.setStringAsync(inviteCode);
+    toast.success(t('invite.copySuccess'));
   }
 
   /**
    * 复制邀请链接
    */
   async function handleCopyLink() {
-    await Clipboard.setStringAsync(inviteData.inviteLink);
-    Toast.show({
-      type: 'success',
-      text1: t('invite.copySuccess'),
-    });
+    await Clipboard.setStringAsync(getImageUrl(user!.inviteLink));
+    toast.success(t('invite.copySuccess'));
   }
 
   /**
    * 查看邀请记录
    */
   function handleInviteRecord() {
-    router.push('/(guard)/account/invite/records');
+    router.push('/account/invite/records?tab=invite');
   }
 
   /**
    * 查看返佣记录
    */
   function handleCommissionRecord() {
-    router.push('/(guard)/account/invite/records');
+    router.push('/account/invite/records?tab=commission');
   }
 
   return (
@@ -71,16 +60,7 @@ export default function InvitePage() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}>
         {/* 横幅图片 */}
-        <View style={styles.heroBanner}>
-          <LinearGradient
-            colors={['#1E3A8A', '#3B82F6', '#8B5CF6']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.heroBannerGradient}>
-            <Text style={styles.heroBannerText}>WIN</Text>
-            <Text style={styles.heroBannerSubtext}>邀请好友赢取奖励</Text>
-          </LinearGradient>
-        </View>
+        <Image source={require('@/assets/images/invite-post.png')} style={styles.heroBanner} />
 
         {/* 邀请信息卡片 */}
         <View style={styles.infoCard}>
@@ -90,13 +70,13 @@ export default function InvitePage() {
             {/* 已邀请人数 */}
             <View style={styles.infoRow}>
               <Text style={styles.infoLabel}>{t('invite.invitedCount')}</Text>
-              <Text style={styles.infoValue}>{inviteData.invitedCount}</Text>
+              <Text style={styles.infoValue}>{user!.inviteUsers}</Text>
             </View>
 
             {/* 邀请码和操作按钮 */}
             <View style={styles.codeRow}>
               <Text style={styles.infoLabel}>{t('invite.inviteCode')}</Text>
-              <Text style={styles.infoValue}>{inviteData.inviteCode}</Text>
+              <Text style={styles.infoValue}>{inviteCode}</Text>
               <Pressable style={styles.copyButton} onPress={handleCopyCode}>
                 <Text style={styles.copyButtonText}>{t('invite.copy')}</Text>
               </Pressable>
@@ -109,17 +89,17 @@ export default function InvitePage() {
             <View style={styles.infoRow}>
               <Text style={styles.infoLabel}>{t('invite.commissionEarned')}</Text>
               <Text style={styles.infoValue}>
-                {inviteData.commissionEarned} {t('invite.points')}
+                {user!.invitePoints} {t('invite.points')}
               </Text>
             </View>
           </View>
 
           {/* 记录链接 */}
           <View style={styles.recordLinks}>
-            <Pressable onPress={handleInviteRecord}>
+            <Pressable style={styles.underlineLink} onPress={handleInviteRecord}>
               <Text style={styles.recordLink}>{t('invite.inviteRecord')}</Text>
             </Pressable>
-            <Pressable onPress={handleCommissionRecord}>
+            <Pressable style={styles.underlineLink} onPress={handleCommissionRecord}>
               <Text style={styles.recordLink}>{t('invite.commissionRecord')}</Text>
             </Pressable>
           </View>
@@ -259,7 +239,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     color: Colors.brand,
-    textDecorationLine: 'underline',
+  },
+  underlineLink: {
+    borderBottomWidth: 1,
+    paddingBottom: 4,
+    borderBottomColor: Colors.brand,
   },
   rulesCard: {
     backgroundColor: Colors.card,

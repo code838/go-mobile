@@ -1,12 +1,14 @@
 import { Image } from 'expo-image';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { MotiView } from 'moti';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, LayoutChangeEvent, Pressable, StyleSheet, Text, View } from 'react-native';
+import { LayoutChangeEvent, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import InviteRecord from '@/components/InviteRecord';
 import NavigationBar from '@/components/NavigationBar';
 import PageDecoration from '@/components/PageDecoration';
+import ReturnMoney from '@/components/ReturnMoney';
 import { Colors } from '@/constants/colors';
 
 // 模拟数据
@@ -56,7 +58,8 @@ interface RecordItem {
 
 export default function RecordsPage() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<TabType>('invite');
+  const params = useLocalSearchParams();
+  const [activeTab, setActiveTab] = useState<TabType>(params.tab as TabType || 'invite');
   const [tabLayouts, setTabLayouts] = useState<{
     invite: { x: number; width: number } | null;
     commission: { x: number; width: number } | null;
@@ -151,14 +154,7 @@ export default function RecordsPage() {
           )}
         </View>
 
-        {/* 记录列表 */}
-        <FlatList
-          data={currentRecords}
-          renderItem={renderRecordItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContent}
-          showsVerticalScrollIndicator={false}
-        />
+        {activeTab === 'invite' ? <InviteRecord /> : <ReturnMoney />}
       </View>
     </View>
   );

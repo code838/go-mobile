@@ -1,6 +1,36 @@
+import { CoinMessage } from "@/model/CoinMessage";
+import { RechargeAddress } from "@/model/RechargeAddress";
+import { UserModel } from "@/model/User";
+
+export interface WithdrawFee {
+  coinId: number;
+  fee: string;
+  minAmount?: string;
+}
+
+export interface WithdrawFeeType {
+  type: number;
+  fees: WithdrawFee[];
+}
+
 export type AccountSlice = {
-  user: any;
-  setUser: (user: any) => void;
+  user: UserModel | null;
+  setUser: (user: UserModel | null) => void;
+  getBalanceByCurrency: (currency: string) => number;
+  refreshUserInfo: () => Promise<void>;
+  logout: () => Promise<any>;
+  deleteAccount: () => Promise<any>;
+  token: string | null;
+  setToken: (token: string | null) => void;
+  memoizedAccount: string | null;
+  setMemoizedAccount: (account: string | null) => void;
+  rechargeAddresses: RechargeAddress[];
+  getAllRechargeAddresses: () => Promise<void>;
+  getRechargeAddressByCoinAndNetwork: (coinName: string, network: string) => RechargeAddress | undefined;
+  withdrawFees: WithdrawFeeType[];
+  getWithdrawFees: () => Promise<void>;
+  getWithdrawFeeByCoinId: (coinId: number) => string;
+  getMinWithdrawAmountByCoinId: (coinId: number) => string;
 }
 
 export type UtilsSlice = {
@@ -9,6 +39,8 @@ export type UtilsSlice = {
   language: string;
   setLanguage: (language: string) => void;
   getLanguageFromStorage: () => Promise<string | null>;
+  coins: CoinMessage[];
+  getCoinsMessage: () => Promise<void>;
 }
 
 export type Store = AccountSlice & UtilsSlice;

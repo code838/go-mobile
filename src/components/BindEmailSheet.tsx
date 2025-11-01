@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, TextInput, View } from 'react-native';
 
@@ -7,6 +7,8 @@ import Button from './Button';
 import VerifyCodeButton from './VerifyCodeButton';
 
 import { Colors } from '@/constants/colors';
+import { useSendCaptcha } from '@/hooks/useApi';
+import { toast } from '@/utils/toast';
 
 interface BindEmailSheetProps {
   visible: boolean;
@@ -19,16 +21,33 @@ interface BindEmailSheetProps {
  */
 export default function BindEmailSheet({ visible, onClose, onConfirm }: BindEmailSheetProps) {
   const { t } = useTranslation();
+  const { execute: sendCaptcha, loading: isSendCaptchaLoading } = useSendCaptcha();
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
+
+  useEffect(() => {
+    if (!visible) {
+      setEmail('');
+      setCode('');
+    }
+  }, [visible]);
 
   /**
    * 发送验证码
    */
   async function handleSendCode() {
-    // TODO: 调用发送验证码 API
-    console.log('发送验证码到邮箱:', email);
-    return Promise.resolve();
+    if (!email.trim() || !isValidEmail()) {
+      toast.error(t('bindEmail.invalidEmail'));
+      return;
+    }
+
+    try {
+      await sendCaptcha({ content: email.trim(), type: 1 }); // type: 1 表示邮箱
+      toast.success(t('captcha.sendSuccess'));
+    } catch (error: any) {
+      console.error('发送验证码失败:', error);
+      toast.error(error.message);
+    }
   }
 
   /**
@@ -66,7 +85,7 @@ export default function BindEmailSheet({ visible, onClose, onConfirm }: BindEmai
         </View>
         <VerifyCodeButton
           onSendCode={handleSendCode}
-          disabled={!isValidEmail()}
+          disabled={!isValidEmail() || isSendCaptchaLoading}
         />
       </View>
 

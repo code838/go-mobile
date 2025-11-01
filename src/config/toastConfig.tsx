@@ -4,14 +4,14 @@ export const toastConfig = {
   success: (props: any) => (
     <BaseToast
       {...props}
-      style={{borderLeftColor: '#2EBC85', borderLeftWidth: 10, zIndex: 1000}}
+      style={{borderLeftColor: '#2EBC85', borderLeftWidth: 4, zIndex: 1000, height: 50}}
       text1Style={{fontSize: 15, fontWeight: '400'}}
     />
   ),
   error: (props: any) => (
     <BaseToast
       {...props}
-      style={{borderLeftColor: 'red', borderLeftWidth: 10, zIndex: 1000}}
+      style={{borderLeftColor: 'red', borderLeftWidth: 4, zIndex: 1000, height: 50}}
       text1Style={{fontSize: 15, fontWeight: '400'}}
     />
   ),

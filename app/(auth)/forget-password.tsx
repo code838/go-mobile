@@ -1,6 +1,10 @@
 import Button from '@/components/Button';
 import VerifyCodeButton from '@/components/VerifyCodeButton';
 import { Colors } from '@/constants/colors';
+import { useResetPassword, useSendCaptcha } from '@/hooks/useApi';
+import { useBoundStore } from '@/store';
+import { hashPassword } from '@/utils/crypto';
+import { toast } from '@/utils/toast';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -16,12 +20,14 @@ import { useImmer } from 'use-immer';
 export default function ForgetPasswordPage() {
   const { t } = useTranslation();
   const router = useRouter();
+  const memoizedAccount = useBoundStore(state => state.memoizedAccount);
+  const { execute: resetPassword, loading: isResetPasswordLoading } = useResetPassword();
+  const { execute: sendCaptcha } = useSendCaptcha();
   const [state, setState] = useImmer({
-    phone: '',
+    phone: memoizedAccount || '',
     verifyCode: '',
     newPassword: '',
     confirmPassword: '',
-    isLoading: false,
   });
 
   function setPhone(phone: string) {
@@ -50,33 +56,56 @@ export default function ForgetPasswordPage() {
 
   async function handleSendCode() {
     if (!state.phone) {
-      // TODO: 显示错误提示
+      toast.error(t('register.fillAllFields'));
       return;
     }
-    // TODO: 实现发送验证码逻辑
-    console.log('发送验证码到:', state.phone);
+
+    const type = state.phone.includes('@') ? 1 : 2; // 1: email, 2: phone
+
+    try {
+      await sendCaptcha({ content: state.phone, type });
+      toast.success(t('captcha.sendSuccess'));
+    } catch (error: any) {
+      console.error('发送验证码失败:', error);
+      toast.error(error.message);
+    }
   }
 
   async function handleConfirm() {
     if (!state.phone || !state.verifyCode || !state.newPassword || !state.confirmPassword) {
-      // TODO: 显示错误提示
+      toast.error(t('register.fillAllFields'));
       return;
     }
+
     if (state.newPassword !== state.confirmPassword) {
-      // TODO: 显示错误提示
+      toast.error(t('register.passwordMismatch'));
       return;
     }
-    setState(draft => {
-      draft.isLoading = true;
-    });
+
     try {
-      // TODO: 实现重置密码逻辑
-      console.log('重置密码信息:', state);
-      await new Promise(resolve => setTimeout(resolve, 2000));
-    } finally {
-      setState(draft => {
-        draft.isLoading = false;
-      });
+      // 加密密码
+      const hashedPassword = await hashPassword(state.newPassword);
+      const type = state.phone.includes('@') ? 1 : 2; // 1: email, 2: phone
+
+      // 构建重置密码参数
+      const resetData = {
+        contentType: type,
+        content: state.phone,
+        captha: state.verifyCode,
+        password: hashedPassword,
+        type: 1 as const, // 忘记密码类型
+      };
+
+      const response = await resetPassword(resetData);
+      if (response.code === 0) {
+        toast.success('密码重置成功');
+        router.push('/login' as any);
+      } else {
+        toast.error(response.msg || '密码重置失败');
+      }
+    } catch (error: any) {
+      console.error('重置密码失败:', error);
+      toast.error(error.message);
     }
   }
 
@@ -161,7 +190,7 @@ export default function ForgetPasswordPage() {
             !state.newPassword ||
             !state.confirmPassword
           }
-          loading={state.isLoading}
+          loading={isResetPasswordLoading}
           style={styles.button}
         />
       </View>

@@ -12,6 +12,7 @@ interface EditNicknameSheetProps {
   currentNickname: string;
   onClose: () => void;
   onConfirm: (nickname: string) => void;
+  loading?: boolean;
 }
 
 /**
@@ -22,6 +23,7 @@ export default function EditNicknameSheet({
   currentNickname,
   onClose,
   onConfirm,
+  loading = false,
 }: EditNicknameSheetProps) {
   const { t } = useTranslation();
   const [nickname, setNickname] = useState(currentNickname);
@@ -73,7 +75,8 @@ export default function EditNicknameSheet({
         <Button
           title={t('editNickname.save')}
           onPress={handleConfirm}
-          disabled={nickname.trim().length === 0}
+          disabled={nickname.trim().length === 0 || loading}
+          loading={loading}
         />
       </View>
     </BottomSheet>

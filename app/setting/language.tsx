@@ -20,8 +20,8 @@ export default function LanguageScreen() {
   const currentLanguage = useBoundStore(state => state.language);
   
   const languages: LanguageOption[] = [
-    { code: 'en', label: t('language.english') },
-    { code: 'zh-cn', label: t('language.chinese') },
+    { code: 'en_us', label: t('language.english') },
+    { code: 'zh_cn', label: t('language.chinese') },
   ];
 
   async function handleLanguageChange(languageCode: string) {

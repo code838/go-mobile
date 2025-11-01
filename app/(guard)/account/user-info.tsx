@@ -4,18 +4,16 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import ConfirmModal from '@/components/ConfirmModal';
 import EditNicknameSheet from '@/components/EditNicknameSheet';
 import NavigationBar from '@/components/NavigationBar';
 import PageDecoration from '@/components/PageDecoration';
 import { Colors } from '@/constants/colors';
+import { getImageUrl } from '@/constants/urls';
+import { useUpdateNickname } from '@/hooks/useApi';
+import { useBoundStore } from '@/store';
+import { toast } from '@/utils/toast';
 
-// 模拟用户数据，实际应该从 store 获取
-const MOCK_USER = {
-  nickname: 'Sandy.eth',
-  email: '12312@qq.com',
-  phone: '',
-  avatar: 'https://picsum.photos/200',
-};
 
 interface UserInfoItem {
   label: string;
@@ -28,6 +26,11 @@ export default function UserInfoPage() {
   const { t } = useTranslation();
   const router = useRouter();
   const [showEditNickname, setShowEditNickname] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const user = useBoundStore(state => state.user);
+  const logout = useBoundStore(state => state.logout);
+  const refreshUserInfo = useBoundStore(state => state.refreshUserInfo);
+  const { execute: updateNickname, loading: updateLoading } = useUpdateNickname();
 
   /**
    * 打开修改昵称弹窗
@@ -39,11 +42,30 @@ export default function UserInfoPage() {
   /**
    * 确认修改昵称
    */
-  function handleConfirmNickname(nickname: string) {
-    console.log('新昵称:', nickname);
-    // TODO: 调用更新昵称 API
-    // 更新成功后关闭弹窗
-    setShowEditNickname(false);
+  async function handleConfirmNickname(nickname: string) {
+    if (!user?.userId) {
+      toast.error(t('errors.unknownError'));
+      return;
+    }
+
+    try {
+      const response = await updateNickname({
+        userId: user.userId,
+        nickName: nickname
+      });
+
+      if (response.code === 0) {
+        toast.success(t('editNickname.updateSuccess'));
+        setShowEditNickname(false);
+        // 刷新用户信息
+        await refreshUserInfo();
+      } else {
+        toast.error(response.msg || t('editNickname.updateFailed'));
+      }
+    } catch (error: any) {
+      console.error('更新昵称失败:', error);
+      toast.error(error.message);
+    }
   }
 
   /**
@@ -52,18 +74,18 @@ export default function UserInfoPage() {
   const userInfoItems: UserInfoItem[] = [
     {
       label: t('userInfo.nickname'),
-      value: MOCK_USER.nickname,
+      value: user?.nickName || '-',
       onPress: handleEditNickname,
       showArrow: true,
     },
     {
       label: t('userInfo.email'),
-      value: MOCK_USER.email,
+      value: user?.email || '-',
       showArrow: false,
     },
     {
       label: t('userInfo.phone'),
-      value: MOCK_USER.phone || '-',
+      value: user?.mobile || '-',
       showArrow: false,
     },
   ];
@@ -72,19 +94,31 @@ export default function UserInfoPage() {
    * 退出账户
    */
   function handleLogout() {
-    console.log('退出账户');
-    // 实际应该：
-    // 1. 清除用户登录状态
-    // 2. 跳转到登录页
-    // router.replace('/login');
+    setShowLogoutModal(true);
+  }
+
+  /**
+   * 确认退出账户
+   */
+  async function handleConfirmLogout() {
+    setShowLogoutModal(false);
+    try {
+      await logout();
+      router.back();
+    } catch (error: any) {
+      console.error('Logout failed:', error);
+      toast.error(error.message);
+    }
   }
 
   /**
    * 地址管理
    */
   function handleAddressManagement() {
-    router.push('/(guard)/account/address-book');
+    router.push('/account/address-book');
   }
+
+  if (!user) return null;
 
   return (
     <View style={styles.container}>
@@ -102,7 +136,7 @@ export default function UserInfoPage() {
         <View style={styles.avatarSection}>
           <View style={styles.avatarContainer}>
             <Image
-              source={{ uri: MOCK_USER.avatar }}
+              source={{ uri: getImageUrl(user!.photo) }}
               style={styles.avatar}
               contentFit="cover"
             />
@@ -158,12 +192,24 @@ export default function UserInfoPage() {
         </Pressable>
       </ScrollView>
 
+      {/* 退出账户确认弹窗 */}
+      <ConfirmModal
+        visible={showLogoutModal}
+        title={t('userInfo.logoutConfirmTitle')}
+        content={t('userInfo.logoutConfirmMessage')}
+        leftButtonText={t('accountSecurity.cancel')}
+        rightButtonText={t('accountSecurity.confirm')}
+        onLeftPress={() => setShowLogoutModal(false)}
+        onRightPress={handleConfirmLogout}
+      />
+
       {/* 修改昵称弹窗 */}
       <EditNicknameSheet
         visible={showEditNickname}
-        currentNickname={MOCK_USER.nickname}
+        currentNickname={user?.nickName || ''}
         onClose={() => setShowEditNickname(false)}
         onConfirm={handleConfirmNickname}
+        loading={updateLoading}
       />
     </View>
   );

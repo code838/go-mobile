@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.brand,
     borderRadius: 8,
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    alignSelf: 'stretch',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,

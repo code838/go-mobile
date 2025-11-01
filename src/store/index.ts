@@ -18,6 +18,11 @@ export const vanillaStore = createStore<Store>()(
       // 配置哪些状态需要持久化
       partialize: (state) => ({
         user: state.user,
+        token: state.token,
+        coins: state.coins,
+        rechargeAddresses: state.rechargeAddresses,
+        language: state.language,
+        memoizedAccount: state.memoizedAccount,
       }),
       version: 1,
       storage: createStorage() as any,

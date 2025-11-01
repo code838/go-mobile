@@ -92,11 +92,11 @@ export default function Button({
       disabled={isDisabled}
       {...pressableProps}
     >
-      {loading ? (
+      {loading && (
         <ActivityIndicator color={loadingColor} size="small" />
-      ) : (
-        <Text style={[styles.buttonText, textStyle]}>{title}</Text>
       )}
+      <Text style={[styles.buttonText, textStyle]}>{title}</Text>
+
     </Pressable>
   );
 }
@@ -107,11 +107,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 8,
+    flexDirection: 'row',
+    gap: 8,
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 44,
-    // 不设置固定宽度，让调用方通过 style 属性控制
-    // 如需全宽：style={{ alignSelf: 'stretch' }} 或 style={{ flex: 1 }}
   },
   buttonDisabled: {
     backgroundColor: Colors.secondary,

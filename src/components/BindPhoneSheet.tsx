@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, TextInput, View } from 'react-native';
 
@@ -7,6 +7,8 @@ import Button from './Button';
 import VerifyCodeButton from './VerifyCodeButton';
 
 import { Colors } from '@/constants/colors';
+import { useSendCaptcha } from '@/hooks/useApi';
+import { toast } from '@/utils/toast';
 
 interface BindPhoneSheetProps {
   visible: boolean;
@@ -19,16 +21,35 @@ interface BindPhoneSheetProps {
  */
 export default function BindPhoneSheet({ visible, onClose, onConfirm }: BindPhoneSheetProps) {
   const { t } = useTranslation();
+  const { execute: sendCaptcha, loading: isSendCaptchaLoading } = useSendCaptcha();
   const [phone, setPhone] = useState('');
   const [code, setCode] = useState('');
+
+  useEffect(() => {
+    if (!visible) {
+      setPhone('');
+      setCode('');
+    }
+  }, [visible]);
+
 
   /**
    * 发送验证码
    */
   async function handleSendCode() {
-    // TODO: 调用发送验证码 API
-    console.log('发送验证码到手机:', phone);
-    return Promise.resolve();
+    if (!phone.trim() || !isValidPhone()) {
+      toast.error(t('bindPhone.invalidPhone'));
+      return;
+    }
+
+    try {
+      // 发送手机验证码，添加+86前缀
+      await sendCaptcha({ content: `+86${phone.trim()}`, type: 2 }); // type: 2 表示手机号
+      toast.success(t('captcha.sendSuccess'));
+    } catch (error: any) {
+      console.error('发送验证码失败:', error);
+      toast.error(error.message);
+    }
   }
 
   /**
@@ -66,7 +87,7 @@ export default function BindPhoneSheet({ visible, onClose, onConfirm }: BindPhon
         </View>
         <VerifyCodeButton
           onSendCode={handleSendCode}
-          disabled={!isValidPhone()}
+          disabled={!isValidPhone() || isSendCaptchaLoading}
         />
       </View>
 

@@ -12,7 +12,10 @@
     "loginButton": "登录",
     "orContinueWith": "Or Continue With",
     "noAccount": "还没有账户？",
-    "register": "注册"
+    "register": "注册",
+    "fillAllFields": "请填写用户名和密码",
+    "success": "登录成功",
+    "loginFailed": "登录失败"
   },
   "register": {
     "phonePlaceholder": "手机号/邮箱",
@@ -26,7 +29,15 @@
     "userAgreement": "<用户协议>",
     "registerButton": "注册",
     "hasAccount": "已有账户？",
-    "login": "登录"
+    "login": "登录",
+    "error": "错误",
+    "pleaseAgreeTerms": "请同意用户协议",
+    "passwordMismatch": "两次输入的密码不一致",
+    "fillAllFields": "请填写所有必填项",
+    "success": "注册成功",
+    "welcomeMessage": "欢迎加入我们！",
+    "registrationFailed": "注册失败",
+    "networkError": "网络错误，请稍后重试"
   },
   "forgetPassword": {
     "phonePlaceholder": "手机号/邮箱",
@@ -61,7 +72,10 @@
     "email": "邮箱",
     "phone": "手机号",
     "addressManagement": "地址管理",
-    "logout": "退出账户"
+    "logout": "退出账户",
+    "logoutConfirmTitle": "退出确认",
+    "logoutConfirmMessage": "确认要退出当前账户吗？",
+    "logoutError": "退出登录失败，请重试"
   },
   "accountSecurity": {
     "title": "账户安全",
@@ -72,7 +86,8 @@
     "deleteConfirmTitle": "确认删除",
     "deleteConfirmContent": "删除您的账户数据将清除，是否确认？",
     "cancel": "取消",
-    "confirm": "确认"
+    "confirm": "确认",
+    "updateSuccess": "更新成功"
   },
   "changePassword": {
     "title": "修改密码",
@@ -87,7 +102,9 @@
     "title": "修改昵称",
     "placeholder": "请输入昵称",
     "hint": "昵称限制 1 - 20 个字符",
-    "save": "保存"
+    "save": "保存",
+    "updateSuccess": "昵称修改成功",
+    "updateFailed": "昵称修改失败"
   },
   "bindEmail": {
     "title": "绑定邮箱",
@@ -116,7 +133,14 @@
     "cancel": "取消",
     "confirm": "确认",
     "myAddress": "我的地址",
-    "copySuccess": "复制成功"
+    "copySuccess": "复制成功",
+    "fetchError": "获取地址列表失败",
+    "deleteSuccess": "删除成功",
+    "deleteFailed": "删除失败",
+    "updateSuccess": "修改成功",
+    "addSuccess": "添加成功",
+    "updateFailed": "修改失败",
+    "addFailed": "添加失败"
   },
   "addAddress": {
     "title": "添加地址",
@@ -166,5 +190,172 @@
     "privacyPolicy": "隐私政策",
     "userAgreement": "用户协议",
     "versionUpdate": "版本更新"
+  },
+  "recharge": {
+    "title": "充值",
+    "coin": "币种",
+    "network": "网络",
+    "selectCoin": "选择币种",
+    "selectNetwork": "选择网络",
+    "rechargeAddress": "充值地址",
+    "address": "地址",
+    "onlyDeposit": "仅向该地址存入 {{coin}}",
+    "minimumAmount": "*最低存款金额 > {{amount}} {{coin}}",
+    "notice1": "请不要将除了 {{coin}} 以外的任何其他数字资产存入上述地址。",
+    "notice2": "最低存款金额为 {{amount}} {{coin}}。任何低于最低存款金额的存款将不会被计入。",
+    "notice3": "请确保您的计算机和浏览器是安全的,并且您的信息受到保护,以免被篡改或泄露。",
+    "copySuccess": "复制成功"
+  },
+  "withdraw": {
+    "title": "提现",
+    "coin": "币种",
+    "network": "网络",
+    "withdrawAddress": "提现地址",
+    "addressPlaceholder": "0x...",
+    "withdrawAmount": "提现金额",
+    "balance": "余额",
+    "max": "MAX",
+    "minimumWithdrawAmount": "最小提现金额",
+    "youWillReceive": "您将收到",
+    "fee": "手续费",
+    "withdrawButton": "提现",
+    "confirmTitle": "确认提现",
+    "confirm": "确认",
+    "successTitle": "提现申请",
+    "submitted": "已提交",
+    "successTip": "提现订单已提交，请稍等",
+    "viewOrder": "查看订单",
+    "back": "返回",
+    "viewRecords": "查看记录",
+    "done": "完成",
+    "errorNoAddress": "请输入提现地址",
+    "errorNoAmount": "请输入提现金额",
+    "errorMinAmount": "提现金额不能低于最低提现金额",
+    "errorNoCoin": "请选择币种",
+    "errorNoNetwork": "请选择网络",
+    "errorInsufficientBalance": "余额不足",
+    "selectCoin": "选择币种",
+    "selectNetwork": "选择网络",
+    "submitting": "提交中...",
+    "submitSuccess": "提现申请提交成功",
+    "submitFailed": "提现申请提交失败"
+  },
+  "common": {
+    "pleaseLogin": "请先登录"
+  },
+  "errors": {
+    "network": "网络错误，请稍后重试",
+    "timeout": "请求超时，请检查网络连接",
+    "networkError": "网络连接失败，请检查网络设置",
+    "requestFailed": "请求失败",
+    "unknownError": "未知错误",
+    "unauthorized": "未授权，请重新登录",
+    "forbidden": "权限不足",
+    "notFound": "请求的资源不存在",
+    "serverError": "服务器内部错误",
+    "requestFailedWithStatus": "请求失败 ({{status}})"
+  },
+  "captcha": {
+    "sendSuccess": "验证码发送成功",
+    "sendFailed": "验证码发送失败"
+  },
+  "exchange": {
+    "title": "闪兑",
+    "payOut": "付出",
+    "available": "可用",
+    "all": "全部",
+    "points": "积分",
+    "receive": "收到",
+    "fee": "手续费",
+    "minExchangeAmount": "最小闪兑金额",
+    "exchangeButton": "闪兑",
+    "inputAmount": "请输入金额",
+    "amountTooSmall": "金额不能低于最小闪兑金额",
+    "insufficientBalance": "余额不足",
+    "exchangeSuccess": "闪兑成功",
+    "exchangeFailed": "闪兑失败",
+    "selectCoin": "选择币种"
+  },
+  "record": {
+    "title": "记录",
+    "all": "全部",
+    "recharge": "充值",
+    "withdraw": "提现",
+    "exchange": "闪兑",
+    "ubuy": "云购",
+    "lottery": "中奖",
+    "commission": "返佣",
+    "empty": "暂无记录",
+    "status": {
+      "pending": "待支付",
+      "paid": "已支付",
+      "cancelled": "已取消",
+      "completed": "已完成"
+    },
+    "return": {
+      "register": "注册返佣",
+      "ubuy": "云购返佣"
+    },
+    "integral": "积分"
+  },
+  "orderDetail": {
+    "title": "订单",
+    "amount": "金额",
+    "type": "类型",
+    "orderId": "订单号",
+    "coin": "币种",
+    "withdrawCoin": "提现币种",
+    "withdrawAmount": "提现金额",
+    "rechargeCoin": "充值币种",
+    "rechargeAmount": "金额",
+    "network": "网络",
+    "hash": "Hash",
+    "address": "地址",
+    "applyTime": "申请时间",
+    "completedTime": "完成时间",
+    "time": "时间",
+    "fee": "手续费",
+    "receiveAmount": "到账金额",
+    "fromCoin": "消耗币种",
+    "toCoin": "闪兑币种",
+    "fromAmount": "消耗数量",
+    "exchangeAmount": "闪兑金额",
+    "productName": "商品名",
+    "productPrice": "商品价格",
+    "quantity": "数量",
+    "total": "总计",
+    "productValue": "商品价值",
+    "lotteryCode": "中奖编号",
+    "copySuccess": "复制成功"
+  },
+  "protocol": {
+    "userAgreement": "用户协议",
+    "privacyPolicy": "隐私政策"
+  },
+  "services": {
+    "title": "客服中心",
+    "faq": "常见问题",
+    "contactUs": "联系我们",
+    "categoryAll": "全部",
+    "categoryAccount": "账户相关",
+    "categoryProduct": "商品相关",
+    "faqList": {
+      "q1": "为什么我提交提现申请后没有立即到账？",
+      "a1": "您的提现申请需要经过后台审核，审核通过后系统才会发起链上转账。不同链的网络确认时间也会影响到账速度，一般 USDT-TRC20 几分钟内即可到账，ETH/ERC20 网络可能需要更久。请耐心等待。",
+      "q2": "为什么提现申请会被驳回？",
+      "a2": "提现申请被驳回可能是由于以下原因：1. 提现地址格式错误；2. 提现金额低于最小提现金额；3. 账户余额不足；4. 账户安全验证未通过。请检查相关信息后重新提交申请。",
+      "q3": "我可以取消或修改提现申请吗？",
+      "a3": "一旦提现申请提交，在审核通过前可以联系客服取消。审核通过后，订单将无法取消或修改。建议提交前仔细核对提现信息。",
+      "q4": "如何确保我的账户安全？",
+      "a4": "建议您：1. 设置强密码并定期更改；2. 绑定邮箱和手机号；3. 不要向他人透露密码和验证码；4. 在安全的网络环境下使用。如发现账户异常，请立即联系客服。",
+      "q5": "充值后多久能到账？",
+      "a5": "充值到账时间取决于区块链网络的确认速度。一般情况下，USDT-TRC20 网络需要 1-3 个区块确认，约 3-6 分钟；ETH/ERC20 网络需要 12 个区块确认，约 3-5 分钟。请耐心等待。",
+      "q6": "什么是云购？如何参与？",
+      "a6": "云购是一种创新的购物方式，用户使用积分或代币参与商品抽奖。每件商品都有固定的参与人数，当人数满额后系统将自动开奖。中奖者可以以极低的成本获得商品。",
+      "q7": "中奖后如何领取商品？",
+      "a7": "中奖后，系统会在个人中心的订单记录中显示中奖信息。您需要在规定时间内填写收货地址，我们将尽快为您发货。如超时未填写地址，将视为放弃领奖。",
+      "q8": "邀请好友有什么奖励？",
+      "a8": "成功邀请好友注册并完成实名认证后，您将获得积分奖励。被邀请人在平台上的消费，您还将获得一定比例的返佣收益。详情请查看邀请规则。"
+    }
   }
 }

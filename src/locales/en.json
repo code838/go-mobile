@@ -12,7 +12,10 @@
     "loginButton": "Login",
     "orContinueWith": "Or Continue With",
     "noAccount": "Don't have an account? ",
-    "register": "Sign up"
+    "register": "Sign up",
+    "fillAllFields": "Please fill in username and password",
+    "success": "Login successful",
+    "loginFailed": "Login failed"
   },
   "register": {
     "phonePlaceholder": "Phone/Email",
@@ -26,7 +29,15 @@
     "userAgreement": "<User Agreement>",
     "registerButton": "Sign up",
     "hasAccount": "Already have an account? ",
-    "login": "Login"
+    "login": "Login",
+    "error": "Error",
+    "pleaseAgreeTerms": "Please agree to the terms of service",
+    "passwordMismatch": "Passwords do not match",
+    "fillAllFields": "Please fill in all required fields",
+    "success": "Registration Successful",
+    "welcomeMessage": "Welcome to join us!",
+    "registrationFailed": "Registration failed",
+    "networkError": "Network error, please try again later"
   },
   "forgetPassword": {
     "phonePlaceholder": "Phone/Email",
@@ -87,7 +98,9 @@
     "title": "Edit Nickname",
     "placeholder": "Please enter nickname",
     "hint": "Nickname must be 1 - 20 characters",
-    "save": "Save"
+    "save": "Save",
+    "updateSuccess": "Nickname updated successfully",
+    "updateFailed": "Failed to update nickname"
   },
   "bindEmail": {
     "title": "Bind Email",
@@ -105,5 +118,168 @@
     "title": "Language",
     "english": "English",
     "chinese": "简体中文"
+  },
+  "errors": {
+    "network": "Network error, please try again later",
+    "timeout": "Request timeout, please check your network connection",
+    "networkError": "Network connection failed, please check your network settings",
+    "requestFailed": "Request failed",
+    "unknownError": "Unknown error",
+    "unauthorized": "Unauthorized, please login again",
+    "forbidden": "Access forbidden",
+    "notFound": "Requested resource not found",
+    "serverError": "Internal server error",
+    "requestFailedWithStatus": "Request failed ({{status}})"
+  },
+  "addressBook": {
+    "title": "Address Management",
+    "addAddress": "Add Address",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteConfirmTitle": "Confirm Deletion",
+    "deleteConfirmContent": "Confirm to delete this address?",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "myAddress": "My Address",
+    "copySuccess": "Copied successfully",
+    "fetchError": "Failed to fetch address list",
+    "deleteSuccess": "Deleted successfully",
+    "deleteFailed": "Delete failed",
+    "updateSuccess": "Updated successfully",
+    "addSuccess": "Added successfully",
+    "updateFailed": "Update failed",
+    "addFailed": "Add failed"
+  },
+  "addAddress": {
+    "title": "Add Address",
+    "editTitle": "Edit Address",
+    "coin": "Coin",
+    "network": "Network",
+    "address": "Address",
+    "addressPlaceholder": "0x....",
+    "remark": "Remark (Optional)",
+    "remarkPlaceholder": "",
+    "save": "Save",
+    "selectCoin": "Select Coin",
+    "selectNetwork": "Select Network"
+  },
+  "invite": {
+    "title": "Invite Friends",
+    "inviteTitle": "Invite friends and earn extra rewards",
+    "invitedCount": "Number of invites:",
+    "inviteCode": "Your invite code:",
+    "copy": "Copy",
+    "copyLink": "Copy Link",
+    "commissionEarned": "Commission earned:",
+    "points": "Points",
+    "inviteRecord": "Invite Record",
+    "commissionRecord": "Commission Record",
+    "rulesTitle": "Invite Rules",
+    "rule1Title": "1. Eligibility",
+    "rule1Content": "All registered and verified users can invite others. New users must complete registration to become invitees.",
+    "rule2Title": "2. Invitation Method",
+    "rule2Content": "Go to personal center to get your exclusive invite link",
+    "rule3Title": "3. Rewards",
+    "rule3Content": "For each successful invite, the inviter receives XX points",
+    "tipsTitle": "Tips",
+    "tip1Title": "1. Where to check my commission",
+    "tip1Content": "Check your commission details in [My Profile] > [Commission Details]. Commissions can be used for purchases or withdrawal.",
+    "tip2Title": "2. What causes commission to be invalid?",
+    "tip2Content": "Malicious commission earning through websites or other platforms will result in commission removal and account suspension once detected.",
+    "tip3Title": "3. Can I invite myself for commission?",
+    "tip3Content": "No. We will manually review, and detected cheating will result in commission removal and account suspension.",
+    "tip4Title": "4. How to know if invitation is successful",
+    "tip4Content": "Check your [My Profile] > [Invite Details] for status.",
+    "copySuccess": "Copied successfully"
+  },
+  "aboutUs": {
+    "title": "About Us",
+    "version": "v1.0.0",
+    "privacyPolicy": "Privacy Policy",
+    "userAgreement": "User Agreement",
+    "versionUpdate": "Version Update"
+  },
+  "recharge": {
+    "title": "Recharge",
+    "coin": "Coin",
+    "network": "Network",
+    "rechargeAddress": "Recharge Address",
+    "address": "Address",
+    "onlyDeposit": "Only deposit {{coin}} to this address",
+    "minimumAmount": "*Minimum deposit amount > {{amount}} {{coin}}",
+    "notice1": "Do not deposit any digital assets other than {{coin}} to the above address.",
+    "notice2": "Minimum deposit amount is {{amount}} {{coin}}. Any deposit below the minimum will not be credited.",
+    "notice3": "Please ensure your computer and browser are secure and your information is protected from tampering or leakage.",
+    "copySuccess": "Copied successfully"
+  },
+  "withdraw": {
+    "title": "Withdraw",
+    "coin": "Coin",
+    "network": "Network",
+    "withdrawAddress": "Withdraw Address",
+    "addressPlaceholder": "0x...",
+    "withdrawAmount": "Withdraw Amount",
+    "balance": "Balance",
+    "max": "MAX",
+    "minimumWithdrawAmount": "Minimum Withdraw Amount",
+    "youWillReceive": "You Will Receive",
+    "fee": "Fee",
+    "withdrawButton": "Withdraw",
+    "confirmTitle": "Confirm Withdrawal",
+    "confirm": "Confirm",
+    "successTitle": "Withdrawal Request",
+    "submitted": "Submitted",
+    "successTip": "Withdrawal order submitted, please wait",
+    "viewOrder": "View Order",
+    "back": "Back",
+    "viewRecords": "View Records",
+    "done": "Done",
+    "errorNoAddress": "Please enter withdrawal address",
+    "errorNoAmount": "Please enter withdrawal amount",
+    "errorMinAmount": "Withdrawal amount cannot be less than minimum"
+  },
+  "captcha": {
+    "sendSuccess": "Verification code sent successfully",
+    "sendFailed": "Failed to send verification code"
+  },
+  "exchange": {
+    "title": "Flash Exchange",
+    "payOut": "Pay Out",
+    "available": "Available",
+    "all": "All",
+    "points": "Points",
+    "receive": "Receive",
+    "fee": "Fee",
+    "minExchangeAmount": "Min Exchange Amount",
+    "exchangeButton": "Exchange",
+    "inputAmount": "Please enter amount",
+    "amountTooSmall": "Amount cannot be lower than minimum exchange amount",
+    "insufficientBalance": "Insufficient balance",
+    "exchangeSuccess": "Exchange successful",
+    "exchangeFailed": "Exchange failed",
+    "selectCoin": "Select Coin"
+  },
+  "record": {
+    "title": "Records",
+    "all": "All",
+    "recharge": "Recharge",
+    "withdraw": "Withdraw",
+    "exchange": "Exchange",
+    "ubuy": "UBuy",
+    "lottery": "Lottery",
+    "commission": "Commission",
+    "empty": "No records",
+    "status": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "cancelled": "Cancelled"
+    },
+    "commission": {
+      "register": "Register Commission",
+      "ubuy": "UBuy Commission"
+    }
+  },
+  "common": {
+    "pleaseLogin": "Please login first"
   }
 }

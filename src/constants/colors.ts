@@ -8,4 +8,5 @@ export const Colors = {
   card: 'rgba(255, 255, 255, 0.05)',
   alert: '#F75353',
   secondary: '#6E6E70',
+  gold: '#E5AD54',
 };

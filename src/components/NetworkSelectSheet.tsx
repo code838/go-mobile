@@ -1,23 +1,15 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-
-import BottomSheet from './BottomSheet';
-
 import { Colors } from '@/constants/colors';
-
-interface Network {
-  id: string;
-  symbol: string;
-  name: string;
-  fullName: string;
-  color: string; // 用于首字母背景色
-}
+import { Network } from '@/model/CoinMessage';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import BottomSheet from './BottomSheet';
 
 interface NetworkSelectSheetProps {
   visible: boolean;
   onClose: () => void;
   onSelect: (network: Network) => void;
-  selectedNetworkId?: string;
+  selectedNetworkId?: number;
   coinSymbol?: string; // 当前选择的币种
+  networks: Network[];
 }
 
 /**
@@ -40,38 +32,8 @@ export default function NetworkSelectSheet({
   onClose,
   onSelect,
   selectedNetworkId,
+  networks
 }: NetworkSelectSheetProps) {
-  // 模拟网络数据
-  const networks: Network[] = [
-    {
-      id: '1',
-      symbol: 'ETH',
-      name: 'Ethereum',
-      fullName: 'Ethereum (ERC-20)',
-      color: '#627eea',
-    },
-    {
-      id: '2',
-      symbol: 'TRX',
-      name: 'Tron',
-      fullName: 'Tron (TRC-20)',
-      color: '#eb0029',
-    },
-    {
-      id: '3',
-      symbol: 'BSC',
-      name: 'BNB Chain',
-      fullName: 'BNB Chain (BEP-20)',
-      color: '#f3ba2f',
-    },
-    {
-      id: '4',
-      symbol: 'SOL',
-      name: 'Solana',
-      fullName: 'Solana',
-      color: '#14f195',
-    },
-  ];
 
   /**
    * 选择网络
@@ -87,27 +49,37 @@ export default function NetworkSelectSheet({
         style={styles.scrollView}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}>
-        {networks.map((network) => (
-          <Pressable
-            key={network.id}
-            style={styles.networkItem}
-            onPress={() => handleSelect(network)}
-            android_ripple={{ color: 'rgba(255, 255, 255, 0.1)' }}>
-            {/* 网络logo（首字母） */}
-            <View style={[styles.networkLogo, { backgroundColor: network.color }]}>
-              <Text style={styles.networkLogoText}>{network.symbol[0]}</Text>
-            </View>
+        {networks.map((network) => {
+          const isSelected = network.networkId === selectedNetworkId;
+          return (
+            <Pressable
+              key={network.networkId}
+              style={[styles.networkItem, isSelected && styles.networkItemSelected]}
+              onPress={() => handleSelect(network)}
+              android_ripple={{ color: 'rgba(255, 255, 255, 0.1)' }}>
+              {/* 网络logo（首字母） */}
+              {/* <Image source={{uri: getImageUrl(network)}} style={styles.networkLogo} contentFit="contain"></Image> */}
 
-            {/* 网络信息 */}
-            <View style={styles.networkInfo}>
-              <Text style={styles.networkName}>
-                <Text style={styles.networkSymbol}>{network.symbol}</Text>
-                {'  '}
-                <Text style={styles.networkFullName}>{network.fullName}</Text>
-              </Text>
-            </View>
-          </Pressable>
-        ))}
+              {/* 网络信息 */}
+              <View style={styles.networkInfo}>
+                <Text style={styles.networkName}>
+                  <Text style={[styles.networkSymbol, isSelected && styles.networkSymbolSelected]}>
+                    {network.network}
+                  </Text>
+                </Text>
+              </View>
+
+              {/* 选中标记 */}
+              {isSelected && (
+                <View style={styles.checkMark}>
+                  <View style={styles.checkCircle}>
+                    <Text style={styles.checkText}>✓</Text>
+                  </View>
+                </View>
+              )}
+            </Pressable>
+          );
+        })}
       </ScrollView>
     </BottomSheet>
   );
@@ -127,6 +99,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  networkItemSelected: {
+    borderColor: Colors.brand,
   },
   networkLogo: {
     width: 24,
@@ -150,8 +127,30 @@ const styles = StyleSheet.create({
   networkSymbol: {
     color: Colors.title,
   },
+  networkSymbolSelected: {
+    color: Colors.brand,
+  },
   networkFullName: {
     color: Colors.secondary,
+  },
+  checkMark: {
+    width: 20,
+    height: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: Colors.brand,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: Colors.title,
   },
 });
 

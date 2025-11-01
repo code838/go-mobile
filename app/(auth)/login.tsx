@@ -1,6 +1,10 @@
 import Button from '@/components/Button';
 import CheckBox from '@/components/CheckBox';
 import { Colors } from '@/constants/colors';
+import { useLogin } from '@/hooks/useApi';
+import { useBoundStore } from '@/store';
+import { generateLoginSign, generateNonce, hashPassword } from '@/utils/crypto';
+import { toast } from '@/utils/toast';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -17,11 +21,16 @@ import { useImmer } from 'use-immer';
 export default function LoginPage() {
   const { t } = useTranslation();
   const router = useRouter();
+  const setUser = useBoundStore(state => state.setUser);
+  const setToken = useBoundStore(state => state.setToken);
+  const memoizedAccount = useBoundStore(state => state.memoizedAccount);
+  const setMemoizedAccount = useBoundStore(state => state.setMemoizedAccount);
+  const getAllRechargeAddresses = useBoundStore(state => state.getAllRechargeAddresses);
+  const { execute: login, loading: isLoginLoading } = useLogin();
   const [state, setState] = useImmer({
-    username: '',
+    username: memoizedAccount || '',
     password: '',
     rememberMe: false,
-    isLoading: false,
   });
 
   const setRememberMe = (rememberMe: boolean) => {
@@ -43,16 +52,61 @@ export default function LoginPage() {
   };
 
   async function handleLogin() {
-    setState(draft => {
-      draft.isLoading = true;
-    });
+    if (!state.username || !state.password) {
+      toast.error(t('login.fillAllFields'));
+      return;
+    }
+
     try {
-      // TODO: 实现登录逻辑
-      await new Promise(resolve => setTimeout(resolve, 2000));
-    } finally {
-      setState(draft => {
-        draft.isLoading = false;
-      });
+      // 判断是邮箱还是手机号
+      const isEmail = state.username.includes('@');
+      const type = isEmail ? 1 : 2; // 1: email, 2: phone
+      
+      // 处理手机号，前面拼接+86
+      const content = isEmail ? state.username : `+86${state.username}`;
+      
+      // 生成时间戳和随机数
+      const timestamp = Date.now();
+      const nonce = generateNonce();
+      
+      // 生成签名 sign = md5(content + nonce + md5(明文密码) + timestamp)
+      const sign = await generateLoginSign(content, nonce, state.password, timestamp);
+      
+      // 加密密码
+      const hashedPassword = await hashPassword(state.password);
+      
+      // 构建登录参数
+      const loginData = {
+        type,
+        timestamp,
+        nonce,
+        sign,
+        content,
+        password: hashedPassword,
+        osType: 1,
+      };
+      
+      console.log('登录参数:', loginData);
+      
+      // 调用登录API
+      const response = await login(loginData);
+      console.log('登录响应:', response);
+      
+      if (response.code === 0) {
+        // 登录成功，保存用户信息到store
+        setUser(response.data);
+        setToken(response.data.token);
+        getAllRechargeAddresses();
+        state.rememberMe ? setMemoizedAccount(state.username) : setMemoizedAccount(null);
+        toast.success(t('login.success'));
+        // 跳转到tab首页
+        router.replace('/');
+      } else {
+        toast.error(response.msg || t('login.loginFailed'));
+      }
+    } catch (error: any) {
+      console.error('登录失败:', error);
+      toast.error(error.message || t('login.loginFailed'));
     }
   }
 
@@ -120,7 +174,7 @@ export default function LoginPage() {
           title={t('login.loginButton')}
           onPress={handleLogin}
           disabled={!state.username || !state.password}
-          loading={state.isLoading}
+          loading={isLoginLoading}
           style={styles.button}
         />
       </View>
@@ -199,7 +253,7 @@ const styles = StyleSheet.create({
   input: {
     paddingHorizontal: 16,
     fontSize: 14,
-    color: '#6e6e70',
+    color: '#fff',
     fontWeight: '500',
     padding: 0,
   },

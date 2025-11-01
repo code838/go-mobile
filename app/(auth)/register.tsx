@@ -2,6 +2,11 @@ import Button from '@/components/Button';
 import CheckBox from '@/components/CheckBox';
 import VerifyCodeButton from '@/components/VerifyCodeButton';
 import { Colors } from '@/constants/colors';
+import { OS_TYPE } from '@/constants/keys';
+import { useRegister, useSendCaptcha } from '@/hooks/useApi';
+import { useBoundStore } from '@/store';
+import { hashPassword } from '@/utils/crypto';
+import { toast } from '@/utils/toast';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -17,6 +22,10 @@ import { useImmer } from 'use-immer';
 export default function RegisterPage() {
   const { t } = useTranslation();
   const router = useRouter();
+  const setUser = useBoundStore(state => state.setUser);
+  const setToken = useBoundStore(state => state.setToken);
+  const { execute: register, loading: isRegisterLoading } = useRegister();
+  const { execute: sendCaptcha } = useSendCaptcha();
   const [state, setState] = useImmer({
     phone: '',
     verifyCode: '',
@@ -24,7 +33,6 @@ export default function RegisterPage() {
     confirmPassword: '',
     inviteCode: '',
     agreedToTerms: false,
-    isLoading: false,
   });
 
   function setPhone(phone: string) {
@@ -65,38 +73,71 @@ export default function RegisterPage() {
 
   async function handleSendCode() {
     if (!state.phone) {
-      // TODO: 显示错误提示
+      toast.error(t('register.fillAllFields'));
       return;
     }
-    // TODO: 实现发送验证码逻辑
-    console.log('发送验证码到:', state.phone);
+
+    const type = state.phone.includes('@') ? 1 : 2; // 1: email, 2: phone
+
+    try {
+      await sendCaptcha({ content: state.phone, type });
+      toast.success(t('captcha.sendSuccess'));
+    } catch (error: any) {
+      console.error('发送验证码失败:', error);
+      toast.error(error.message);
+    }
   }
 
   async function handleRegister() {
-    if (!state.agreedToTerms) {
-      // TODO: 显示错误提示
-      return;
-    }
+
     if (state.password !== state.confirmPassword) {
-      // TODO: 显示错误提示
+      toast.error(t('register.passwordMismatch'));
       return;
     }
-    setState(draft => {
-      draft.isLoading = true;
-    });
+
     try {
-      // TODO: 实现注册逻辑
-      console.log('注册信息:', state);
-      await new Promise(resolve => setTimeout(resolve, 2000));
-    } finally {
-      setState(draft => {
-        draft.isLoading = false;
-      });
+      // 获取IP地址
+      // const networkInfo = await Network.getIpAddressAsync();
+      const networkInfo = '127.0.0.1';
+      const ip = networkInfo || '127.0.0.1';
+
+      // 加密密码
+      const hashedPassword = await hashPassword(state.password);
+      console.log('hashedPassword', hashedPassword);
+      const type = state.phone.includes('@') ? 1 : 2; // 1: email, 2: phone
+
+      // 构建注册参数
+      const registerData = {
+        type,
+        osType: OS_TYPE,
+        content: type === 1 ? state.phone : `+86${state.phone}`,
+        password: hashedPassword,
+        ip,
+        captha: state.verifyCode,
+        ...(state.inviteCode && { lottory: state.inviteCode }),
+      };
+
+      // 调用注册API
+      const response = await register(registerData);
+      console.log('response', response);
+      if (response.code === 0) {
+        // 注册成功，保存用户信息到store
+        setUser(response.data);
+        setToken(response.data.token);
+        toast.success(t('register.success'));
+        // 跳转到tab首页
+        router.replace('/');
+      } else {
+        toast.error(response.msg || t('register.registrationFailed'));
+      }
+    } catch (error: any) {
+      console.error('注册失败:', error);
+      toast.error(error.message);
     }
   }
 
   function handleLogin() {
-    router.push('/login' as any);
+    router.back();
   }
 
   function handleUserAgreement() {
@@ -208,7 +249,7 @@ export default function RegisterPage() {
             !state.confirmPassword ||
             !state.agreedToTerms
           }
-          loading={state.isLoading}
+          loading={isRegisterLoading}
           style={styles.button}
         />
       </View>

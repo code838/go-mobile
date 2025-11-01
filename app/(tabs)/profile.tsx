@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { MotiView } from 'moti';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Pressable,
@@ -12,24 +12,11 @@ import {
 } from 'react-native';
 
 import { Colors } from '@/constants/colors';
+import { getImageUrl } from '@/constants/urls';
+import { useBoundStore } from '@/store';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Circle, Defs, Stop, RadialGradient as SvgRadialGradient } from 'react-native-svg';
-
-// 模拟用户数据，实际应该从 store 获取
-// 修改 isLoggedIn 的值可以测试不同的登录状态
-const MOCK_USER = {
-  isLoggedIn: true, // 设置为 false 可以查看未登录状态
-  username: 'Sandy.eth',
-  userId: '#1241241',
-  avatar: 'https://picsum.photos/200',
-  balance: {
-    usdt: 120,
-    points: 120,
-    eth: 0.013,
-    btc: 0.03121,
-  },
-};
 
 interface QuickActionItem {
   icon: any;
@@ -48,16 +35,28 @@ export default function ProfilePage() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [isAssetsExpanded, setIsAssetsExpanded] = useState(false);
+  const user = useBoundStore(state => state.user);
+  const token = useBoundStore(state => state.token);
+  const refreshUserInfo = useBoundStore(state => state.refreshUserInfo);
+  const getBalanceByCurrency = useBoundStore(state => state.getBalanceByCurrency);
 
-  // 实际应该从 store 获取
-  const isLoggedIn = MOCK_USER.isLoggedIn;
+  useFocusEffect(
+    useCallback(() => {
+      token && refreshUserInfo();
+    }, [token, refreshUserInfo])
+  )
+
+  const getBalance = (currency: string) => {
+    if (!user) return 0;
+    return getBalanceByCurrency(currency);
+  }
 
   /**
    * 切换资产展开/收起状态
    * 只有登录状态才允许展开
    */
   function toggleAssetsExpanded() {
-    if (!isLoggedIn) return;
+    if (!user) return;
     setIsAssetsExpanded(!isAssetsExpanded);
   }
 
@@ -68,22 +67,22 @@ export default function ProfilePage() {
     {
       icon: require('@/assets/images/recharge.png'),
       label: t('profile.recharge'),
-      onPress: () => router.push('/account/recharge'),
+      onPress: () => router.push('/account/assets/recharge'),
     },
     {
       icon: require('@/assets/images/withdraw.png'),
       label: t('profile.withdraw'),
-      onPress: () => console.log('提现'),
+      onPress: () => router.push('/account/assets/withdraw'),
     },
     {
       icon: require('@/assets/images/flash-exchange.png'),
       label: t('profile.flashExchange'),
-      onPress: () => console.log('闪兑'),
+      onPress: () => router.push('/account/assets/exchange'),
     },
     {
       icon: require('@/assets/images/record.png'),
       label: t('profile.record'),
-      onPress: () => console.log('记录'),
+      onPress: () => router.push('/account/record'),
     },
   ];
 
@@ -104,7 +103,7 @@ export default function ProfilePage() {
     {
       icon: require('@/assets/images/service-center.png'),
       label: t('profile.serviceCenter'),
-      onPress: () => console.log('客服中心'),
+      onPress: () => router.push('/setting/services'),
     },
     {
       icon: require('@/assets/images/about-us.png'),
@@ -145,8 +144,8 @@ export default function ProfilePage() {
           <View style={styles.avatarContainer}>
             <Image
               source={
-                isLoggedIn
-                  ? { uri: MOCK_USER.avatar }
+                user
+                  ? { uri: getImageUrl(user.photo) }
                   : require('@/assets/images/inactive-tab5.png')
               }
               style={styles.avatar}
@@ -156,14 +155,14 @@ export default function ProfilePage() {
 
           <View style={styles.userInfo}>
             <Text style={styles.username}>
-              {isLoggedIn ? MOCK_USER.username : t('profile.guestName')}
+              {user ? user.nickName : t('profile.guestName')}
             </Text>
             <Text style={styles.userId}>
-              {isLoggedIn ? MOCK_USER.userId : t('profile.pleaseLogin')}
+              {user ? `#${user.userId}` : t('profile.pleaseLogin')}
             </Text>
           </View>
 
-          {isLoggedIn ? (
+          {user ? (
             <Pressable onPress={() => console.log('免费领币')} style={styles.freeReceiveButtonBorder}>
               <LinearGradient
                 colors={['#E445C3', '#9074FF']}
@@ -198,30 +197,30 @@ export default function ProfilePage() {
         <Pressable
           style={styles.assetsCard}
           onPress={toggleAssetsExpanded}
-          disabled={!isLoggedIn}>
+          disabled={!user}>
           <View style={styles.assetsContent}>
             <View style={styles.assetsRow}>
-              <Text style={[styles.assetsText, { color: isLoggedIn ? Colors.title : Colors.subtitle }]}>
-                {t('profile.balance')}：{MOCK_USER.balance.usdt} USDT
+              <Text style={[styles.assetsText, { color: user ? Colors.title : Colors.subtitle }]}>
+                {t('profile.balance')}：{getBalance('USDT')} USDT
               </Text>
-              <Text style={[styles.assetsText, { color: isLoggedIn ? Colors.title : Colors.subtitle }]}>
-                {t('profile.points')}：{MOCK_USER.balance.points} POINTS
+              <Text style={[styles.assetsText, { color: user ? Colors.title : Colors.subtitle }]}>
+                {t('profile.points')}：{user ? user.points : 0} POINTS
               </Text>
             </View>
 
-            {isAssetsExpanded && isLoggedIn && (
+            {isAssetsExpanded && user && (
               <View style={styles.assetsRow}>
                 <Text style={[styles.assetsText, { color: Colors.title }]}>
-                  ETH：{MOCK_USER.balance.eth}
+                  ETH：{getBalance('ETH')}
                 </Text>
                 <Text style={[styles.assetsText, { color: Colors.title }]}>
-                  BTC：{MOCK_USER.balance.btc}
+                  BTC：{getBalance('BTC')}
                 </Text>
               </View>
             )}
           </View>
 
-          {isLoggedIn && (
+          {user && (
             <MotiView
               animate={{
                 rotate: isAssetsExpanded ? '180deg' : '0deg',

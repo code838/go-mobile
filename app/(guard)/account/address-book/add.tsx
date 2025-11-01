@@ -1,9 +1,8 @@
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import Toast from 'react-native-toast-message';
 
 import Button from '@/components/Button';
 import CoinSelectSheet from '@/components/CoinSelectSheet';
@@ -11,121 +10,110 @@ import NavigationBar from '@/components/NavigationBar';
 import NetworkSelectSheet from '@/components/NetworkSelectSheet';
 import PageDecoration from '@/components/PageDecoration';
 import { Colors } from '@/constants/colors';
-
-interface Coin {
-  id: string;
-  symbol: string;
-  name: string;
-  balance: string;
-  color: string;
-}
-
-interface Network {
-  id: string;
-  symbol: string;
-  name: string;
-  fullName: string;
-  color: string;
-}
+import { CoinMessage, Network } from '@/model/CoinMessage';
+import { addressBookApi } from '@/services/api';
+import { useBoundStore } from '@/store';
+import { toast } from '@/utils/toast';
+import { useImmer } from 'use-immer';
 
 export default function AddAddressPage() {
   const { t } = useTranslation();
   const router = useRouter();
   const params = useLocalSearchParams<{
     id?: string;
-    coin?: string;
+    coinId?: string;
+    coinName?: string;
+    networkId?: string;
     network?: string;
     address?: string;
     remark?: string;
   }>();
 
+  const coins = useBoundStore(state => state.coins);
+  const user = useBoundStore(state => state.user);
+
   // 判断是编辑模式还是新增模式
   const isEditMode = !!params.id;
 
-  const [showCoinSelect, setShowCoinSelect] = useState(false);
-  const [showNetworkSelect, setShowNetworkSelect] = useState(false);
-  const [selectedCoin, setSelectedCoin] = useState<Coin | undefined>();
-  const [selectedNetwork, setSelectedNetwork] = useState<Network | undefined>();
-  const [address, setAddress] = useState('');
-  const [remark, setRemark] = useState('');
+  const [state, setState] = useImmer<{
+    selectedCoin: CoinMessage | null;
+    selectedNetwork: Network | null;
+    address: string;
+    remark: string;
+    showCoinSelect: boolean;
+    showNetworkSelect: boolean;
+  }>({
+    selectedCoin: null,
+    selectedNetwork: null,
+    address: '',
+    remark: '',
+    showCoinSelect: false,
+    showNetworkSelect: false,
+  });
 
+  const setSelectedCoin = (coin: CoinMessage | null) => {
+    setState(state => {
+      state.selectedCoin = coin;
+    });
+  }
+
+  const setSelectedNetwork = (network: Network | null) => {
+    setState(state => {
+      state.selectedNetwork = network;
+    });
+  }
+
+  const setAddress = (address: string) => {
+    setState(state => {
+      state.address = address;
+    });
+  }
+
+  const setRemark = (remark: string) => {
+    setState(state => {
+      state.remark = remark;
+    });
+  }
+
+  const setShowCoinSelect = (show: boolean) => {
+    setState(state => {
+      state.showCoinSelect = show;
+    });
+  }
+
+  const setShowNetworkSelect = (show: boolean) => {
+    setState(state => {
+      state.showNetworkSelect = show;
+    });
+  }
   /**
-   * 初始化表单数据（编辑模式）
+   * 初始化表单数据
    */
   useEffect(() => {
-    if (isEditMode && params.coin && params.network && params.address) {
-      // 根据币种名称匹配币种数据
-      const coinData = getCoinBySymbol(params.coin);
+    // 如果是编辑模式，根据参数初始化表单
+    if (isEditMode && params.coinId && params.networkId && params.address) {
+      const coinData = coins.find(coin => coin.coinId === Number(params.coinId));
       if (coinData) {
         setSelectedCoin(coinData);
+        const networkData = coinData.networks.find(network => network.networkId === Number(params.networkId));
+        if (networkData) {
+          setSelectedNetwork(networkData);
+        }
       }
-
-      // 根据网络名称匹配网络数据
-      const networkData = getNetworkByName(params.network);
-      if (networkData) {
-        setSelectedNetwork(networkData);
-      }
-
       setAddress(params.address);
       setRemark(params.remark || '');
     }
-  }, [isEditMode, params]);
-
-  /**
-   * 根据币种符号获取币种数据
-   */
-  function getCoinBySymbol(symbol: string): Coin | undefined {
-    const coins: Coin[] = [
-      { id: '1', symbol: 'USDT', name: 'USDT', balance: '112.21', color: '#26a17b' },
-      { id: '2', symbol: 'BTC', name: 'Bitcoin', balance: '0.05', color: '#f7931a' },
-      { id: '3', symbol: 'ETH', name: 'Ethereum', balance: '1.23', color: '#627eea' },
-      { id: '4', symbol: 'BNB', name: 'BNB', balance: '5.67', color: '#f3ba2f' },
-    ];
-    return coins.find((coin) => coin.symbol === symbol);
-  }
-
-  /**
-   * 根据网络名称获取网络数据
-   */
-  function getNetworkByName(name: string): Network | undefined {
-    const networks: Network[] = [
-      {
-        id: '1',
-        symbol: 'ETH',
-        name: 'Ethereum',
-        fullName: 'Ethereum (ERC-20)',
-        color: '#627eea',
-      },
-      {
-        id: '2',
-        symbol: 'TRX',
-        name: 'Tron',
-        fullName: 'Tron (TRC-20)',
-        color: '#eb0029',
-      },
-      {
-        id: '3',
-        symbol: 'BSC',
-        name: 'BNB Chain',
-        fullName: 'BNB Chain (BEP-20)',
-        color: '#f3ba2f',
-      },
-      {
-        id: '4',
-        symbol: 'SOL',
-        name: 'Solana',
-        fullName: 'Solana',
-        color: '#14f195',
-      },
-    ];
-    return networks.find((network) => network.name === name);
-  }
+  }, []);
 
   /**
    * 选择币种
    */
-  function handleSelectCoin(coin: Coin) {
+  function handleSelectCoin(coin: CoinMessage) {
     setSelectedCoin(coin);
+    // 重置网络选择
+    if (coin.networks.length > 0) {
+      handleSelectNetwork(coin.networks[0]);
+    }
   }
 
   /**
@@ -138,45 +126,50 @@ export default function AddAddressPage() {
   /**
    * 保存地址
    */
-  function handleSave() {
-    if (!selectedCoin || !selectedNetwork || !address.trim()) {
+  async function handleSave() {
+    if (!state.selectedCoin || !state.selectedNetwork || !state.address.trim() || !user) {
       return;
     }
 
-    if (isEditMode) {
-      // TODO: 调用编辑地址 API
-      console.log('编辑地址:', {
-        id: params.id,
-        coin: selectedCoin,
-        network: selectedNetwork,
-        address: address.trim(),
-        remark: remark.trim(),
-      });
+    try {
+      if (isEditMode) {
+        // 调用编辑地址 API
+        await addressBookApi.manageAddressBook({
+          userId: user.userId,
+          id: params.id ? +params.id : undefined,
+          address: state.address.trim(),
+          coinId: state.selectedCoin.coinId,
+          networkId: state.selectedNetwork.networkId,
+          operate: 3, // 3:修改
+          remark: state.remark.trim(),
+        });
 
-      Toast.show({
-        type: 'success',
-        text1: '修改成功',
-      });
-    } else {
-      // TODO: 调用新增地址 API
-      console.log('添加地址:', {
-        coin: selectedCoin,
-        network: selectedNetwork,
-        address: address.trim(),
-        remark: remark.trim(),
-      });
+        toast.success(t('addressBook.updateSuccess'));
+      } else {
+        // 调用新增地址 API
+        await addressBookApi.manageAddressBook({
+          userId: user.userId,
+          address: state.address.trim(),
+          coinId: state.selectedCoin.coinId,
+          networkId: state.selectedNetwork.networkId,
+          operate: 1, // 1:新增
+          remark: state.remark.trim(),
+        });
+        toast.success(t('addressBook.addSuccess'));
+      }
 
-      Toast.show({
-        type: 'success',
-        text1: '添加成功',
-      });
+      // 返回上一页
+      router.back();
+    } catch (error: any) {
+      console.error('保存地址失败:', error);
+      toast.error(error.message);
     }
-
-    // 返回上一页
-    router.back();
   }
 
-  const isSaveDisabled = !selectedCoin || !selectedNetwork || !address.trim();
+  // 检查是否应该显示网络选择（如果选择的币种有网络可选）
+  const shouldShowNetworkSelect = state.selectedCoin && state.selectedCoin.networks.length > 0;
+  
+  const isSaveDisabled = !state.selectedCoin || !state.address.trim() || !!(shouldShowNetworkSelect && !state.selectedNetwork);
 
   return (
     <View style={styles.container}>
@@ -198,12 +191,9 @@ export default function AddAddressPage() {
             onPress={() => setShowCoinSelect(true)}
             android_ripple={{ color: 'rgba(255, 255, 255, 0.1)' }}>
             <View style={styles.selectorLeft}>
-              {selectedCoin ? (
+              {state.selectedCoin ? (
                 <>
-                  <View style={[styles.coinLogo, { backgroundColor: selectedCoin.color }]}>
-                    <Text style={styles.coinLogoText}>{selectedCoin.symbol[0]}</Text>
-                  </View>
-                  <Text style={styles.selectorText}>{selectedCoin.symbol}</Text>
+                  <Text style={styles.selectorText}>{state.selectedCoin.coinName}</Text>
                 </>
               ) : (
                 <Text style={styles.selectorPlaceholder}>{t('addAddress.selectCoin')}</Text>
@@ -217,32 +207,31 @@ export default function AddAddressPage() {
           </Pressable>
         </View>
 
-        {/* 网络选择 */}
-        <View style={styles.field}>
-          <Text style={styles.label}>{t('addAddress.network')}</Text>
-          <Pressable
-            style={styles.selector}
-            onPress={() => setShowNetworkSelect(true)}
-            android_ripple={{ color: 'rgba(255, 255, 255, 0.1)' }}>
-            <View style={styles.selectorLeft}>
-              {selectedNetwork ? (
-                <>
-                  <View style={[styles.networkLogo, { backgroundColor: selectedNetwork.color }]}>
-                    <Text style={styles.networkLogoText}>{selectedNetwork.symbol[0]}</Text>
-                  </View>
-                  <Text style={styles.selectorText}>{selectedNetwork.name}</Text>
-                </>
-              ) : (
-                <Text style={styles.selectorPlaceholder}>{t('addAddress.selectNetwork')}</Text>
-              )}
-            </View>
-            <Image
-              source={require('@/assets/images/chevron-right.png')}
-              style={styles.chevron}
-              contentFit="contain"
-            />
-          </Pressable>
-        </View>
+        {/* 网络选择 - 只在选择币种有网络时显示 */}
+        {shouldShowNetworkSelect && (
+          <View style={styles.field}>
+            <Text style={styles.label}>{t('addAddress.network')}</Text>
+            <Pressable
+              style={styles.selector}
+              onPress={() => setShowNetworkSelect(true)}
+              android_ripple={{ color: 'rgba(255, 255, 255, 0.1)' }}>
+              <View style={styles.selectorLeft}>
+                {state.selectedNetwork ? (
+                  <>
+                    <Text style={styles.selectorText}>{state.selectedNetwork.network}</Text>
+                  </>
+                ) : (
+                  <Text style={styles.selectorPlaceholder}>{t('addAddress.selectNetwork')}</Text>
+                )}
+              </View>
+              <Image
+                source={require('@/assets/images/chevron-right.png')}
+                style={styles.chevron}
+                contentFit="contain"
+              />
+            </Pressable>
+          </View>
+        )}
 
         {/* 地址输入 */}
         <View style={styles.field}>
@@ -252,7 +241,7 @@ export default function AddAddressPage() {
               style={styles.textInput}
               placeholder={t('addAddress.addressPlaceholder')}
               placeholderTextColor={Colors.secondary}
-              value={address}
+              value={state.address}
               onChangeText={setAddress}
               autoCapitalize="none"
               autoCorrect={false}
@@ -268,7 +257,7 @@ export default function AddAddressPage() {
               style={styles.textInput}
               placeholder={t('addAddress.remarkPlaceholder')}
               placeholderTextColor={Colors.secondary}
-              value={remark}
+              value={state.remark}
               onChangeText={setRemark}
               autoCapitalize="none"
             />
@@ -288,20 +277,23 @@ export default function AddAddressPage() {
 
       {/* 选择币种弹窗 */}
       <CoinSelectSheet
-        visible={showCoinSelect}
+        visible={state.showCoinSelect}
         onClose={() => setShowCoinSelect(false)}
         onSelect={handleSelectCoin}
-        selectedCoinId={selectedCoin?.id}
+        selectedCoinId={state.selectedCoin?.coinId}
+        coins={coins}
       />
 
       {/* 选择网络弹窗 */}
-      <NetworkSelectSheet
-        visible={showNetworkSelect}
-        onClose={() => setShowNetworkSelect(false)}
-        onSelect={handleSelectNetwork}
-        selectedNetworkId={selectedNetwork?.id}
-        coinSymbol={selectedCoin?.symbol}
-      />
+      {shouldShowNetworkSelect && (
+        <NetworkSelectSheet
+          visible={state.showNetworkSelect}
+          onClose={() => setShowNetworkSelect(false)}
+          onSelect={handleSelectNetwork}
+          selectedNetworkId={state.selectedNetwork?.networkId}
+          networks={state.selectedCoin?.networks || []}
+        />
+      )}
     </View>
   );
 }
@@ -322,7 +314,7 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   field: {
-    gap: 4,
+    gap: 8,
   },
   label: {
     fontSize: 14,
@@ -338,8 +330,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 8,
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    minHeight: 48,
+    height: 45,
   },
   selectorLeft: {
     flexDirection: 'row',
@@ -392,8 +383,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 8,
     paddingHorizontal: 16,
-    paddingVertical: 0,
-    minHeight: 48,
+    height: 45,
     justifyContent: 'center',
   },
   textInput: {

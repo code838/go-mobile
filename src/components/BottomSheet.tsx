@@ -45,11 +45,7 @@ export default function BottomSheet({
    */
   function handleClose() {
     setIsClosing(true);
-    // 等待 slideDown 动画完成后再真正关闭
-    setTimeout(() => {
-      setIsClosing(false);
-      onClose();
-    }, 300);
+    onClose();
   }
 
   // 重置关闭状态

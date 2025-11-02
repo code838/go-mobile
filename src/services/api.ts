@@ -108,6 +108,14 @@ export const financeApi = {
   getOrderDetail: (data: { userId: number; orderId: string; isOwner: boolean }) =>
     request.post(urls.getOrderDetail, data),
   
+  // 支付订单
+  payOrder: (data: { userId: number; orderId: string }) =>
+    request.post(urls.payOrder, data),
+  
+  // 取消订单
+  cancelOrder: (data: { userId: number; orderId: string }) =>
+    request.post(urls.cancelOrder, data),
+  
   // 兑换
   exchange: (data: { 
     userId: number; 
@@ -151,4 +159,16 @@ export const addressBookApi = {
     remark?: string;
   }) => 
     request.post(urls.manageAddressBook, data),
+};
+
+export const zoneApi = {
+  // 获取专区列表
+  getZones: () => 
+    request.get(urls.getZones),
+  // 获取专区商品列表
+  getZoneProducts: (data: any) => 
+    request.post(urls.getZoneProducts, data),
+  // 获取即将揭晓产品列表
+  getWillProducts: (data: any) => 
+    request.post(urls.getWillProducts, data),
 };

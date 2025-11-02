@@ -5,6 +5,8 @@ export const toast = {
     Toast.show({
       type: 'success',
       text1: message,
+      position: 'top',
+      visibilityTime: 2000,
     });
   },
 
@@ -12,6 +14,17 @@ export const toast = {
     Toast.show({
       type: 'error',
       text1: message,
+      position: 'top',
+      visibilityTime: 2000,
+    });
+  },
+
+  info: (message: string) => {
+    Toast.show({
+      type: 'info',
+      text1: message,
+      position: 'top',
+      visibilityTime: 2000,
     });
   },
 };

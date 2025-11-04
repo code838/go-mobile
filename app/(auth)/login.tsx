@@ -1,13 +1,18 @@
 import Button from '@/components/Button';
 import CheckBox from '@/components/CheckBox';
+import TelegramLoginButton from '@/components/TelegramAuth';
 import { Colors } from '@/constants/colors';
 import { useLogin } from '@/hooks/useApi';
+import { useFacebookAuth } from '@/hooks/useFacebookAuth';
+import { useGoogleAuth } from '@/hooks/useGoogleAuth';
+import { authApi } from '@/services/api';
 import { useBoundStore } from '@/store';
 import { generateLoginSign, generateNonce, hashPassword } from '@/utils/crypto';
 import { toast } from '@/utils/toast';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Pressable,
@@ -26,11 +31,30 @@ export default function LoginPage() {
   const memoizedAccount = useBoundStore(state => state.memoizedAccount);
   const setMemoizedAccount = useBoundStore(state => state.setMemoizedAccount);
   const getAllRechargeAddresses = useBoundStore(state => state.getAllRechargeAddresses);
+  const getThirdLoginInfo = useBoundStore(state => state.getThirdLoginInfo);
   const { execute: login, loading: isLoginLoading } = useLogin();
   const [state, setState] = useImmer({
     username: memoizedAccount || '',
     password: '',
     rememberMe: false,
+  });
+  
+  // 初始化时获取第三方登录配置
+  useEffect(() => {
+    getThirdLoginInfo();
+  }, [getThirdLoginInfo]);
+  
+  // 社交登录hooks
+  const googleAuth = useGoogleAuth({
+    onSuccess: async (accessToken) => {
+      handleThirdLogin(1, accessToken);
+    }
+  });
+  
+  const facebookAuth = useFacebookAuth({
+    onSuccess: async (accessToken) => {
+      handleThirdLogin(2, accessToken);
+    }
   });
 
   const setRememberMe = (rememberMe: boolean) => {
@@ -50,6 +74,23 @@ export default function LoginPage() {
       state.username = username;
     });
   };
+
+  const handleThirdLogin = async (type: number, token: string) => {
+    try {
+      const {data} = await authApi.thirdLogin({
+        type,
+        token
+      });
+      if (data.code === 0) {
+        setUser(data.data);
+        setToken(data.data.token);
+        getAllRechargeAddresses();
+        toast.success(t('login.success'));
+        router.back();
+      }
+    } catch (error) {
+    }
+  }
 
   async function handleLogin() {
     if (!state.username || !state.password) {
@@ -97,10 +138,14 @@ export default function LoginPage() {
         setUser(response.data);
         setToken(response.data.token);
         getAllRechargeAddresses();
-        state.rememberMe ? setMemoizedAccount(state.username) : setMemoizedAccount(null);
+        if (state.rememberMe) {
+          setMemoizedAccount(state.username);
+        } else {
+          setMemoizedAccount(null);
+        }
         toast.success(t('login.success'));
         // 跳转到tab首页
-        router.replace('/');
+        router.back();
       } else {
         toast.error(response.msg || t('login.loginFailed'));
       }
@@ -119,7 +164,18 @@ export default function LoginPage() {
   }
 
   function handleSocialLogin(provider: 'google' | 'facebook' | 'telegram') {
-    // TODO: 实现社交登录逻辑
+    switch (provider) {
+      case 'google':
+        googleAuth.login();
+        break;
+      case 'facebook':
+        facebookAuth.login();
+        break;
+      case 'telegram':
+        // TODO: 实现Telegram登录逻辑
+        console.log('Telegram登录暂未实现');
+        break;
+    }
   }
 
   return (
@@ -218,6 +274,9 @@ export default function LoginPage() {
           <Text style={styles.registerLink}>{t('login.register')}</Text>
         </Text>
       </Pressable>
+
+      <TelegramLoginButton />
+
     </View>
   );
 }

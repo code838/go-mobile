@@ -97,6 +97,63 @@ export default function ServicesScreen() {
       answer: t('services.faqList.a8'),
       category: 'product',
     },
+    // 充值相关
+    {
+      id: 'q9',
+      question: t('services.faqList.q9'),
+      answer: t('services.faqList.a9'),
+      category: 'account',
+    },
+    {
+      id: 'q10',
+      question: t('services.faqList.q10'),
+      answer: t('services.faqList.a10'),
+      category: 'account',
+    },
+    {
+      id: 'q11',
+      question: t('services.faqList.q11'),
+      answer: t('services.faqList.a11'),
+      category: 'account',
+    },
+    // 提现相关
+    {
+      id: 'q12',
+      question: t('services.faqList.q12'),
+      answer: t('services.faqList.a12'),
+      category: 'account',
+    },
+    {
+      id: 'q13',
+      question: t('services.faqList.q13'),
+      answer: t('services.faqList.a13'),
+      category: 'account',
+    },
+    {
+      id: 'q14',
+      question: t('services.faqList.q14'),
+      answer: t('services.faqList.a14'),
+      category: 'account',
+    },
+    // 闪兑相关
+    {
+      id: 'q15',
+      question: t('services.faqList.q15'),
+      answer: t('services.faqList.a15'),
+      category: 'account',
+    },
+    {
+      id: 'q16',
+      question: t('services.faqList.q16'),
+      answer: t('services.faqList.a16'),
+      category: 'account',
+    },
+    {
+      id: 'q17',
+      question: t('services.faqList.q17'),
+      answer: t('services.faqList.a17'),
+      category: 'account',
+    },
   ];
 
   // 根据分类过滤FAQ

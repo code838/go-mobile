@@ -35,4 +35,6 @@ export const urls = {
   getOrderList: `${apiUrl}/order/list`,
   getOrderDetail: `${apiUrl}/order/detail`,
   getInviteRecord: `${apiUrl}/invite/record`,
+  getThirdLoginInfo: `${apiUrl}/thirdlogin/info`,
+  thirdLogin: `${apiUrl}/thirdlogin/login`,
 }

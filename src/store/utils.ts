@@ -1,5 +1,5 @@
 import { LANGUAGE_KEY } from '@/constants/keys';
-import { financeApi } from '@/services/api';
+import { authApi, financeApi } from '@/services/api';
 import { Store, UtilsSlice } from '@/store/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import i18next from 'i18next';
@@ -13,6 +13,7 @@ export const createUtilsSlice: StateCreator<
   UtilsSlice
 > = immer(set => ({
   coins: [],
+  thirdLoginInfo: [],
   hasHydrated: false,
   setHasHydrated: (hasHydrated: boolean) => {
     set(state => {
@@ -58,4 +59,16 @@ export const createUtilsSlice: StateCreator<
     }
   },
 
+
+  /**
+   * 获取第三方登录信息
+   */
+  getThirdLoginInfo: async () => {
+    const { data } = await authApi.getThirdLoginInfo();
+    if (data.code === 0 && data.data) {
+      set(state => {
+        state.thirdLoginInfo = data.data;
+      });
+    }
+  }
 }));

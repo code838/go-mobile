@@ -4,9 +4,9 @@ import { useBoundStore } from '@/store';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
+import * as WebBrowser from 'expo-web-browser';
 import { useEffect } from 'react';
 import { LogBox } from 'react-native';
-import 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -16,6 +16,7 @@ export const unstable_settings = {
   anchor: '(tabs)',
 };
 
+WebBrowser.maybeCompleteAuthSession();
 SplashScreen.preventAutoHideAsync();
 LogBox.ignoreAllLogs();
 
@@ -23,9 +24,11 @@ LogBox.ignoreAllLogs();
 export default function RootLayout() {
   const insets = useSafeAreaInsets();
   const getCoinsMessage = useBoundStore(state => state.getCoinsMessage);
+  const getThirdLoginInfo = useBoundStore(state => state.getThirdLoginInfo);
 
   const initApp = async () => {
     await getCoinsMessage();
+    await getThirdLoginInfo();
     SplashScreen.hideAsync();
   }
 

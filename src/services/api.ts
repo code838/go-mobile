@@ -47,6 +47,14 @@ export const authApi = {
   // 发送验证码
   sendCaptcha: (data: { content: string; type: number }) => 
     request.post(urls.sendCaptcha, data),
+
+  // 获取第三方登录信息
+  getThirdLoginInfo: () => 
+    request.post(urls.getThirdLoginInfo, {}),
+
+  // 第三方登录
+  thirdLogin: (data: { type: number; token: string }) => 
+    request.post(urls.thirdLogin, data),
 };
 
 // 用户相关接口

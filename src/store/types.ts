@@ -1,5 +1,6 @@
 import { CoinMessage } from "@/model/CoinMessage";
 import { RechargeAddress } from "@/model/RechargeAddress";
+import { ThirdLoginInfo } from "@/model/ThirdLoginInfo";
 import { UserModel } from "@/model/User";
 
 export interface WithdrawFee {
@@ -41,6 +42,8 @@ export type UtilsSlice = {
   getLanguageFromStorage: () => Promise<string | null>;
   coins: CoinMessage[];
   getCoinsMessage: () => Promise<void>;
+  thirdLoginInfo: ThirdLoginInfo[];
+  getThirdLoginInfo: () => Promise<void>;
 }
 
 export type Store = AccountSlice & UtilsSlice;

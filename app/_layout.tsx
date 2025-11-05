@@ -45,7 +45,7 @@ export default function RootLayout() {
           </Stack>
         </SafeAreaProvider>
 
-        <StatusBar style="light" />
+        <StatusBar style="light" backgroundColor="#0E0E10" translucent={false} />
       </GestureHandlerRootView>
       <Toast position={'top'} topOffset={insets.top} config={toastConfig} />
     </>

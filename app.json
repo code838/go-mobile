@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "go",
-    "slug": "go",
+    "name": "1U.VIP",
+    "slug": "1U.VIP",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/images/go-logo.png",
@@ -21,7 +21,15 @@
         "monochromeImage": "./src/assets/images/go-logo.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "navigationBar": {
+        "backgroundColor": "#0E0E10",
+        "barStyle": "light-content"
+      },
+      "statusBar": {
+        "backgroundColor": "#0E0E10",
+        "barStyle": "light-content"
+      }
     },
     "plugins": [
       "expo-router",

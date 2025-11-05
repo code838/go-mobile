@@ -16,10 +16,10 @@ export default function TelegramLoginButton() {
       responseType: AuthSession.ResponseType.Token,
       extraParams: {
         bot_id: '8421744377',
-        origin: 'https://liberty7788.top',
-        embed: '1',
+        origin: 'liberty7788.top',
+        // embed: '1',
         request_access: 'write',
-        return_to: REDIRECT_URI,
+        return_to: 'liberty7788.top',
       },
     },
     { 

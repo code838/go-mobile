@@ -1,4 +1,3 @@
-import { REDIRECT_URI } from '@/constants/keys';
 import { useBoundStore } from '@/store';
 import * as Google from 'expo-auth-session/providers/google';
 import { useEffect } from 'react';
@@ -16,8 +15,9 @@ export function useGoogleAuth({ onSuccess, onError }: UseGoogleAuthProps = {}) {
   
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     iosClientId: googleInfo?.clientId,
+    androidClientId: '1030552561232-34icg80itt2eimpgk44cjquu3sd0jh2q.apps.googleusercontent.com',
     scopes: googleInfo?.scope ? googleInfo.scope.split(' ') : ['openid', 'profile', 'email'],
-    redirectUri: REDIRECT_URI,
+    redirectUri: 'com.oneu.vip:/',
   });
 
   useEffect(() => {

@@ -9,6 +9,9 @@ import { authApi } from '@/services/api';
 import { useBoundStore } from '@/store';
 import { generateLoginSign, generateNonce, hashPassword } from '@/utils/crypto';
 import { toast } from '@/utils/toast';
+import {
+  GoogleSignin
+} from '@react-native-google-signin/google-signin';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -163,10 +166,20 @@ export default function LoginPage() {
     router.push('/register' as any);
   }
 
-  function handleSocialLogin(provider: 'google' | 'facebook' | 'telegram') {
+  async function handleSocialLogin(provider: 'google' | 'facebook' | 'telegram') {
     switch (provider) {
       case 'google':
-        googleAuth.login();
+        GoogleSignin.configure({
+          iosClientId: '1030552561232-1bmj85vvvee5tgpbai9cpatohhumtl79.apps.googleusercontent.com',
+          webClientId: '1030552561232-d85iff4aqs2jsf87d41mkrh960360lik.apps.googleusercontent.com'
+        });
+        await GoogleSignin.hasPlayServices();
+        await GoogleSignin.signOut();
+        const response = await GoogleSignin.signIn();
+        const token = await GoogleSignin.getTokens();
+        console.log('google token', token);
+        console.log('google response', response);
+        // googleAuth.login();
         break;
       case 'facebook':
         facebookAuth.login();

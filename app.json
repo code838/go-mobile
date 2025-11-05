@@ -5,15 +5,15 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/images/go-logo.png",
-    "scheme": "com.1u.vip",
+    "scheme": "com.ugo.vip",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.1u.vip"
+      "bundleIdentifier": "com.ugo.vip"
     },
     "android": {
-      "package": "com.oneu.vip",
+      "package": "com.ugo.vip",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./src/assets/images/go-logo.png",

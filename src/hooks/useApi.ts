@@ -59,6 +59,14 @@ export const useSendCaptcha = () => {
   return useApi(authApi.sendCaptcha);
 };
 
+export const useGetThirdLoginInfo = () => {
+  return useApi(authApi.getThirdLoginInfo);
+};
+
+export const useThirdLogin = () => {
+  return useApi(authApi.thirdLogin);
+};
+
 // 用户相关Hook
 export const useUserInfo = () => {
   return useApi(userApi.getUserInfo);

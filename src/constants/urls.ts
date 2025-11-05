@@ -73,4 +73,12 @@ export const urls = {
   productBuyUsers: `${apiUrl}/product/buyUsers`,
   productHistoryDraws: `${apiUrl}/product/historyDraws`,
   productCalcResult: `${apiUrl}/product/calcResult`,
+  // getAddressBookList: `${apiUrl}/address/withdraw/list`,
+  // manageAddressBook: `${apiUrl}/address/withdraw/manage`,
+  // getAllRechargeAddresses: `${apiUrl}/user/address`,
+  // getOrderList: `${apiUrl}/order/list`,
+  // getOrderDetail: `${apiUrl}/order/detail`,
+  // getInviteRecord: `${apiUrl}/invite/record`,
+  getThirdLoginInfo: `${apiUrl}/thirdlogin/info`,
+  thirdLogin: `${apiUrl}/thirdlogin/login`,
 }

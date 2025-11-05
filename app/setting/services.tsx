@@ -15,13 +15,13 @@ import PageDecoration from '@/components/PageDecoration';
 import { Colors } from '@/constants/colors';
 import { systemApi } from '@/services/api';
 
-type Category = 'all' | 'account' | 'product';
+type Category = 'all' | 'recharge' | 'withdraw' | 'swap';
 
 interface FAQItem {
   id: string;
   question: string;
   answer: string;
-  category: 'account' | 'product';
+  category: 'recharge' | 'withdraw' | 'swap';
 }
 
 export default function ServicesScreen() {
@@ -49,53 +49,62 @@ export default function ServicesScreen() {
   }, []);
   // FAQ数据
   const faqData: FAQItem[] = [
+    // 充值相关
     {
       id: 'q1',
       question: t('services.faqList.q1'),
       answer: t('services.faqList.a1'),
-      category: 'account',
+      category: 'recharge',
     },
     {
       id: 'q2',
       question: t('services.faqList.q2'),
       answer: t('services.faqList.a2'),
-      category: 'account',
+      category: 'recharge',
     },
     {
       id: 'q3',
       question: t('services.faqList.q3'),
       answer: t('services.faqList.a3'),
-      category: 'account',
+      category: 'recharge',
     },
+    // 提现相关
     {
       id: 'q4',
       question: t('services.faqList.q4'),
       answer: t('services.faqList.a4'),
-      category: 'account',
+      category: 'withdraw',
     },
     {
       id: 'q5',
       question: t('services.faqList.q5'),
       answer: t('services.faqList.a5'),
-      category: 'account',
+      category: 'withdraw',
     },
     {
       id: 'q6',
       question: t('services.faqList.q6'),
       answer: t('services.faqList.a6'),
-      category: 'product',
+      category: 'withdraw',
     },
+    // 闪兑相关
     {
       id: 'q7',
       question: t('services.faqList.q7'),
       answer: t('services.faqList.a7'),
-      category: 'product',
+      category: 'swap',
     },
     {
       id: 'q8',
       question: t('services.faqList.q8'),
       answer: t('services.faqList.a8'),
-      category: 'product',
+      category: 'swap',
+    },
+    {
+      id: 'q9',
+      question: t('services.faqList.q9'),
+      answer: t('services.faqList.a9'),
+      category: 'swap',
     },
   ];
 
@@ -150,30 +159,45 @@ export default function ServicesScreen() {
           <Pressable
             style={[
               styles.categoryButton,
-              selectedCategory === 'account' && styles.categoryButtonActive,
+              selectedCategory === 'recharge' && styles.categoryButtonActive,
             ]}
-            onPress={() => setSelectedCategory('account')}>
+            onPress={() => setSelectedCategory('recharge')}>
             <Text
               style={[
                 styles.categoryText,
-                selectedCategory === 'account' && styles.categoryTextActive,
+                selectedCategory === 'recharge' && styles.categoryTextActive,
               ]}>
-              {t('services.categoryAccount')}
+              {t('services.categoryRecharge')}
             </Text>
           </Pressable>
 
           <Pressable
             style={[
               styles.categoryButton,
-              selectedCategory === 'product' && styles.categoryButtonActive,
+              selectedCategory === 'withdraw' && styles.categoryButtonActive,
             ]}
-            onPress={() => setSelectedCategory('product')}>
+            onPress={() => setSelectedCategory('withdraw')}>
             <Text
               style={[
                 styles.categoryText,
-                selectedCategory === 'product' && styles.categoryTextActive,
+                selectedCategory === 'withdraw' && styles.categoryTextActive,
               ]}>
-              {t('services.categoryProduct')}
+              {t('services.categoryWithdraw')}
+            </Text>
+          </Pressable>
+
+          <Pressable
+            style={[
+              styles.categoryButton,
+              selectedCategory === 'swap' && styles.categoryButtonActive,
+            ]}
+            onPress={() => setSelectedCategory('swap')}>
+            <Text
+              style={[
+                styles.categoryText,
+                selectedCategory === 'swap' && styles.categoryTextActive,
+              ]}>
+              {t('services.categorySwap')}
             </Text>
           </Pressable>
         </View>

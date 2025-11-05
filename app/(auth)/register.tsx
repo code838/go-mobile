@@ -7,7 +7,7 @@ import { useRegister, useSendCaptcha } from '@/hooks/useApi';
 import { useBoundStore } from '@/store';
 import { hashPassword } from '@/utils/crypto';
 import { toast } from '@/utils/toast';
-import { LinearGradient } from 'expo-linear-gradient';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import {
@@ -148,9 +148,10 @@ export default function RegisterPage() {
   return (
     <View style={styles.container}>
       {/* Logo */}
-      <LinearGradient
-        colors={[Colors.brand, '#67e8f2']}
+      <Image
+        source={require('@/assets/images/go-logo.png')}
         style={styles.logo}
+        contentFit="contain"
       />
 
       {/* 输入框区域 */}
@@ -278,7 +279,6 @@ const styles = StyleSheet.create({
   logo: {
     width: 64,
     height: 64,
-    borderRadius: 99,
   },
   inputContainer: {
     width: '100%',

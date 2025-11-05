@@ -1,5 +1,4 @@
 import { Image } from 'expo-image';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -32,9 +31,10 @@ export default function AboutUsScreen() {
         <View style={styles.card}>
           {/* Logo 和版本号 */}
           <View style={styles.logoSection}>
-            <LinearGradient
-              colors={[Colors.brand, '#67E8F2']}
+            <Image
+              source={require('@/assets/images/go-logo.png')}
               style={styles.logo}
+              contentFit="contain"
             />
             <Text style={styles.version}>{t('aboutUs.version')}</Text>
           </View>
@@ -110,7 +110,6 @@ const styles = StyleSheet.create({
   logo: {
     width: 64,
     height: 64,
-    borderRadius: 32,
   },
   version: {
     fontSize: 16,

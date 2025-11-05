@@ -1,49 +1,97 @@
 {
   "expo": {
-    "name": "go",
-    "slug": "go",
+    "name": "1U.VIP",
+    "slug": "1uvip",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "go",
+    "icon": "./src/assets/images/go-logo.png",
+    "scheme": "com.ugo.vip",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.go.app"
+      "bundleIdentifier": "com.ugo.vip",
+      "infoPlist": {
+        "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you.",
+        "SKAdNetworkItems": [
+          {
+            "SKAdNetworkIdentifier": "v9wttpbfk9.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
+          }
+        ]
+      }
     },
     "android": {
+      "package": "com.ugo.vip",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "foregroundImage": "./src/assets/images/go-logo.png",
+        "backgroundImage": "./src/assets/images/go-logo.png",
+        "monochromeImage": "./src/assets/images/go-logo.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
-    },
-    "web": {
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.INTERNET"
+      ]
     },
     "plugins": [
       "expo-router",
       [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.77297535141-5hjkl8ojsrl8708rh98htbt12i3pfbse"
+        }
+      ],
+      [
+        "react-native-fbsdk-next",
+        {
+          "appID": "1305306277998721",
+          "displayName": "1U.VIP",
+          "clientToken": "c414331f325491c8c4ad12455c3550c3",
+          "scheme": "fb1305306277998721",
+          "advertiserIDCollectionEnabled": false,
+          "autoLogAppEventsEnabled": false,
+          "isAutoInitEnabled": true,
+          "iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
+        }
+      ],
+      [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./src/assets/images/go-logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
-          "dark": {
-            "backgroundColor": "#000000"
-          }
+          "backgroundColor": "#0E0E10"
         }
-      ]
+      ],
+      "expo-web-browser",
+      "react-native-fbsdk-next"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ea61edf3-9ecd-4cc6-b714-f79fe8a1ae18"
+      }
+    },
+    "owner": "galactic-heroes",
+    "build": {
+      "preview": {
+        "ios": {
+          "simulator": true
+        }
+      },
+      "production": {
+        "android": {
+          "buildType": "apk"
+        }
+      }
     }
   }
 }

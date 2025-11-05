@@ -15,7 +15,9 @@
     "register": "Sign up",
     "fillAllFields": "Please fill in username and password",
     "success": "Login successful",
-    "loginFailed": "Login failed"
+    "loginFailed": "Login failed",
+    "getAccessTokenFailed": "Failed to get Access Token",
+    "socialLoginInProgress": "Social login in progress..."
   },
   "register": {
     "phonePlaceholder": "Phone/Email",
@@ -279,6 +281,16 @@
       "ubuy": "UBuy Commission"
     }
   },
+  "auth": {
+    "third_party_login": "Third Party Login",
+    "login_with_google": "Login with Google",
+    "login_with_facebook": "Login with Facebook",
+    "login_with_telegram": "Login with Telegram",
+    "error": "Error",
+    "google_login_failed": "Google login failed",
+    "facebook_login_failed": "Facebook login failed",
+    "telegram_login_failed": "Telegram login failed"
+  },
   "common": {
     "pleaseLogin": "Please login first"
   },
@@ -468,5 +480,34 @@
     "clearDialogContent": "Are you sure you want to clear selected items?",
     "cancel": "Cancel",
     "confirm": "Confirm"
+  },
+  "services": {
+    "title": "Customer Service Center",
+    "faq": "Frequently Asked Questions",
+    "contactUs": "Contact Us",
+    "categoryAll": "All",
+    "categoryRecharge": "Recharge Related",
+    "categoryWithdraw": "Withdraw Related",
+    "categorySwap": "Swap Related",
+    "faqList": {
+      "q1": "How long does it take for deposits to arrive?",
+      "a1": "Usually 1-5 minutes.",
+      "q2": "What to do if deposit fails or doesn't arrive?",
+      "a2": "If it still hasn't arrived, please provide the following information to contact customer service:\n1. Transaction hash (TxID);\n2. Deposit amount and time;\n3. Screenshots of deposit network and address.\n\nIf the deposit fails, please confirm the following information:\n1. Whether the deposit address is correct;\n2. Whether the selected network is consistent;\n3. Whether the blockchain has shown successful transfer (check blockchain explorer).",
+      "q3": "Can I use exchange wallets to deposit directly?",
+      "a3": "Yes, but it is recommended to use personal wallets for deposits first. Some exchanges may have delays or processing failures. Using personal wallets can better protect asset security.",
+      "q4": "Why hasn't my withdrawal request been credited immediately?",
+      "a4": "Your withdrawal request needs to be reviewed by the backend. After approval, the system will initiate an on-chain transfer. The network confirmation time of different chains will also affect the arrival speed. Generally, USDT-TRC20 can arrive within a few minutes, while ETH/ERC20 networks may take longer. Please be patient.",
+      "q5": "Why was my withdrawal request rejected?",
+      "a5": "Common reasons include:\n1. Incorrect withdrawal address or unsupported chain;\n2. Withdrawal amount below minimum withdrawal limit;\n3. Insufficient available balance or frozen funds;\n4. Abnormal behavior triggered risk control.\n\nPlease check if your withdrawal information is correct. If you have any questions, please contact platform customer service.",
+      "q6": "Can I cancel or modify my withdrawal request?",
+      "a6": "Before backend review, you can contact customer service to cancel the withdrawal request; once approved and on-chain broadcast is completed, withdrawal transactions cannot be withdrawn. Please be sure to confirm that the withdrawal address and amount are correct.",
+      "q7": "Why is the amount credited after I exchanged USDT less than what I entered?",
+      "a7": "The system charges a certain percentage of exchange fees. Actual credited amount = exchange amount - handling fee. Please check the specific rate on the exchange page.",
+      "q8": "Does the exchange operation require backend review?",
+      "a8": "No. Exchange is automatically processed by the system. After submitting an exchange request, points or other currencies will be deducted in real time and corresponding USDT will be issued immediately.",
+      "q9": "Why did my exchange order fail?",
+      "a9": "Possible reasons include:\n1. Insufficient available balance;\n2. Exchange amount below minimum limit or exceeds maximum limit;\n3. Network fluctuations caused price refresh, please initiate exchange again."
+    }
   }
 }

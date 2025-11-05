@@ -23,6 +23,7 @@ export const vanillaStore = createStore<Store>()(
         rechargeAddresses: state.rechargeAddresses,
         language: state.language,
         memoizedAccount: state.memoizedAccount,
+        thirdLoginInfo: state.thirdLoginInfo,
       }),
       version: 1,
       storage: createStorage() as any,

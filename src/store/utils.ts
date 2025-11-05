@@ -1,5 +1,5 @@
 import { LANGUAGE_KEY } from '@/constants/keys';
-import { financeApi } from '@/services/api';
+import { authApi, financeApi } from '@/services/api';
 import { Store, UtilsSlice } from '@/store/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import i18next from 'i18next';
@@ -13,10 +13,17 @@ export const createUtilsSlice: StateCreator<
   UtilsSlice
 > = immer(set => ({
   coins: [],
+  thirdLoginInfo: [],
   hasHydrated: false,
   setHasHydrated: (hasHydrated: boolean) => {
     set(state => {
       state.hasHydrated = hasHydrated;
+    });
+  },
+  socialLoginLoading: false,
+  setSocialLoginLoading: (loading: boolean) => {
+    set(state => {
+      state.socialLoginLoading = loading;
     });
   },
   language: 'zh',
@@ -50,12 +57,24 @@ export const createUtilsSlice: StateCreator<
    * 获取币种信息列表
    */
   getCoinsMessage: async () => {
-    const { data } = await financeApi.getCoins();
-    if (data.data) {
+    const response = await financeApi.getCoins();
+    if (response.data.code === 0) {
       set(state => {
-        state.coins = data.data;
+        state.coins = response.data.data;
       });
     }
   },
 
+
+  /**
+   * 获取第三方登录信息
+   */
+  getThirdLoginInfo: async () => {
+    const { data } = await authApi.getThirdLoginInfo();
+    if (data.code === 0 && data.data) {
+      set(state => {
+        state.thirdLoginInfo = data.data;
+      });
+    }
+  }
 }));

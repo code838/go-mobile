@@ -1,13 +1,16 @@
 import Button from '@/components/Button';
 import CheckBox from '@/components/CheckBox';
+import SocialLoginLoading from '@/components/SocialLoginLoading';
+import TelegramLoginButton from '@/components/TelegramAuth';
 import { Colors } from '@/constants/colors';
 import { useLogin } from '@/hooks/useApi';
 import { useBoundStore } from '@/store';
 import { generateLoginSign, generateNonce, hashPassword } from '@/utils/crypto';
+import { facebookLogin, googleLogin, handleThirdPartyLogin } from '@/utils/socialAuth';
 import { toast } from '@/utils/toast';
 import { Image } from 'expo-image';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Pressable,
@@ -26,13 +29,20 @@ export default function LoginPage() {
   const memoizedAccount = useBoundStore(state => state.memoizedAccount);
   const setMemoizedAccount = useBoundStore(state => state.setMemoizedAccount);
   const getAllRechargeAddresses = useBoundStore(state => state.getAllRechargeAddresses);
+  const getThirdLoginInfo = useBoundStore(state => state.getThirdLoginInfo);
+  const setSocialLoginLoading = useBoundStore(state => state.setSocialLoginLoading);
   const { execute: login, loading: isLoginLoading } = useLogin();
   const [state, setState] = useImmer({
     username: memoizedAccount || '',
     password: '',
     rememberMe: false,
   });
-
+  
+  // 初始化时获取第三方登录配置
+  useEffect(() => {
+    getThirdLoginInfo();
+  }, [getThirdLoginInfo]);
+  
   const setRememberMe = (rememberMe: boolean) => {
     setState(state => {
       state.rememberMe = rememberMe;
@@ -50,6 +60,7 @@ export default function LoginPage() {
       state.username = username;
     });
   };
+
 
   async function handleLogin() {
     if (!state.username || !state.password) {
@@ -97,10 +108,14 @@ export default function LoginPage() {
         setUser(response.data);
         setToken(response.data.token);
         getAllRechargeAddresses();
-        state.rememberMe ? setMemoizedAccount(state.username) : setMemoizedAccount(null);
+        if (state.rememberMe) {
+          setMemoizedAccount(state.username);
+        } else {
+          setMemoizedAccount(null);
+        }
         toast.success(t('login.success'));
         // 跳转到tab首页
-        router.replace('/');
+        router.back();
       } else {
         toast.error(response.msg || t('login.loginFailed'));
       }
@@ -118,16 +133,73 @@ export default function LoginPage() {
     router.push('/register' as any);
   }
 
-  function handleSocialLogin(provider: 'google' | 'facebook' | 'telegram') {
-    // TODO: 实现社交登录逻辑
+  async function handleSocialLogin(provider: 'google' | 'facebook' | 'telegram') {
+    if (provider === 'telegram') {
+      console.log('Telegram登录暂未实现');
+      return;
+    }
+
+    setSocialLoginLoading(true);
+
+    try {
+      let result;
+      let loginType;
+
+      switch (provider) {
+        case 'google':
+          result = await googleLogin();
+          loginType = 1;
+          break;
+        case 'facebook':
+          result = await facebookLogin();
+          loginType = 2;
+          break;
+        default:
+          return;
+      }
+
+      if (result.cancelled) {
+        return;
+      }
+
+      if (!result.success) {
+        if (result.error) {
+          toast.error(result.error);
+        }
+        return;
+      }
+
+      if (result.token) {
+        await handleThirdPartyLogin(
+          loginType,
+          result.token,
+          (userData) => {
+            setUser(userData);
+            setToken(userData.token);
+            getAllRechargeAddresses();
+            toast.success(t('login.success'));
+            router.back();
+          },
+          (error) => {
+            toast.error(error);
+          }
+        );
+      }
+    } catch (error: any) {
+      console.error('Social login error:', error);
+      toast.error(error.message || t('login.loginFailed'));
+    } finally {
+      setSocialLoginLoading(false);
+    }
   }
 
   return (
     <View style={styles.container}>
       {/* Logo */}
-      <LinearGradient
-        colors={[Colors.brand, '#67e8f2']}
+      <Image
+        source={require('@/assets/images/go-logo.png')}
         style={styles.logo}
+        contentFit="contain"
       />
 
       {/* 输入框区域 */}
@@ -218,6 +290,10 @@ export default function LoginPage() {
           <Text style={styles.registerLink}>{t('login.register')}</Text>
         </Text>
       </Pressable>
+
+      <TelegramLoginButton />
+
+      <SocialLoginLoading />
     </View>
   );
 }
@@ -235,7 +311,6 @@ const styles = StyleSheet.create({
   logo: {
     width: 64,
     height: 64,
-    borderRadius: 99,
   },
   inputContainer: {
     width: '100%',

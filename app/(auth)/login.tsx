@@ -1,19 +1,14 @@
 import Button from '@/components/Button';
 import CheckBox from '@/components/CheckBox';
+import SocialLoginLoading from '@/components/SocialLoginLoading';
 import TelegramLoginButton from '@/components/TelegramAuth';
 import { Colors } from '@/constants/colors';
 import { useLogin } from '@/hooks/useApi';
-import { useFacebookAuth } from '@/hooks/useFacebookAuth';
-import { useGoogleAuth } from '@/hooks/useGoogleAuth';
-import { authApi } from '@/services/api';
 import { useBoundStore } from '@/store';
 import { generateLoginSign, generateNonce, hashPassword } from '@/utils/crypto';
+import { facebookLogin, googleLogin, handleThirdPartyLogin } from '@/utils/socialAuth';
 import { toast } from '@/utils/toast';
-import {
-  GoogleSignin
-} from '@react-native-google-signin/google-signin';
 import { Image } from 'expo-image';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -35,6 +30,7 @@ export default function LoginPage() {
   const setMemoizedAccount = useBoundStore(state => state.setMemoizedAccount);
   const getAllRechargeAddresses = useBoundStore(state => state.getAllRechargeAddresses);
   const getThirdLoginInfo = useBoundStore(state => state.getThirdLoginInfo);
+  const setSocialLoginLoading = useBoundStore(state => state.setSocialLoginLoading);
   const { execute: login, loading: isLoginLoading } = useLogin();
   const [state, setState] = useImmer({
     username: memoizedAccount || '',
@@ -47,19 +43,6 @@ export default function LoginPage() {
     getThirdLoginInfo();
   }, [getThirdLoginInfo]);
   
-  // 社交登录hooks
-  const googleAuth = useGoogleAuth({
-    onSuccess: async (accessToken) => {
-      handleThirdLogin(1, accessToken);
-    }
-  });
-  
-  const facebookAuth = useFacebookAuth({
-    onSuccess: async (accessToken) => {
-      handleThirdLogin(2, accessToken);
-    }
-  });
-
   const setRememberMe = (rememberMe: boolean) => {
     setState(state => {
       state.rememberMe = rememberMe;
@@ -78,22 +61,6 @@ export default function LoginPage() {
     });
   };
 
-  const handleThirdLogin = async (type: number, token: string) => {
-    try {
-      const {data} = await authApi.thirdLogin({
-        type,
-        token
-      });
-      if (data.code === 0) {
-        setUser(data.data);
-        setToken(data.data.token);
-        getAllRechargeAddresses();
-        toast.success(t('login.success'));
-        router.back();
-      }
-    } catch (error) {
-    }
-  }
 
   async function handleLogin() {
     if (!state.username || !state.password) {
@@ -167,36 +134,72 @@ export default function LoginPage() {
   }
 
   async function handleSocialLogin(provider: 'google' | 'facebook' | 'telegram') {
-    switch (provider) {
-      case 'google':
-        GoogleSignin.configure({
-          iosClientId: '1030552561232-1bmj85vvvee5tgpbai9cpatohhumtl79.apps.googleusercontent.com',
-          webClientId: '1030552561232-d85iff4aqs2jsf87d41mkrh960360lik.apps.googleusercontent.com'
-        });
-        await GoogleSignin.hasPlayServices();
-        await GoogleSignin.signOut();
-        const response = await GoogleSignin.signIn();
-        const token = await GoogleSignin.getTokens();
-        console.log('google token', token);
-        console.log('google response', response);
-        // googleAuth.login();
-        break;
-      case 'facebook':
-        facebookAuth.login();
-        break;
-      case 'telegram':
-        // TODO: 实现Telegram登录逻辑
-        console.log('Telegram登录暂未实现');
-        break;
+    if (provider === 'telegram') {
+      console.log('Telegram登录暂未实现');
+      return;
+    }
+
+    setSocialLoginLoading(true);
+
+    try {
+      let result;
+      let loginType;
+
+      switch (provider) {
+        case 'google':
+          result = await googleLogin();
+          loginType = 1;
+          break;
+        case 'facebook':
+          result = await facebookLogin();
+          loginType = 2;
+          break;
+        default:
+          return;
+      }
+
+      if (result.cancelled) {
+        return;
+      }
+
+      if (!result.success) {
+        if (result.error) {
+          toast.error(result.error);
+        }
+        return;
+      }
+
+      if (result.token) {
+        await handleThirdPartyLogin(
+          loginType,
+          result.token,
+          (userData) => {
+            setUser(userData);
+            setToken(userData.token);
+            getAllRechargeAddresses();
+            toast.success(t('login.success'));
+            router.back();
+          },
+          (error) => {
+            toast.error(error);
+          }
+        );
+      }
+    } catch (error: any) {
+      console.error('Social login error:', error);
+      toast.error(error.message || t('login.loginFailed'));
+    } finally {
+      setSocialLoginLoading(false);
     }
   }
 
   return (
     <View style={styles.container}>
       {/* Logo */}
-      <LinearGradient
-        colors={[Colors.brand, '#67e8f2']}
+      <Image
+        source={require('@/assets/images/go-logo.png')}
         style={styles.logo}
+        contentFit="contain"
       />
 
       {/* 输入框区域 */}
@@ -290,6 +293,7 @@ export default function LoginPage() {
 
       <TelegramLoginButton />
 
+      <SocialLoginLoading />
     </View>
   );
 }
@@ -307,7 +311,6 @@ const styles = StyleSheet.create({
   logo: {
     width: 64,
     height: 64,
-    borderRadius: 99,
   },
   inputContainer: {
     width: '100%',

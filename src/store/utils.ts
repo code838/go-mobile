@@ -20,6 +20,12 @@ export const createUtilsSlice: StateCreator<
       state.hasHydrated = hasHydrated;
     });
   },
+  socialLoginLoading: false,
+  setSocialLoginLoading: (loading: boolean) => {
+    set(state => {
+      state.socialLoginLoading = loading;
+    });
+  },
   language: 'zh',
   setLanguage: async (language: string) => {
     await i18next.changeLanguage(language);
@@ -51,10 +57,10 @@ export const createUtilsSlice: StateCreator<
    * 获取币种信息列表
    */
   getCoinsMessage: async () => {
-    const { data } = await financeApi.getCoins();
-    if (data.data) {
+    const response = await financeApi.getCoins();
+    if (response.data.code === 0) {
       set(state => {
-        state.coins = data.data;
+        state.coins = response.data.data;
       });
     }
   },

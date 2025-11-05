@@ -44,6 +44,8 @@ export type UtilsSlice = {
   getCoinsMessage: () => Promise<void>;
   thirdLoginInfo: ThirdLoginInfo[];
   getThirdLoginInfo: () => Promise<void>;
+  socialLoginLoading: boolean;
+  setSocialLoginLoading: (loading: boolean) => void;
 }
 
 export type Store = AccountSlice & UtilsSlice;

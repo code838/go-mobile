@@ -15,7 +15,9 @@
     "register": "Sign up",
     "fillAllFields": "Please fill in username and password",
     "success": "Login successful",
-    "loginFailed": "Login failed"
+    "loginFailed": "Login failed",
+    "getAccessTokenFailed": "Failed to get Access Token",
+    "socialLoginInProgress": "Social login in progress..."
   },
   "register": {
     "phonePlaceholder": "Phone/Email",

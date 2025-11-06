@@ -1,7 +1,7 @@
 import { IMG_BASE_URL } from '@/constants/api';
 import { manageCart, orderBuy } from '@/services/home';
+import { useBoundStore } from '@/store';
 import type { Product } from '@/types';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -29,6 +29,7 @@ export default function ProductCard({
 }: ProductCardProps) {
   const { t } = useTranslation();
   const router = useRouter();
+  const user = useBoundStore(state => state.user);
   const [quantity, setQuantity] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isInCart, setIsInCart] = useState(product.cart || false);
@@ -63,9 +64,8 @@ export default function ProductCard({
   const remainingSlots = product.totalPerson - product.joinPerson;
 
   const handleJoinNow = async () => {
-    // 检查是否登录
-    const userId = await AsyncStorage.getItem('userId');
-    if (!userId) {
+    // 检查是否登录 - 参考 (guard)/_layout.tsx 的处理方式
+    if (!user) {
       router.push('/(auth)/login');
       return;
     }
@@ -78,7 +78,7 @@ export default function ProductCard({
 
       // 调用下单接口
       const response = await orderBuy({
-        userId: Number(userId),
+        userId: Number(user.userId),
         data: [
           {
             productId: product.productId,
@@ -111,9 +111,8 @@ export default function ProductCard({
   };
 
   const handleToggleCart = async () => {
-    // 检查是否登录
-    const userId = await AsyncStorage.getItem('userId');
-    if (!userId) {
+    // 检查是否登录 - 参考 (guard)/_layout.tsx 的处理方式
+    if (!user) {
       router.push('/(auth)/login');
       return;
     }
@@ -124,7 +123,7 @@ export default function ProductCard({
       // 调用购物车管理接口
       // type: 1-添加, 2-删除
       await manageCart({
-        userId: Number(userId),
+        userId: Number(user.userId),
         productId: product.productId,
         type: newCartState ? 1 : 2,
         num: quantity,

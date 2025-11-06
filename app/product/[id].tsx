@@ -1,20 +1,20 @@
 import Countdown from '@/components/Countdown';
 import { IMG_BASE_URL } from '@/constants/api';
 import { urls } from '@/constants/urls';
+import { useBoundStore } from '@/store';
 import { request } from '@/utils/request';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-    ActivityIndicator,
-    Image,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Image,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
@@ -82,6 +82,7 @@ export default function ProductDetailPage() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const insets = useSafeAreaInsets();
+  const user = useBoundStore(state => state.user);
   
   const productId = Number(params.id);
   const serialNumber = Number(params.serialNumber) || 1;
@@ -141,12 +142,11 @@ export default function ProductDetailPage() {
   const fetchProductDetail = async () => {
     try {
       setLoading(true);
-      const userId = await AsyncStorage.getItem('userId');
       const apiUrl = (urls as any).productDetail || `${urls.home.replace('/home', '/product/detail')}`;
       const response = await request.post(apiUrl, {
         productId,
         serialNumber,
-        userId: userId ? Number(userId) : undefined,
+        userId: user ? Number(user.userId) : undefined,
       });
       
       if (response?.data?.code === 0) {
@@ -167,13 +167,12 @@ export default function ProductDetailPage() {
 
   const fetchBuyUsers = async () => {
     try {
-      const userId = await AsyncStorage.getItem('userId');
       const apiUrl = (urls as any).productBuyUsers || `${urls.home.replace('/home', '/product/buyUsers')}`;
       const response = await request.post(apiUrl, {
         productId,
         pageNo: buyUsersPage,
         pageSize,
-        userId: userId ? Number(userId) : undefined,
+        userId: user ? Number(user.userId) : undefined,
       });
       
       if (response?.data?.code === 0) {
@@ -222,8 +221,8 @@ export default function ProductDetailPage() {
   };
 
   const handleToggleCart = async () => {
-    const userId = await AsyncStorage.getItem('userId');
-    if (!userId) {
+    // 检查是否登录 - 参考 (guard)/_layout.tsx 的处理方式
+    if (!user) {
       router.push('/(auth)/login');
       return;
     }
@@ -231,7 +230,7 @@ export default function ProductDetailPage() {
     try {
       const newCartState = !isInCart;
       await request.post(urls.cartManage, {
-        userId: Number(userId),
+        userId: Number(user.userId),
         productId,
         type: newCartState ? 1 : 2,
         num: quantity,
@@ -251,8 +250,8 @@ export default function ProductDetailPage() {
   };
 
   const handleJoinNow = async () => {
-    const userId = await AsyncStorage.getItem('userId');
-    if (!userId) {
+    // 检查是否登录 - 参考 (guard)/_layout.tsx 的处理方式
+    if (!user) {
       router.push('/(auth)/login');
       return;
     }
@@ -262,7 +261,7 @@ export default function ProductDetailPage() {
     try {
       setIsSubmitting(true);
       const response = await request.post(urls.orderBuy, {
-        userId: Number(userId),
+        userId: Number(user.userId),
         data: [{ productId, num: quantity }],
       });
       

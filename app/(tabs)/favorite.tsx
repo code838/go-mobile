@@ -1,50 +1,66 @@
+import CheckBox from '@/components/CheckBox';
+import ConfirmModal from '@/components/ConfirmModal';
+import NavigationBar from '@/components/NavigationBar';
 import { Colors } from '@/constants/colors';
 import { getImageUrl } from '@/constants/urls';
 import { getCartList, manageCart, orderBuy } from '@/services/home';
-import { useAuthStore } from '@/store/auth';
+import { useBoundStore } from '@/store';
 import type { CartItem } from '@/types';
 import Feather from '@expo/vector-icons/Feather';
-import { router, Stack } from 'expo-router';
+import { router, Stack, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   Image,
+  KeyboardAvoidingView,
   Platform,
   Pressable,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from 'react-native';
 import Toast from 'react-native-toast-message';
 
-import CheckBox from '@/components/CheckBox';
-import ConfirmModal from '@/components/ConfirmModal';
-
 export default function FavoritePage() {
   const { t } = useTranslation();
-  const { userId } = useAuthStore();
+  const user = useBoundStore(state => state.user);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSelectAllLoading, setIsSelectAllLoading] = useState(false);
   const [loadingItems, setLoadingItems] = useState<Set<number>>(new Set());
   const [isCheckoutSubmitting, setIsCheckoutSubmitting] = useState(false);
   const [showClearDialog, setShowClearDialog] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [editingQuantities, setEditingQuantities] = useState<Map<number, string>>(new Map());
 
   // 获取购物车列表
   const fetchCartList = useCallback(async () => {
+    const userId = user?.userId ? Number(user.userId) : undefined;
+    console.log('心愿单 fetchCartList - user:', user);
+    console.log('心愿单 fetchCartList - userId:', userId, '类型:', typeof userId);
+    
     if (!userId) {
+      console.log('心愿单 fetchCartList - userId 为空，清空列表');
       setCartItems([]);
       setIsLoading(false);
+      setRefreshing(false);
       return;
     }
 
     try {
       setIsLoading(true);
+      console.log('心愿单 fetchCartList - 请求参数:', JSON.stringify({ userId }));
       const response = await getCartList({ userId });
+      console.log('心愿单 fetchCartList - 响应:', response?.data);
+      
       if (response?.data?.code === 0 || response?.data?.code === 200) {
-        setCartItems(response.data.data || []);
+        const items = response.data.data || [];
+        console.log('心愿单 fetchCartList - 获取到商品数量:', items.length);
+        setCartItems(items);
       } else {
         setCartItems([]);
       }
@@ -53,11 +69,25 @@ export default function FavoritePage() {
       setCartItems([]);
     } finally {
       setIsLoading(false);
+      setRefreshing(false);
     }
-  }, [userId]);
+  }, [user]);
 
   // 初始加载
   useEffect(() => {
+    fetchCartList();
+  }, [fetchCartList]);
+
+  // 每次页面聚焦时重新加载数据
+  useFocusEffect(
+    useCallback(() => {
+      fetchCartList();
+    }, [fetchCartList])
+  );
+
+  // 下拉刷新
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
     fetchCartList();
   }, [fetchCartList]);
 
@@ -81,12 +111,14 @@ export default function FavoritePage() {
 
   // 全选/取消全选
   const handleSelectAll = async () => {
+    const userId = user?.userId ? Number(user.userId) : undefined;
     if (!userId || isSelectAllLoading) return;
 
     setIsSelectAllLoading(true);
     try {
       const targetSelected = isAllSelected ? 0 : 1;
       const targetType = targetSelected === 1 ? 4 : 5; // 4: 选中, 5: 取消选中
+      console.log('心愿单 handleSelectAll - userId:', userId, 'targetType:', targetType);
 
       for (const item of cartItems) {
         if (item.selected !== targetSelected) {
@@ -112,6 +144,9 @@ export default function FavoritePage() {
 
   // 单个商品选中/取消选中
   const handleSelectItem = async (item: CartItem) => {
+    const userId = user?.userId ? Number(user.userId) : undefined;
+    console.log('心愿单 handleSelectItem - userId:', userId, 'productId:', item.productId);
+    
     if (!userId || loadingItems.has(item.productId)) return;
 
     setLoadingItems((prev) => new Set(prev).add(item.productId));
@@ -140,24 +175,34 @@ export default function FavoritePage() {
 
   // 删除商品
   const handleRemoveItem = async (item: CartItem) => {
+    const userId = user?.userId ? Number(user.userId) : undefined;
+    console.log('心愿单 handleRemoveItem - userId:', userId, 'productId:', item.productId);
+    
     if (!userId || loadingItems.has(item.productId)) return;
 
     setLoadingItems((prev) => new Set(prev).add(item.productId));
     try {
-      await manageCart({
+      const requestParams = {
         userId,
         type: 2, // 删除
         productId: item.productId,
-      });
+      };
+      console.log('心愿单 handleRemoveItem - 请求参数:', JSON.stringify(requestParams));
+      
+      const response = await manageCart(requestParams);
+      console.log('心愿单 handleRemoveItem - 响应:', response?.data);
+      
       Toast.show({
         type: 'success',
         text1: t('wishlist.removeSuccess'),
       });
+      console.log('心愿单 handleRemoveItem - 删除成功，刷新列表');
       await fetchCartList();
-    } catch (error) {
+    } catch (error: any) {
+      console.error('心愿单 handleRemoveItem - 错误:', error);
       Toast.show({
         type: 'error',
-        text1: t('wishlist.removeFailed'),
+        text1: error?.message || t('wishlist.removeFailed'),
       });
     } finally {
       setLoadingItems((prev) => {
@@ -170,7 +215,17 @@ export default function FavoritePage() {
 
   // 修改数量
   const handleQuantityChange = async (item: CartItem, delta: number) => {
+    const userId = user?.userId ? Number(user.userId) : undefined;
     if (!userId || loadingItems.has(item.productId)) return;
+
+    // 清除正在编辑的状态
+    if (editingQuantities.has(item.productId)) {
+      setEditingQuantities((prev) => {
+        const next = new Map(prev);
+        next.delete(item.productId);
+        return next;
+      });
+    }
 
     // 如果当前数量为1且是减少操作，则删除商品
     if (item.num === 1 && delta === -1) {
@@ -178,8 +233,23 @@ export default function FavoritePage() {
       return;
     }
 
-    const newQuantity = Math.max(1, item.num + delta);
-    if (newQuantity === item.num) return;
+    // 计算剩余可参与数量
+    const remainingSlots = item.totalPerson - item.joinPerson;
+    const maxQuantity = remainingSlots;
+    
+    const newQuantity = Math.max(1, Math.min(maxQuantity, item.num + delta));
+    if (newQuantity === item.num) {
+      // 如果已达到最大值，给出提示
+      if (delta > 0 && item.num >= maxQuantity) {
+        Toast.show({
+          type: 'warning',
+          text1: t('wishlist.maxQuantityReached', { max: maxQuantity }),
+        });
+      }
+      return;
+    }
+    
+    console.log('心愿单 handleQuantityChange - userId:', userId, 'productId:', item.productId, 'newQuantity:', newQuantity, 'maxQuantity:', maxQuantity);
 
     setLoadingItems((prev) => new Set(prev).add(item.productId));
     try {
@@ -204,8 +274,119 @@ export default function FavoritePage() {
     }
   };
 
+  // 处理手动输入数量
+  const handleQuantityInputChange = (productId: number, value: string) => {
+    // 只允许输入数字
+    const sanitized = value.replace(/[^0-9]/g, '');
+    setEditingQuantities((prev) => {
+      const next = new Map(prev);
+      next.set(productId, sanitized);
+      return next;
+    });
+  };
+
+  // 提交手动输入的数量
+  const handleQuantityInputSubmit = async (item: CartItem) => {
+    const userId = user?.userId ? Number(user.userId) : undefined;
+    if (!userId || loadingItems.has(item.productId)) return;
+
+    const inputValue = editingQuantities.get(item.productId);
+    if (!inputValue) {
+      // 如果输入为空，恢复原值
+      setEditingQuantities((prev) => {
+        const next = new Map(prev);
+        next.delete(item.productId);
+        return next;
+      });
+      return;
+    }
+
+    const newQuantity = parseInt(inputValue, 10);
+    
+    // 计算剩余可参与数量
+    const remainingSlots = item.totalPerson - item.joinPerson;
+    const maxQuantity = remainingSlots;
+    
+    // 验证输入
+    if (isNaN(newQuantity) || newQuantity < 1) {
+      Toast.show({
+        type: 'warning',
+        text1: t('wishlist.invalidQuantity'),
+      });
+      setEditingQuantities((prev) => {
+        const next = new Map(prev);
+        next.delete(item.productId);
+        return next;
+      });
+      return;
+    }
+
+    // 检查是否超过最大值
+    if (newQuantity > maxQuantity) {
+      Toast.show({
+        type: 'warning',
+        text1: t('wishlist.exceedMaxQuantity', { max: maxQuantity }),
+      });
+      setEditingQuantities((prev) => {
+        const next = new Map(prev);
+        next.delete(item.productId);
+        return next;
+      });
+      return;
+    }
+
+    // 如果数量没有变化，只清除编辑状态
+    if (newQuantity === item.num) {
+      setEditingQuantities((prev) => {
+        const next = new Map(prev);
+        next.delete(item.productId);
+        return next;
+      });
+      return;
+    }
+
+    console.log('心愿单 handleQuantityInputSubmit - userId:', userId, 'productId:', item.productId, 'newQuantity:', newQuantity, 'maxQuantity:', maxQuantity);
+
+    setLoadingItems((prev) => new Set(prev).add(item.productId));
+    try {
+      await manageCart({
+        userId,
+        type: 3, // 修改数量
+        productId: item.productId,
+        num: newQuantity,
+      });
+      // 清除编辑状态
+      setEditingQuantities((prev) => {
+        const next = new Map(prev);
+        next.delete(item.productId);
+        return next;
+      });
+      await fetchCartList();
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: t('wishlist.updateQuantityFailed'),
+      });
+      // 失败时也清除编辑状态
+      setEditingQuantities((prev) => {
+        const next = new Map(prev);
+        next.delete(item.productId);
+        return next;
+      });
+    } finally {
+      setLoadingItems((prev) => {
+        const next = new Set(prev);
+        next.delete(item.productId);
+        return next;
+      });
+    }
+  };
+
   // 结算
   const handleCheckout = async () => {
+    const userId = user?.userId ? Number(user.userId) : undefined;
+    console.log('心愿单 handleCheckout - userId:', userId, 'selectedCount:', selectedCount);
+    
     if (!userId) {
       Toast.show({
         type: 'warning',
@@ -233,6 +414,8 @@ export default function FavoritePage() {
         productId: item.productId,
         num: item.num,
       }));
+      
+      console.log('心愿单 handleCheckout - orderData:', orderData);
 
       // 调用下单接口
       const res = await orderBuy({
@@ -292,11 +475,16 @@ export default function FavoritePage() {
   };
 
   const handleConfirmClear = async () => {
+    const userId = user?.userId ? Number(user.userId) : undefined;
+    console.log('心愿单 handleConfirmClear - userId:', userId);
+    
     if (!userId) return;
 
     try {
       // 删除选中的商品
       const selectedItems = cartItems.filter((item) => item.selected === 1);
+      console.log('心愿单 handleConfirmClear - 选中的商品数:', selectedItems.length);
+      
       for (const item of selectedItems) {
         await manageCart({
           userId,
@@ -308,12 +496,14 @@ export default function FavoritePage() {
         type: 'success',
         text1: t('wishlist.clearSuccess'),
       });
+      console.log('心愿单 handleConfirmClear - 清空成功，刷新列表');
       await fetchCartList();
       setShowClearDialog(false);
-    } catch (error) {
+    } catch (error: any) {
+      console.error('心愿单 handleConfirmClear - 错误:', error);
       Toast.show({
         type: 'error',
-        text1: t('wishlist.clearFailed'),
+        text1: error?.message || t('wishlist.clearFailed'),
       });
     }
   };
@@ -325,24 +515,12 @@ export default function FavoritePage() {
           headerShown: false,
         }}
       />
-      <View style={styles.container}>
-        {/* 自定义导航栏 */}
-        <View style={styles.header}>
-          <View style={styles.headerLeft}>
-            <Pressable
-              onPress={() => router.back()}
-              style={({ pressed }) => [
-                styles.backButton,
-                pressed && styles.backButtonPressed,
-              ]}
-            >
-              <Feather name="chevron-left" size={24} color="#FFFFFF" />
-            </Pressable>
-          </View>
-          <Text style={styles.headerTitle}>{t('wishlist.title')}</Text>
-          <View style={styles.headerRight} />
-        </View>
-
+      <KeyboardAvoidingView 
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={0}
+      >
+          <NavigationBar title={t('wishlist.title')} showBack={false} />
         {/* 内容区域 */}
         {isLoading ? (
           <View style={styles.loadingContainer}>
@@ -360,6 +538,10 @@ export default function FavoritePage() {
               style={styles.scrollView}
               contentContainerStyle={styles.scrollContent}
               showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
             >
               {cartItems.map((item) => {
                 const isItemLoading = loadingItems.has(item.productId);
@@ -421,7 +603,19 @@ export default function FavoritePage() {
                         <Feather name="minus" size={16} color="#FFFFFF" />
                       </Pressable>
                       <View style={styles.quantityValue}>
-                        <Text style={styles.quantityText}>{item.num}</Text>
+                        <TextInput
+                          style={styles.quantityInput}
+                          value={editingQuantities.has(item.productId) 
+                            ? editingQuantities.get(item.productId) 
+                            : String(item.num)}
+                          onChangeText={(value) => handleQuantityInputChange(item.productId, value)}
+                          onBlur={() => handleQuantityInputSubmit(item)}
+                          onSubmitEditing={() => handleQuantityInputSubmit(item)}
+                          keyboardType="number-pad"
+                          selectTextOnFocus
+                          editable={!isItemLoading}
+                          maxLength={3}
+                        />
                       </View>
                       <Pressable
                         onPress={() => !isItemLoading && handleQuantityChange(item, 1)}
@@ -488,7 +682,7 @@ export default function FavoritePage() {
           onLeftPress={() => setShowClearDialog(false)}
           onRightPress={handleConfirmClear}
         />
-      </View>
+      </KeyboardAvoidingView>
     </>
   );
 }
@@ -497,39 +691,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0E0E10',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingTop: Platform.OS === 'ios' ? 44 : 0,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#0E0E10',
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  headerLeft: {
-    width: 40,
-  },
-  headerRight: {
-    width: 40,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 20,
-  },
-  backButtonPressed: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: Colors.brand,
-    textAlign: 'center',
   },
   loadingContainer: {
     flex: 1,
@@ -556,7 +717,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 16,
-    paddingBottom: 24,
+    paddingBottom: 120,
     gap: 12,
   },
   cartItem: {
@@ -629,10 +790,20 @@ const styles = StyleSheet.create({
   quantityValue: {
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderRadius: 4,
-    minWidth: 24,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
+    minWidth: 32,
+    height: 24,
+    paddingHorizontal: 4,
+    justifyContent: 'center',
     alignItems: 'center',
+  },
+  quantityInput: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
+    width: '100%',
+    padding: 0,
+    margin: 0,
   },
   quantityText: {
     color: '#FFFFFF',
@@ -674,7 +845,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   totalPrice: {
-    color: Colors.brand,
+    color: Colors.gold,
     fontWeight: '600',
   },
   checkoutButton: {

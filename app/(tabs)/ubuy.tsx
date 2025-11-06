@@ -2,21 +2,22 @@ import ProductCard from '@/components/ProductCard';
 import WinnerAnnouncement from '@/components/WinnerAnnouncement';
 import { financeApi } from '@/services/api';
 import { getHomeBuys, getWillProducts, getZoneProducts, getZones } from '@/services/home';
+import { useBoundStore } from '@/store';
 import type { BuyerInfo, Product, Zone } from '@/types';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  ActivityIndicator,
-  Image,
-  Modal,
-  RefreshControl,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Image,
+    Modal,
+    RefreshControl,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 
 interface Coin {
@@ -26,8 +27,9 @@ interface Coin {
 
 export default function UbuyPage() {
   const { t } = useTranslation();
+  const user = useBoundStore(state => state.user);
+  const params = useLocalSearchParams<{ initialTab?: string }>();
   const [mounted, setMounted] = useState(false);
-  const [userId, setUserId] = useState<number | undefined>(undefined);
   const [zones, setZones] = useState<Zone[]>([]);
   const [coins, setCoins] = useState<Coin[]>([]);
   const [selectedTab, setSelectedTab] = useState<string>('');
@@ -41,6 +43,8 @@ export default function UbuyPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [isCoinDropdownOpen, setIsCoinDropdownOpen] = useState(false);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
+  const [coinButtonLayout, setCoinButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  const [sortButtonLayout, setSortButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
 
   // 构建币种选项列表
   const coinOptions = useMemo(() => {
@@ -60,20 +64,7 @@ export default function UbuyPage() {
   // 确保在客户端挂载后再获取数据
   useEffect(() => {
     setMounted(true);
-    loadUserId();
   }, []);
-
-  // 加载用户ID
-  const loadUserId = async () => {
-    try {
-      const storedUserId = await AsyncStorage.getItem('userId');
-      if (storedUserId) {
-        setUserId(Number(storedUserId));
-      }
-    } catch (error) {
-      console.error('加载用户ID失败:', error);
-    }
-  };
 
   // 加载初始数据
   const loadInitialData = async () => {
@@ -92,13 +83,10 @@ export default function UbuyPage() {
       setCoins(coinsData);
       setBuys(buysData);
 
-      // 设置默认选中第一个专区
-      if (zonesData.length > 0) {
-        setSelectedTab(zonesData[0].zoneTitle);
-        setSelectedZoneId(zonesData[0].zoneId);
-      }
+      return zonesData;
     } catch (error) {
       console.error('加载初始数据失败:', error);
+      return [];
     }
   };
 
@@ -107,8 +95,12 @@ export default function UbuyPage() {
     try {
       setLoading(true);
 
+      const userId = user?.userId ? Number(user.userId) : undefined;
+      console.log('Ubuy loadProducts - user:', user);
+      console.log('Ubuy loadProducts - userId:', userId, '类型:', typeof userId);
+
       const isComing = selectedTab === t('zone.comingSoon');
-      const params = {
+      const requestParams = {
         pageNo: 1,
         pageSize: 50,
         coinId: selectedCoinId,
@@ -117,10 +109,10 @@ export default function UbuyPage() {
 
       let productsRes;
       if (isComing) {
-        productsRes = await getWillProducts(params);
+        productsRes = await getWillProducts(requestParams);
       } else if (selectedZoneId) {
         productsRes = await getZoneProducts({
-          ...params,
+          ...requestParams,
           zoneId: selectedZoneId,
           userId: userId,
         });
@@ -139,22 +131,42 @@ export default function UbuyPage() {
   // 当mounted变化时加载初始数据
   useEffect(() => {
     if (mounted) {
-      loadInitialData();
+      loadInitialData().then((zonesData) => {
+        // 根据路由参数或默认设置选中的tab
+        if (params.initialTab === 'coming') {
+          // 即将揭晓
+          setSelectedTab(t('zone.comingSoon'));
+          setSelectedZoneId(undefined);
+        } else if (zonesData.length > 0) {
+          // 默认选中第一个专区
+          setSelectedTab(zonesData[0].zoneTitle);
+          setSelectedZoneId(zonesData[0].zoneId);
+        }
+      });
     }
-  }, [mounted]);
+  }, [mounted, params.initialTab, t]);
 
   // 当选中的tab、币种、排序方式变化时加载商品数据
   useEffect(() => {
     if (mounted && selectedTab) {
       loadProducts();
     }
-  }, [mounted, selectedTab, selectedZoneId, selectedCoinId, sortBy, userId]);
+  }, [mounted, selectedTab, selectedZoneId, selectedCoinId, sortBy, user]);
+
+  // 每次页面聚焦时重新加载数据
+  useFocusEffect(
+    useCallback(() => {
+      if (mounted && selectedTab) {
+        loadProducts();
+      }
+    }, [mounted, selectedTab, selectedZoneId, selectedCoinId, sortBy, user])
+  );
 
   // 下拉刷新
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     loadProducts();
-  }, [selectedTab, selectedZoneId, selectedCoinId, sortBy, userId]);
+  }, [selectedTab, selectedZoneId, selectedCoinId, sortBy, user]);
 
   // 生成标签数据
   const tabsData = useMemo(() => {
@@ -252,6 +264,13 @@ export default function UbuyPage() {
             <TouchableOpacity
               style={styles.filterButton}
               onPress={() => setIsCoinDropdownOpen(true)}
+              onLayout={(event) => {
+                const { x, y, width, height } = event.nativeEvent.layout;
+                // 需要获取相对于屏幕的位置
+                event.target.measure((fx, fy, w, h, px, py) => {
+                  setCoinButtonLayout({ x: px, y: py, width: w, height: h });
+                });
+              }}
             >
               <Text style={styles.filterButtonText}>{selectedCoin}</Text>
               <Image
@@ -266,6 +285,13 @@ export default function UbuyPage() {
             <TouchableOpacity
               style={styles.filterButton}
               onPress={() => setIsSortDropdownOpen(true)}
+              onLayout={(event) => {
+                const { x, y, width, height } = event.nativeEvent.layout;
+                // 需要获取相对于屏幕的位置
+                event.target.measure((fx, fy, w, h, px, py) => {
+                  setSortButtonLayout({ x: px, y: py, width: w, height: h });
+                });
+              }}
             >
               <Text style={styles.filterButtonText} numberOfLines={1}>
                 {t('zone.sortBy')}: {sortOptions.find((opt) => opt.value === sortBy)?.label}
@@ -321,21 +347,31 @@ export default function UbuyPage() {
           activeOpacity={1}
           onPress={() => setIsCoinDropdownOpen(false)}
         >
-          <View style={styles.modalContent}>
-            <ScrollView style={styles.modalScrollView}>
+          <View
+            style={[
+              styles.dropdownContent,
+              {
+                position: 'absolute',
+                top: coinButtonLayout.y + coinButtonLayout.height + 4,
+                left: coinButtonLayout.x,
+                width: coinButtonLayout.width,
+              },
+            ]}
+          >
+            <ScrollView style={styles.dropdownScrollView}>
               {coinOptions.map((coin) => (
                 <TouchableOpacity
                   key={coin.coinId}
                   style={[
-                    styles.modalItem,
-                    selectedCoin === coin.coinName && styles.modalItemActive,
+                    styles.dropdownItem,
+                    selectedCoin === coin.coinName && styles.dropdownItemActive,
                   ]}
                   onPress={() => handleCoinSelect(coin)}
                 >
                   <Text
                     style={[
-                      styles.modalItemText,
-                      selectedCoin === coin.coinName && styles.modalItemTextActive,
+                      styles.dropdownItemText,
+                      selectedCoin === coin.coinName && styles.dropdownItemTextActive,
                     ]}
                   >
                     {coin.coinName}
@@ -359,20 +395,30 @@ export default function UbuyPage() {
           activeOpacity={1}
           onPress={() => setIsSortDropdownOpen(false)}
         >
-          <View style={styles.modalContent}>
+          <View
+            style={[
+              styles.dropdownContent,
+              {
+                position: 'absolute',
+                top: sortButtonLayout.y + sortButtonLayout.height + 4,
+                left: sortButtonLayout.x,
+                width: sortButtonLayout.width,
+              },
+            ]}
+          >
             {sortOptions.map((option) => (
               <TouchableOpacity
                 key={option.value}
                 style={[
-                  styles.modalItem,
-                  sortBy === option.value && styles.modalItemActive,
+                  styles.dropdownItem,
+                  sortBy === option.value && styles.dropdownItemActive,
                 ]}
                 onPress={() => handleSortSelect(option.value)}
               >
                 <Text
                   style={[
-                    styles.modalItemText,
-                    sortBy === option.value && styles.modalItemTextActive,
+                    styles.dropdownItemText,
+                    sortBy === option.value && styles.dropdownItemTextActive,
                   ]}
                 >
                   {option.label}
@@ -418,7 +464,7 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
   },
   tabText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
   },
   tabTextActive: {
@@ -489,36 +535,40 @@ const styles = StyleSheet.create({
   // Modal样式
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
-  modalContent: {
+  dropdownContent: {
     backgroundColor: '#1D1D1D',
-    borderRadius: 12,
+    borderRadius: 8,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.1)',
-    width: '80%',
-    maxHeight: '60%',
     overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
-  modalScrollView: {
-    maxHeight: 300,
+  dropdownScrollView: {
+    maxHeight: 240,
   },
-  modalItem: {
+  dropdownItem: {
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255, 255, 255, 0.05)',
   },
-  modalItemActive: {
+  dropdownItemActive: {
     backgroundColor: 'rgba(103, 65, 255, 0.1)',
   },
-  modalItemText: {
+  dropdownItemText: {
     color: '#FFFFFF',
     fontSize: 14,
   },
-  modalItemTextActive: {
+  dropdownItemTextActive: {
     color: '#6741FF',
     fontWeight: '600',
   },

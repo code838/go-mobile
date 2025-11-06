@@ -1,20 +1,23 @@
 import Countdown from '@/components/Countdown';
+import NavigationBar from '@/components/NavigationBar';
 import { IMG_BASE_URL } from '@/constants/api';
 import { urls } from '@/constants/urls';
 import { useBoundStore } from '@/store';
 import { request } from '@/utils/request';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   Image,
+  Keyboard,
   Platform,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
@@ -93,8 +96,11 @@ export default function ProductDetailPage() {
   const [productDetail, setProductDetail] = useState<ProductDetail | null>(null);
   const [activeTab, setActiveTab] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [quantityInput, setQuantityInput] = useState('1');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isInCart, setIsInCart] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const quantityInputRef = useRef<TextInput>(null);
   
   // 列表数据
   const [buyUsers, setBuyUsers] = useState<BuyUser[]>([]);
@@ -113,10 +119,15 @@ export default function ProductDetailPage() {
     ? [t('productDetail.participantRecords'), t('productDetail.calculationResult')] 
     : [t('productDetail.participantRecords'), t('productDetail.recentDraws')];
 
+  // 监听 isInCart 状态变化
+  useEffect(() => {
+    console.log(`商品详情[${productId}] - isInCart 状态变化为:`, isInCart);
+  }, [isInCart]);
+
   // 获取商品详情
   useEffect(() => {
     fetchProductDetail();
-  }, [productId, serialNumber]);
+  }, [productId, serialNumber, user]);
 
   // 获取参与记录
   useEffect(() => {
@@ -139,18 +150,47 @@ export default function ProductDetailPage() {
     }
   }, [activeTab, isWinnerView]);
 
+  // 监听键盘事件
+  useEffect(() => {
+    const keyboardWillShowListener = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      (e) => {
+        setKeyboardHeight(e.endCoordinates.height);
+      }
+    );
+    const keyboardWillHideListener = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => {
+        setKeyboardHeight(0);
+      }
+    );
+
+    return () => {
+      keyboardWillShowListener.remove();
+      keyboardWillHideListener.remove();
+    };
+  }, []);
+
   const fetchProductDetail = async () => {
     try {
       setLoading(true);
+      const userId = user ? Number(user.userId) : undefined;
+      console.log('商品详情 fetchProductDetail - user:', user);
+      console.log('商品详情 fetchProductDetail - userId:', userId, '类型:', typeof userId);
+      
       const apiUrl = (urls as any).productDetail || `${urls.home.replace('/home', '/product/detail')}`;
-      const response = await request.post(apiUrl, {
+      const requestParams = {
         productId,
         serialNumber,
-        userId: user ? Number(user.userId) : undefined,
-      });
+        userId,
+      };
+      console.log('商品详情 fetchProductDetail - 请求参数:', JSON.stringify(requestParams));
+      
+      const response = await request.post(apiUrl, requestParams);
       
       if (response?.data?.code === 0) {
         const data = response.data.data;
+        console.log('商品详情 - 获取到的 data.cart:', data.cart);
         setProductDetail(data);
         setIsInCart(data.cart || false);
       }
@@ -223,29 +263,70 @@ export default function ProductDetailPage() {
   const handleToggleCart = async () => {
     // 检查是否登录 - 参考 (guard)/_layout.tsx 的处理方式
     if (!user) {
+      console.log('商品详情 handleToggleCart - user 为空，跳转到登录');
       router.push('/(auth)/login');
       return;
     }
 
     try {
       const newCartState = !isInCart;
-      await request.post(urls.cartManage, {
-        userId: Number(user.userId),
+      console.log('商品详情 handleToggleCart - 当前状态:', isInCart, '目标状态:', newCartState);
+      console.log('商品详情 handleToggleCart - user.userId:', user.userId, '类型:', typeof user.userId);
+      
+      const userIdNumber = Number(user.userId);
+      console.log('商品详情 handleToggleCart - 转换后的 userId:', userIdNumber, '是否为 NaN:', isNaN(userIdNumber));
+      
+      // 验证 userId 是否有效
+      if (!userIdNumber || isNaN(userIdNumber)) {
+        console.error('商品详情 handleToggleCart - userId 无效:', user.userId);
+        Toast.show({
+          type: 'error',
+          text1: t('productCard.invalidUserId', { defaultValue: '用户信息无效，请重新登录' }),
+        });
+        return;
+      }
+
+      const requestParams = {
+        userId: userIdNumber,
         productId,
         type: newCartState ? 1 : 2,
         num: quantity,
-      });
+      };
+      console.log('商品详情 handleToggleCart - 请求参数:', JSON.stringify(requestParams));
+
+      const response = await request.post(urls.cartManage, requestParams);
       
+      console.log('商品详情 manageCart 响应:', response?.data);
+      
+      // 成功：立即更新本地状态
       setIsInCart(newCartState);
+      console.log('商品详情 状态更新成功，新状态:', newCartState);
+      
       Toast.show({
         type: 'success',
         text1: newCartState ? t('productCard.addedToWishlist') : t('productCard.removedFromWishlist'),
       });
     } catch (error: any) {
-      Toast.show({
-        type: 'error',
-        text1: error?.response?.data?.msg || t('productCard.operationFailed'),
-      });
+      console.error('商品详情 handleToggleCart - 捕获错误:', error);
+      console.error('商品详情 handleToggleCart - 错误消息:', error?.message);
+      
+      // 检查是否是 code: 23（商品已在心愿单中）
+      if (error?.message?.includes('商品已在心愿单中') || error?.message?.includes('already in cart')) {
+        console.log('商品详情 - 商品已在心愿单中，同步本地状态为 true');
+        setIsInCart(true);
+        Toast.show({
+          type: 'info',
+          text1: error?.message || '商品已在心愿单中',
+        });
+      } else {
+        // 其他错误
+        const errorMsg = error?.message || error?.response?.data?.msg || t('productCard.operationFailed', { defaultValue: '操作失败' });
+        console.log('商品详情 - 操作失败:', errorMsg);
+        Toast.show({
+          type: 'error',
+          text1: errorMsg,
+        });
+      }
     }
   };
 
@@ -265,21 +346,39 @@ export default function ProductDetailPage() {
         data: [{ productId, num: quantity }],
       });
       
-      if (response?.data?.code === 0) {
+      console.log('订单创建响应:', response?.data);
+      
+      if (response?.data?.code === 0 || response?.data?.code === 200) {
+        const orderId = response.data.data?.orderId || response.data.data;
+        console.log('获取到的 orderId:', orderId);
+        
+        if (!orderId) {
+          Toast.show({
+            type: 'error',
+            text1: t('productCard.orderFailed'),
+          });
+          return;
+        }
+        
         router.push({
           pathname: '/confirm-order',
-          params: { orderId: response.data.data?.orderId },
+          params: { orderId: String(orderId) },
         } as any);
       } else {
+        // 显示服务器返回的错误信息
+        console.log('订单创建失败 - code:', response?.data?.code, 'msg:', response?.data?.msg);
         Toast.show({
           type: 'error',
           text1: response?.data?.msg || t('productCard.orderFailed'),
         });
       }
     } catch (error: any) {
+      console.error('创建订单失败:', error);
+      // 优先显示服务器返回的错误信息，然后是错误消息，最后是默认文本
+      const errorMsg = error?.response?.data?.msg || error?.message || t('productCard.orderFailed');
       Toast.show({
         type: 'error',
-        text1: error?.response?.data?.msg || t('productCard.orderFailed'),
+        text1: errorMsg,
       });
     } finally {
       setIsSubmitting(false);
@@ -287,21 +386,60 @@ export default function ProductDetailPage() {
   };
 
   const handleDecrement = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
+    // 从输入框的当前值计算
+    const currentQuantity = parseInt(quantityInput) || 1;
+    if (currentQuantity > 1) {
+      const newQuantity = currentQuantity - 1;
+      setQuantity(newQuantity);
+      setQuantityInput(String(newQuantity));
     }
   };
 
   const handleIncrement = () => {
+    // 从输入框的当前值计算
+    const currentQuantity = parseInt(quantityInput) || 1;
     const remainingSlots = productDetail ? productDetail.totalPerson - productDetail.joinPerson : 0;
-    if (quantity < remainingSlots) {
-      setQuantity(quantity + 1);
+    if (currentQuantity < remainingSlots) {
+      const newQuantity = currentQuantity + 1;
+      setQuantity(newQuantity);
+      setQuantityInput(String(newQuantity));
     } else {
       Toast.show({
         type: 'warning',
         text1: t('productCard.maxParticipantLimit', { count: remainingSlots }),
       });
     }
+  };
+
+  const handleQuantityInputChange = (text: string) => {
+    // 只允许输入数字
+    const numericText = text.replace(/[^0-9]/g, '');
+    setQuantityInput(numericText);
+    
+    // 实时更新 quantity 状态，但允许临时为空
+    const numValue = parseInt(numericText);
+    if (!isNaN(numValue) && numValue > 0) {
+      setQuantity(numValue);
+    }
+  };
+
+  const handleQuantityInputBlur = () => {
+    const remainingSlots = productDetail ? productDetail.totalPerson - productDetail.joinPerson : 0;
+    let newQuantity = parseInt(quantityInput) || 1;
+    
+    // 限制在1到剩余名额之间
+    if (newQuantity < 1) {
+      newQuantity = 1;
+    } else if (newQuantity > remainingSlots) {
+      newQuantity = remainingSlots;
+      Toast.show({
+        type: 'warning',
+        text1: t('productCard.maxParticipantLimit', { count: remainingSlots }),
+      });
+    }
+    
+    setQuantity(newQuantity);
+    setQuantityInput(String(newQuantity));
   };
 
   const formatTimeAgo = (timestamp: number): string => {
@@ -317,6 +455,16 @@ export default function ProductDetailPage() {
     if (hours < 24) return t('productDetail.hoursAgo', { count: hours });
     if (days === 1) return t('productDetail.daysHoursAgo', { days: 1, hours: hours % 24 });
     return t('productDetail.daysAgo', { count: days });
+  };
+
+  const formatTimestampToHMS = (timestamp: number | string): string => {
+    const ts = typeof timestamp === 'string' ? parseInt(timestamp) : timestamp;
+    const date = new Date(ts);
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    const milliseconds = date.getMilliseconds().toString().padStart(3, '0');
+    return `${hours}:${minutes}:${seconds}.${milliseconds}`;
   };
 
   if (loading) {
@@ -343,37 +491,34 @@ export default function ProductDetailPage() {
 
   return (
     <View style={styles.container}>
+      {/* 导航栏 */}
+      <NavigationBar 
+        title={t('productDetail.title')}
+        rightContent={
+          <TouchableOpacity 
+            onPress={() => {
+              console.log(`商品详情 点击爱心按钮 - 当前 isInCart: ${isInCart}, 图片: ${isInCart ? 'icon-heart-filled.png' : 'icon-heart.png'}`);
+              handleToggleCart();
+            }} 
+            style={styles.heartButton}
+          >
+            <Image
+              source={
+                isInCart
+                  ? require('@/assets/images/icon-heart-filled.png')
+                  : require('@/assets/images/icon-heart.png')
+              }
+              style={styles.heartIcon}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        }
+      />
+      
       <ScrollView 
         style={styles.scrollView} 
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingTop: insets.top }
-        ]}
+        contentContainerStyle={styles.scrollContent}
       >
-        {/* 标题栏 */}
-        <View style={styles.header}>
-          <TouchableOpacity 
-            onPress={() => router.back()} 
-            style={styles.backButton}
-          >
-            <Text style={styles.backButtonText}>←</Text>
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>{t('productDetail.title')}</Text>
-          {!isWinnerView ? (
-            <TouchableOpacity onPress={handleToggleCart} style={styles.headerAction}>
-              <Image
-                source={
-                  isInCart
-                    ? require('@/assets/images/icon-heart-filled.png')
-                    : require('@/assets/images/icon-heart.png')
-                }
-                style={styles.heartIcon}
-              />
-            </TouchableOpacity>
-          ) : (
-            <View style={styles.headerAction} />
-          )}
-        </View>
 
         {/* 商品信息卡片 */}
         <View style={styles.productCard}>
@@ -402,11 +547,15 @@ export default function ProductDetailPage() {
 
           {/* 标题 */}
           <Text style={styles.productTitle}>
-            {t('productDetail.productTitleWithPeriod', {
-              name: productDetail.title,
-              period: productDetail.serialNumber,
-            })}
+            （第 {productDetail.serialNumber} 期）{productDetail.title}
           </Text>
+          
+          {/* 副标题 */}
+          {productDetail.subTitle && (
+            <Text style={styles.productSubTitle}>
+              {productDetail.subTitle}
+            </Text>
+          )}
 
           {/* 统计信息 */}
           <View style={styles.statsGrid}>
@@ -512,7 +661,7 @@ export default function ProductDetailPage() {
                         }}
                         style={styles.avatar}
                       />
-                      <Text style={styles.tableCell} numberOfLines={1}>
+                      <Text style={styles.userNameText} numberOfLines={1}>
                         {user.nickName}
                       </Text>
                     </View>
@@ -562,11 +711,13 @@ export default function ProductDetailPage() {
                     <View style={styles.userCell}>
                       <Image
                         source={{
-                          uri: `https://api.dicebear.com/7.x/pixel-art/svg?seed=${draw.owner}`,
+                          uri: draw.ownerImage
+                            ? `${IMG_BASE_URL}${draw.ownerImage}`
+                            : `https://api.dicebear.com/7.x/pixel-art/svg?seed=${draw.owner}`,
                         }}
                         style={styles.avatar}
                       />
-                      <Text style={styles.tableCell} numberOfLines={1}>
+                      <Text style={styles.userNameText} numberOfLines={1}>
                         {draw.owner}
                       </Text>
                     </View>
@@ -611,7 +762,7 @@ export default function ProductDetailPage() {
                       <Text style={styles.calcTimeText}>
                         {new Date(item.buyTime).toLocaleString()}
                       </Text>
-                      <Text style={styles.calcTimestamp}>（{item.timeStamp}）</Text>
+                      <Text style={styles.calcTimestamp}>（{formatTimestampToHMS(item.timeStamp)}）</Text>
                     </View>
                     <View style={styles.userCell}>
                       <Image
@@ -622,7 +773,7 @@ export default function ProductDetailPage() {
                         }}
                         style={styles.avatar}
                       />
-                      <Text style={styles.tableCell} numberOfLines={1}>
+                      <Text style={styles.userNameText} numberOfLines={1}>
                         {item.productName}
                       </Text>
                     </View>
@@ -635,7 +786,7 @@ export default function ProductDetailPage() {
                         }}
                         style={styles.avatar}
                       />
-                      <Text style={styles.tableCell} numberOfLines={1}>
+                      <Text style={styles.userNameText} numberOfLines={1}>
                         {item.nickName}
                       </Text>
                     </View>
@@ -647,7 +798,6 @@ export default function ProductDetailPage() {
             {/* 计算结果 */}
             {calcResultData.calcResult && (
               <View style={styles.resultBox}>
-                <View style={styles.resultBlur} />
                 <View style={styles.resultContent}>
                   <Text style={styles.resultTitle}>{t('productDetail.calculationResultTitle')}</Text>
                   <Text style={styles.resultText}>
@@ -681,7 +831,7 @@ export default function ProductDetailPage() {
       {!isWinnerView && !isProgressComplete && (
         <View style={[
           styles.bottomBar,
-          { bottom: insets.bottom > 0 ? insets.bottom : 0 }
+          { bottom: keyboardHeight > 0 ? keyboardHeight : (insets.bottom > 0 ? insets.bottom : 0) }
         ]}>
           <View style={styles.totalSection}>
             <Text style={styles.totalLabel}>{t('productDetail.total')}</Text>
@@ -701,9 +851,16 @@ export default function ProductDetailPage() {
                 <Text style={styles.quantityButtonText}>-</Text>
               </TouchableOpacity>
 
-              <View style={styles.quantityDisplay}>
-                <Text style={styles.quantityText}>{quantity}</Text>
-              </View>
+              <TextInput
+                ref={quantityInputRef}
+                style={styles.quantityInput}
+                value={quantityInput}
+                onChangeText={handleQuantityInputChange}
+                onBlur={handleQuantityInputBlur}
+                keyboardType="number-pad"
+                maxLength={4}
+                selectTextOnFocus
+              />
 
               <TouchableOpacity
                 onPress={handleIncrement}
@@ -726,7 +883,7 @@ export default function ProductDetailPage() {
               {isSubmitting ? (
                 <ActivityIndicator size="small" color="#FFFFFF" />
               ) : (
-                <Text style={styles.joinButtonText}>{t('productCard.joinNowShort')}</Text>
+                <Text style={styles.joinButtonText}>{t('productCard.joinNow')}</Text>
               )}
             </TouchableOpacity>
           </View>
@@ -762,41 +919,15 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 120,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backButtonText: {
-    fontSize: 28,
-    color: '#FFFFFF',
-    fontWeight: '300',
-  },
-  headerTitle: {
-    flex: 1,
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#6741FF',
-    textAlign: 'center',
-  },
-  headerAction: {
-    width: 40,
-    height: 40,
+  heartButton: {
+    width: 28,
+    height: 28,
     justifyContent: 'center',
     alignItems: 'center',
   },
   heartIcon: {
-    width: 24,
-    height: 24,
-    tintColor: '#FFFFFF',
+    width: 20,
+    height: 20,
   },
   productCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
@@ -843,6 +974,14 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     textAlign: 'center',
     marginBottom: 8,
+  },
+  productSubTitle: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: 'rgba(255, 255, 255, 0.6)',
+    textAlign: 'center',
+    marginBottom: 8,
+    paddingHorizontal: 16,
   },
   statsGrid: {
     flexDirection: 'row',
@@ -947,9 +1086,9 @@ const styles = StyleSheet.create({
   },
   tableHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingHorizontal: 8,
   },
   tableHeaderText: {
     flex: 1,
@@ -960,13 +1099,11 @@ const styles = StyleSheet.create({
   },
   tableRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 8,
-    marginBottom: 8,
   },
   tableCell: {
     flex: 1,
@@ -980,12 +1117,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 4,
+    gap: 0,
   },
   avatar: {
     width: 16,
     height: 16,
     borderRadius: 8,
+  },
+  userNameText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: 'rgba(255, 255, 255, 0.8)',
   },
   emptyState: {
     paddingVertical: 24,
@@ -1047,18 +1189,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginTop: 12,
-    position: 'relative',
-    overflow: 'hidden',
-  },
-  resultBlur: {
-    position: 'absolute',
-    right: 60,
-    bottom: 20,
-    width: 95,
-    height: 101,
-    borderRadius: 999,
-    backgroundColor: '#67E8F2',
-    opacity: 0.3,
   },
   resultContent: {
     gap: 8,
@@ -1077,7 +1207,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    backgroundColor: '#0E0E10',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -1135,18 +1265,16 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#FFFFFF',
   },
-  quantityDisplay: {
-    width: 24,
+  quantityInput: {
+    width: 48,
     height: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderRadius: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  quantityText: {
     fontSize: 14,
     fontWeight: '600',
     color: '#FFFFFF',
+    textAlign: 'center',
+    paddingHorizontal: 4,
   },
   joinButton: {
     backgroundColor: '#6741FF',

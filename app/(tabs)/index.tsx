@@ -3,11 +3,11 @@ import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ProductCard from '@/components/ProductCard';
 import WinnerAnnouncement from '@/components/WinnerAnnouncement';
 import { getCarousel, getHome, getHomeBuys } from '@/services/home';
+import { useBoundStore } from '@/store';
 import type { Carousel as CarouselType, Home, HomeBuys } from '@/types';
 import { toast } from '@/utils/toast';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
@@ -24,8 +24,8 @@ import {
 export default function HomePage() {
   const { t } = useTranslation();
   const router = useRouter();
+  const user = useBoundStore(state => state.user);
   const [mounted, setMounted] = useState(false);
-  const [userId, setUserId] = useState<number | undefined>(undefined);
   const [homeData, setHomeData] = useState<Home | undefined>(undefined);
   const [homeBuysData, setHomeBuysData] = useState<HomeBuys | undefined>(undefined);
   const [carouselData, setCarouselData] = useState<CarouselType[]>([]);
@@ -35,24 +35,15 @@ export default function HomePage() {
   // 确保在客户端挂载后再获取数据
   useEffect(() => {
     setMounted(true);
-    loadUserId();
   }, []);
-
-  // 加载用户ID
-  const loadUserId = async () => {
-    try {
-      const storedUserId = await AsyncStorage.getItem('userId');
-      if (storedUserId) {
-        setUserId(Number(storedUserId));
-      }
-    } catch (error) {
-      console.error('加载用户ID失败:', error);
-    }
-  };
 
   // 加载首页数据
   const loadHomeData = async () => {
     try {
+      const userId = user?.userId ? Number(user.userId) : undefined;
+      console.log('首页 loadHomeData - user:', user);
+      console.log('首页 loadHomeData - userId:', userId, '类型:', typeof userId);
+
       const [homeRes, homeBuysRes, carouselRes] = await Promise.all([
         getHome(userId ? { userId } : undefined),
         getHomeBuys(),
@@ -70,12 +61,21 @@ export default function HomePage() {
     }
   };
 
-  // 当mounted或userId变化时加载数据
+  // 当mounted或user变化时加载数据
   useEffect(() => {
     if (mounted) {
       loadHomeData();
     }
-  }, [mounted, userId]);
+  }, [mounted, user]);
+
+  // 每次页面聚焦时重新加载数据
+  useFocusEffect(
+    useCallback(() => {
+      if (mounted) {
+        loadHomeData();
+      }
+    }, [mounted, user])
+  );
 
   // 下拉刷新
   const onRefresh = () => {
@@ -165,10 +165,7 @@ export default function HomePage() {
             <Text style={styles.sectionTitle}>{t('home.hotProducts')}</Text>
           </View>
           <TouchableOpacity
-            onPress={() => router.push({
-              pathname: '/zone',
-              params: { tab: '1U专区', zoneId: '1' },
-            } as any)}
+            onPress={() => router.push('/(tabs)/ubuy')}
           >
             <Image 
               source={require('@/assets/images/icon-chevron-right.png')} 
@@ -202,8 +199,8 @@ export default function HomePage() {
           </View>
           <TouchableOpacity
             onPress={() => router.push({
-              pathname: '/zone',
-              params: { tab: 'coming' },
+              pathname: '/(tabs)/ubuy',
+              params: { initialTab: 'coming' },
             } as any)}
           >
             <Image 
@@ -237,10 +234,7 @@ export default function HomePage() {
             <Text style={styles.sectionTitle}>{t('home.newArrivals')}</Text>
           </View>
           <TouchableOpacity
-            onPress={() => router.push({
-              pathname: '/zone',
-              params: { tab: '1U专区', zoneId: '1' },
-            } as any)}
+            onPress={() => router.push('/(tabs)/ubuy')}
           >
             <Image 
               source={require('@/assets/images/icon-chevron-right.png')} 
@@ -365,7 +359,7 @@ const styles = StyleSheet.create({
   },
   // 商品区块样式
   section: {
-    marginTop: 24,
+    marginTop: 10,
   },
   sectionHeader: {
     flexDirection: 'row',

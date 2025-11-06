@@ -338,7 +338,13 @@
     "total": "总计",
     "productValue": "商品价值",
     "lotteryCode": "中奖编号",
-    "copySuccess": "复制成功"
+    "copySuccess": "复制成功",
+    "cancelOrder": "取消订单",
+    "goToPay": "去支付",
+    "cancelSuccess": "订单已取消",
+    "cancelFailed": "取消订单失败",
+    "paymentSuccess": "支付成功",
+    "paymentFailed": "支付失败"
   },
   "protocol": {
     "userAgreement": "用户协议",
@@ -491,6 +497,8 @@
     "quantity": "数量",
     "status": "状态",
     "statusPending": "正在抽奖",
+    "loginRequired": "请先登录",
+    "orderIdMissing": "订单ID缺失",
     "statusPaid": "已支付",
     "statusCancelled": "已取消",
     "statusUnknown": "未知",
@@ -544,12 +552,15 @@
     "clear": "清空",
     "remove": "移除",
     "loading": "加载中...",
-    "emptyMessage": "心愿单是空的",
+    "emptyMessage": "您的心愿单还是空的呦",
     "noSelection": "请选择商品",
     "operationFailed": "操作失败",
     "removeSuccess": "移除成功",
     "removeFailed": "移除失败",
     "updateQuantityFailed": "更新数量失败",
+    "invalidQuantity": "请输入有效的数量（大于0）",
+    "maxQuantityReached": "已达到最大数量 {{max}}",
+    "exceedMaxQuantity": "数量不能超过 {{max}}（剩余可参与数量）",
     "clearSuccess": "清空成功",
     "clearFailed": "清空失败",
     "processing": "处理中...",
@@ -559,5 +570,17 @@
     "clearDialogContent": "确定要清空已选商品吗？",
     "cancel": "取消",
     "confirm": "确认"
+  },
+  "notifications": {
+    "title": "系统通知",
+    "noNotifications": "暂无消息通知",
+    "justNow": "刚刚",
+    "minutesAgo": "{{minutes}} 分钟前",
+    "hoursAgo": "{{hours}} 小时前",
+    "typeSystem": "系统消息",
+    "typeOrder": "订单消息",
+    "typePromotion": "活动消息",
+    "typeSecurity": "安全消息",
+    "loading": "加载中..."
   }
 }

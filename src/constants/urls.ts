@@ -30,6 +30,7 @@ export const urls = {
   homeBuys: `${apiUrl}/home/buys`,
   carousel: `${apiUrl}/carousel`,
   announcement: `${apiUrl}/announcement`,
+  message: `${apiUrl}/message`,
   
   // 购物车相关
   getCartList: `${apiUrl}/cart/list`,
@@ -70,8 +71,8 @@ export const urls = {
   
   // 商品详情相关
   productDetail: `${apiUrl}/product/detail`,
-  productBuyUsers: `${apiUrl}/product/buyUsers`,
-  productHistoryDraws: `${apiUrl}/product/historyDraws`,
+  productBuyUsers: `${apiUrl}/product/buyusers`,
+  productHistoryDraws: `${apiUrl}/history/draw/products`,
   productCalcResult: `${apiUrl}/product/calcResult`,
   // getAddressBookList: `${apiUrl}/address/withdraw/list`,
   // manageAddressBook: `${apiUrl}/address/withdraw/manage`,

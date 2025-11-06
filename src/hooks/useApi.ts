@@ -138,3 +138,11 @@ export const useOrderList = () => {
 export const useOrderDetail = () => {
   return useApi(financeApi.getOrderDetail);
 };
+
+export const usePayOrder = () => {
+  return useApi(financeApi.payOrder);
+};
+
+export const useCancelOrder = () => {
+  return useApi(financeApi.cancelOrder);
+};

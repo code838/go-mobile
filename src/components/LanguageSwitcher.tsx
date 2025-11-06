@@ -3,16 +3,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Modal,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 
 export default function LanguageSwitcher() {
   const { i18n } = useTranslation();
   const [visible, setVisible] = useState(false);
+  const [buttonLayout, setButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const currentLang = i18n.language;
 
   const switchLanguage = async (lang: 'en' | 'zh') => {
@@ -30,6 +31,13 @@ export default function LanguageSwitcher() {
       <TouchableOpacity
         style={styles.button}
         onPress={() => setVisible(true)}
+        onLayout={(event) => {
+          const { x, y, width, height } = event.nativeEvent.layout;
+          // 需要获取相对于屏幕的位置
+          event.target.measure((fx, fy, w, h, px, py) => {
+            setButtonLayout({ x: px, y: py, width: w, height: h });
+          });
+        }}
       >
         <Ionicons name="earth" size={20} color="#FFFFFF" />
       </TouchableOpacity>
@@ -45,7 +53,16 @@ export default function LanguageSwitcher() {
           activeOpacity={1}
           onPress={() => setVisible(false)}
         >
-          <View style={styles.dropdown}>
+          <View
+            style={[
+              styles.dropdown,
+              {
+                position: 'absolute',
+                top: buttonLayout.y + buttonLayout.height + 4,
+                right: 16,
+              },
+            ]}
+          >
             <TouchableOpacity
               style={[
                 styles.option,
@@ -97,11 +114,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-end',
-    paddingTop: 60,
-    paddingRight: 16,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   dropdown: {
     backgroundColor: '#1D1D1D',
@@ -110,6 +123,14 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.1)',
     width: 120,
     padding: 4,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
   option: {
     paddingHorizontal: 12,

@@ -1,24 +1,26 @@
+import NavigationBar from '@/components/NavigationBar';
 import { IMG_BASE_URL } from '@/constants/api';
 import { getHistoryProducts } from '@/services/home';
+import { useBoundStore } from '@/store';
 import type { ProductHistory } from '@/types';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   Image,
   RefreshControl,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 
 export default function LatestPage() {
   const { t } = useTranslation();
   const router = useRouter();
+  const user = useBoundStore(state => state.user);
   const [pageNo, setPageNo] = useState(1);
   const [historyProducts, setHistoryProducts] = useState<ProductHistory[]>([]);
   const [loading, setLoading] = useState(false);
@@ -45,7 +47,18 @@ export default function LatestPage() {
 
     setLoading(true);
     try {
-      const res = await getHistoryProducts({ pageNo: page, pageSize });
+      const userId = user?.userId ? Number(user.userId) : undefined;
+      console.log('最新揭晓 fetchProducts - user:', user);
+      console.log('最新揭晓 fetchProducts - userId:', userId, '类型:', typeof userId);
+      
+      const requestParams = {
+        pageNo: page,
+        pageSize,
+        userId,
+      };
+      console.log('最新揭晓 fetchProducts - 请求参数:', JSON.stringify(requestParams));
+      
+      const res = await getHistoryProducts(requestParams);
       const newProducts = res?.data?.data || [];
 
       if (page === 1) {
@@ -72,7 +85,16 @@ export default function LatestPage() {
   // 初始加载
   useEffect(() => {
     fetchProducts(1);
-  }, []);
+  }, [user]);
+
+  // 每次页面聚焦时重新加载数据
+  useFocusEffect(
+    useCallback(() => {
+      setPageNo(1);
+      setHasMore(true);
+      fetchProducts(1);
+    }, [user])
+  );
 
   // 加载更多
   const handleLoadMore = () => {
@@ -106,11 +128,11 @@ export default function LatestPage() {
   // 初始加载时显示加载状态
   if (initialLoading) {
     return (
-      <SafeAreaView style={styles.safeArea}>
+      <View style={styles.safeArea}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#6741FF" />
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
@@ -119,7 +141,8 @@ export default function LatestPage() {
   const remainingProducts = historyProducts?.slice(1) || [];
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.safeArea}>
+      <NavigationBar title={t('latest.title')} showBack={false} />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.content}
@@ -127,10 +150,6 @@ export default function LatestPage() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        {/* 页面标题 */}
-        <View style={styles.titleSection}>
-          <Text style={styles.pageTitle}>{t('latest.title')}</Text>
-        </View>
 
         {/* 最新揭晓商品 - 顶部特殊展示 */}
         {latestProduct && (
@@ -156,7 +175,7 @@ export default function LatestPage() {
             {/* 商品标题 */}
             <View style={styles.latestTitleContainer}>
               <Text style={styles.latestTitle} numberOfLines={1}>
-                {latestProduct.title}
+                （第 {latestProduct.serialNumber} 期）{latestProduct.title}
               </Text>
             </View>
 
@@ -344,7 +363,7 @@ export default function LatestPage() {
           </View>
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -365,17 +384,6 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 32,
   },
-  // 页面标题样式
-  titleSection: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  pageTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#6741FF',
-    textAlign: 'center',
-  },
   // 最新揭晓商品卡片样式
   latestCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
@@ -385,6 +393,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     marginBottom: 12,
     alignItems: 'center',
+    marginTop: 15
   },
   latestImageWrapper: {
     position: 'absolute',

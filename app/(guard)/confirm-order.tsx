@@ -1,18 +1,18 @@
 import NavigationBar from '@/components/NavigationBar';
 import { IMG_BASE_URL } from '@/constants/api';
 import { financeApi } from '@/services/api';
-import { useAuthStore } from '@/store/auth';
+import { useBoundStore } from '@/store';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-    ActivityIndicator,
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
@@ -62,7 +62,7 @@ export default function ConfirmOrderPage() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const insets = useSafeAreaInsets();
-  const { user } = useAuthStore();
+  const user = useBoundStore(state => state.user);
 
   const orderId = params.orderId as string;
 
@@ -74,27 +74,52 @@ export default function ConfirmOrderPage() {
 
   // 获取订单详情
   useEffect(() => {
-    if (!user?.userId || !orderId) return;
+    console.log('确认订单页面参数 - user:', user, 'orderId:', orderId);
+    
+    if (!user) {
+      console.error('用户未登录');
+      setLoading(false);
+      Toast.show({
+        type: 'error',
+        text1: t('confirmOrder.loginRequired'),
+      });
+      return;
+    }
+    
+    if (!orderId) {
+      console.error('订单ID缺失');
+      setLoading(false);
+      Toast.show({
+        type: 'error',
+        text1: t('confirmOrder.orderIdMissing'),
+      });
+      return;
+    }
 
     const fetchOrderDetail = async () => {
       try {
         setLoading(true);
+        console.log('开始获取订单详情 - userId:', user.userId, 'orderId:', orderId);
+        
         const response = await financeApi.getOrderDetail({
           userId: Number(user.userId),
           orderId,
           isOwner: false,
         });
 
+        console.log('订单详情响应:', response?.data);
+
         if (response.data.code === 0 || response.data.code === 200) {
           setOrderDetail(response.data.data);
         } else {
+          console.error('获取订单详情失败 - code:', response.data.code, 'msg:', response.data.msg);
           Toast.show({
             type: 'error',
             text1: response.data.msg || t('confirmOrder.loadFailed'),
           });
         }
       } catch (error: any) {
-        console.error('获取订单详情失败:', error);
+        console.error('获取订单详情异常:', error);
         Toast.show({
           type: 'error',
           text1: error?.response?.data?.msg || t('confirmOrder.loadFailed'),
@@ -105,7 +130,7 @@ export default function ConfirmOrderPage() {
     };
 
     fetchOrderDetail();
-  }, [user?.userId, orderId, t]);
+  }, [user, orderId, t]);
 
   // 计算剩余时间
   useEffect(() => {
@@ -155,7 +180,7 @@ export default function ConfirmOrderPage() {
 
   // 处理支付
   const handlePay = async () => {
-    if (!user?.userId || !orderId || isPayingSubmitting) return;
+    if (!user || !orderId || isPayingSubmitting) return;
 
     try {
       setIsPayingSubmitting(true);
@@ -172,7 +197,7 @@ export default function ConfirmOrderPage() {
           text1: t('confirmOrder.paymentSuccess'),
         });
         // 跳转到记录页面
-        router.replace('/(guard)/account/record/shopping');
+        router.replace('/(guard)/account/record');
       } else {
         Toast.show({
           type: 'error',
@@ -195,7 +220,7 @@ export default function ConfirmOrderPage() {
 
   // 处理取消订单
   const handleCancel = async () => {
-    if (!user?.userId || !orderId || isCancelingSubmitting) return;
+    if (!user || !orderId || isCancelingSubmitting) return;
 
     try {
       setIsCancelingSubmitting(true);
@@ -211,8 +236,7 @@ export default function ConfirmOrderPage() {
           type: 'success',
           text1: t('confirmOrder.cancelSuccess'),
         });
-        // 跳转到记录页面
-        router.replace('/(guard)/account/record/shopping');
+        router.back();
       } else {
         Toast.show({
           type: 'error',
@@ -236,7 +260,7 @@ export default function ConfirmOrderPage() {
   // 加载状态
   if (loading) {
     return (
-      <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={styles.container}>
         <NavigationBar title={t('confirmOrder.title')} />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#6741FF" />
@@ -249,7 +273,7 @@ export default function ConfirmOrderPage() {
   // 错误状态
   if (!orderDetail) {
     return (
-      <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={styles.container}>
         <NavigationBar title={t('confirmOrder.title')} />
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>{t('confirmOrder.loadFailed')}</Text>
@@ -267,7 +291,7 @@ export default function ConfirmOrderPage() {
   const products = orderDetail.products || [];
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={styles.container}>
       <NavigationBar title={t('confirmOrder.title')} />
 
       <ScrollView
@@ -313,17 +337,7 @@ export default function ConfirmOrderPage() {
               <Text style={styles.statusText}>
                 {getStatusText(orderDetail.status)}
               </Text>
-              <View style={styles.quantityContainer}>
-                <View style={styles.quantityButton}>
-                  <MinusIcon />
-                </View>
-                <View style={styles.quantityBox}>
-                  <Text style={styles.quantityText}>{product.productAmount}</Text>
-                </View>
-                <View style={styles.quantityButton}>
-                  <PlusIcon />
-                </View>
-              </View>
+              <Text style={styles.quantityText}>x {product.productAmount}</Text>
             </View>
           </View>
         ))}
@@ -510,6 +524,11 @@ const styles = StyleSheet.create({
   productRight: {
     alignItems: 'flex-end',
     gap: 4,
+  },
+  quantityText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
   },
   statusText: {
     color: '#6E6E70',

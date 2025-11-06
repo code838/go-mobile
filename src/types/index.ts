@@ -195,3 +195,27 @@ export interface ZoneProductsParams extends PaginationParams {
   userId?: number;
 }
 
+/**
+ * 消息信息
+ */
+export interface Message {
+  id: number | null;
+  uid: number | null;
+  title: string;
+  content: string;
+  language: string | null;
+  createtime: number;
+}
+
+/**
+ * 通知类型（用于前端显示）
+ */
+export interface Notification {
+  id: string;
+  title: string;
+  content: string;
+  time: number;
+  read: boolean;
+  type: 'system' | 'order' | 'promotion' | 'security';
+}
+

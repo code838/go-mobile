@@ -5,6 +5,7 @@ import type {
     CartManageParams,
     Home,
     HomeBuys,
+    Message,
     OrderBuyParams,
     OrderBuyResponse,
 } from '@/types';
@@ -96,4 +97,13 @@ export const getWillProducts = (params: any) =>
  */
 export const getHistoryProducts = (params: any) =>
   request.post(urls.getHistoryProducts, params);
+
+// ==================== 消息相关 ====================
+
+/**
+ * 获取消息列表
+ * @param params.userId - 用户ID（可选，未登录可不传）
+ */
+export const getMessage = (params?: { userId?: number }) =>
+  request.post<Message[]>(urls.message, params || {});
 

@@ -35,10 +35,26 @@ export default function ProductCard({
   const [isInCart, setIsInCart] = useState(product.cart || false);
   const [isCountdownExpired, setIsCountdownExpired] = useState(false);
 
+  // 组件挂载时打印初始状态
+  useEffect(() => {
+    console.log(`ProductCard[${product.productId}] - 初始 product.cart:`, product.cart, '初始 isInCart:', isInCart);
+    console.log(`ProductCard[${product.productId}] - user 对象:`, user);
+    console.log(`ProductCard[${product.productId}] - user.userId:`, user?.userId, '类型:', typeof user?.userId);
+    if (user?.userId) {
+      console.log(`ProductCard[${product.productId}] - Number(user.userId):`, Number(user.userId));
+    }
+  }, []);
+
   // 当 product.cart 变化时更新本地状态
   useEffect(() => {
+    console.log(`ProductCard[${product.productId}] - product.cart 变化:`, product.cart);
     setIsInCart(product.cart || false);
   }, [product.cart]);
+
+  // 监听 isInCart 状态变化
+  useEffect(() => {
+    console.log(`ProductCard[${product.productId}] - isInCart 状态变化为:`, isInCart);
+  }, [isInCart]);
 
   // 监听倒计时是否结束
   useEffect(() => {
@@ -87,13 +103,28 @@ export default function ProductCard({
         ],
       });
 
-      if (response?.data?.code === 0) {
+      console.log('订单创建响应:', response?.data);
+
+      if (response?.data?.code === 0 || response?.data?.code === 200) {
+        const orderId = response.data.data?.orderId || response.data.data;
+        console.log('获取到的 orderId:', orderId);
+        
+        if (!orderId) {
+          Toast.show({
+            type: 'error',
+            text1: t('orderFailed', { defaultValue: '下单失败' }),
+          });
+          return;
+        }
+        
         // 导航到确认订单页面
         router.push({
           pathname: '/confirm-order',
-          params: { orderId: response.data.data?.orderId },
+          params: { orderId: String(orderId) },
         } as any);
       } else {
+        // 显示服务器返回的错误信息
+        console.log('订单创建失败 - code:', response?.data?.code, 'msg:', response?.data?.msg);
         Toast.show({
           type: 'error',
           text1: response?.data?.msg || t('orderFailed', { defaultValue: '下单失败' }),
@@ -101,9 +132,11 @@ export default function ProductCard({
       }
     } catch (error: any) {
       console.error('下单失败:', error);
+      // 优先显示服务器返回的错误信息，然后是错误消息，最后是默认文本
+      const errorMsg = error?.response?.data?.msg || error?.message || t('orderFailed', { defaultValue: '下单失败' });
       Toast.show({
         type: 'error',
-        text1: error?.message || t('orderFailed', { defaultValue: '下单失败' }),
+        text1: errorMsg,
       });
     } finally {
       setIsSubmitting(false);
@@ -113,24 +146,46 @@ export default function ProductCard({
   const handleToggleCart = async () => {
     // 检查是否登录 - 参考 (guard)/_layout.tsx 的处理方式
     if (!user) {
+      console.log('handleToggleCart - user 为空，跳转到登录');
       router.push('/(auth)/login');
       return;
     }
 
     try {
       const newCartState = !isInCart;
+      console.log('handleToggleCart - 当前状态:', isInCart, '目标状态:', newCartState);
+      console.log('handleToggleCart - user.userId:', user.userId, '类型:', typeof user.userId);
+      
+      const userIdNumber = Number(user.userId);
+      console.log('handleToggleCart - 转换后的 userId:', userIdNumber, '是否为 NaN:', isNaN(userIdNumber));
+      
+      // 验证 userId 是否有效
+      if (!userIdNumber || isNaN(userIdNumber)) {
+        console.error('handleToggleCart - userId 无效:', user.userId);
+        Toast.show({
+          type: 'error',
+          text1: t('invalidUserId', { defaultValue: '用户信息无效，请重新登录' }),
+        });
+        return;
+      }
 
       // 调用购物车管理接口
       // type: 1-添加, 2-删除
-      await manageCart({
-        userId: Number(user.userId),
+      const requestParams = {
+        userId: userIdNumber,
         productId: product.productId,
         type: newCartState ? 1 : 2,
         num: quantity,
-      });
+      };
+      console.log('handleToggleCart - 请求参数:', JSON.stringify(requestParams));
+      
+      const response = await manageCart(requestParams);
 
-      // 立即更新本地状态
+      console.log('manageCart 响应:', response?.data);
+
+      // 成功：立即更新本地状态
       setIsInCart(newCartState);
+      console.log('状态更新成功，新状态:', newCartState);
 
       // 触发刷新
       if (onRefresh) {
@@ -150,11 +205,26 @@ export default function ProductCard({
         });
       }
     } catch (error: any) {
-      console.error('操作失败:', error);
-      Toast.show({
-        type: 'error',
-        text1: error?.response?.data?.msg || t('operationFailed', { defaultValue: '操作失败' }),
-      });
+      console.error('handleToggleCart - 捕获错误:', error);
+      console.error('handleToggleCart - 错误详情:', error?.response?.data);
+      
+      // 检查是否是 code: 23（商品已在心愿单中）
+      if (error?.message?.includes('商品已在心愿单中') || error?.message?.includes('already in cart')) {
+        console.log('商品已在心愿单中，同步本地状态为 true');
+        setIsInCart(true);
+        Toast.show({
+          type: 'info',
+          text1: error?.message || '商品已在心愿单中',
+        });
+      } else {
+        // 其他错误
+        const errorMsg = error?.message || error?.response?.data?.msg || t('operationFailed', { defaultValue: '操作失败' });
+        console.log('操作失败:', errorMsg);
+        Toast.show({
+          type: 'error',
+          text1: errorMsg,
+        });
+      }
     }
   };
 
@@ -194,6 +264,13 @@ export default function ProductCard({
       <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
         {product.title}
       </Text>
+      
+      {/* 副标题 */}
+      {product.subTitle && (
+        <Text style={styles.subTitle} numberOfLines={1} ellipsizeMode="tail">
+          {product.subTitle}
+        </Text>
+      )}
 
       {/* 信息网格 - 只显示两列 */}
       <View style={styles.infoGrid}>
@@ -273,7 +350,10 @@ export default function ProductCard({
         )}
 
         <TouchableOpacity 
-          onPress={handleToggleCart}
+          onPress={() => {
+            console.log(`点击爱心按钮 - 当前 isInCart: ${isInCart}, 图片: ${isInCart ? 'icon-heart-filled.png' : 'icon-heart.png'}`);
+            handleToggleCart();
+          }}
           style={styles.heartButton}
         >
           <Image
@@ -283,6 +363,7 @@ export default function ProductCard({
                 : require('@/assets/images/icon-heart.png')
             }
             style={styles.heartIcon}
+            resizeMode="contain"
           />
         </TouchableOpacity>
       </View>
@@ -323,6 +404,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     width: '100%',
   },
+  subTitle: {
+    color: 'rgba(255, 255, 255, 0.6)',
+    fontSize: 10,
+    fontWeight: '400',
+    textAlign: 'center',
+    width: '100%',
+  },
   infoGrid: {
     flexDirection: 'row',
     width: '100%',
@@ -335,12 +423,12 @@ const styles = StyleSheet.create({
   },
   priceText: {
     color: '#FFB800',
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '500',
   },
   valueText: {
     color: '#1AF578',
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '500',
   },
   infoLabel: {
@@ -436,7 +524,6 @@ const styles = StyleSheet.create({
   heartIcon: {
     width: 24,
     height: 24,
-    tintColor: '#FFFFFF',
   },
 });
 

@@ -28,7 +28,6 @@ export default function RootLayout() {
   const getThirdLoginInfo = useBoundStore(state => state.getThirdLoginInfo);
 
   const initApp = async () => {
-    
     await getCoinsMessage();
     await getThirdLoginInfo();
     SplashScreen.hideAsync();

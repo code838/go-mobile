@@ -10,7 +10,8 @@ export const ORDER_TYPE_IMAGES = {
   [OrderType.RECHARGE]: require('@/assets/images/record-type2.png'),
   [OrderType.WITHDRAW]: require('@/assets/images/record-type3.png'),
   [OrderType.EXCHANGE]: require('@/assets/images/record-type4.png'),
-  [OrderType.COMMISSION]: require('@/assets/images/record-type4.png'), // 返佣使用兑换图标
+  [OrderType.COMMISSION]: require('@/assets/images/record-type5.png'), // 返佣使用兑换图标
+  [OrderType.FREE_RECIVE]: require('@/assets/images/record-type6.png'), // 免费领取使用兑换图标
 };
 
 /**
@@ -23,6 +24,7 @@ export const ORDER_TYPE_MAP = {
   [OrderType.WITHDRAW]: 'record.withdraw',
   [OrderType.EXCHANGE]: 'record.exchange',
   [OrderType.COMMISSION]: 'record.commission',
+  [OrderType.FREE_RECIVE]: 'record.freeRecive',
 };
 
 /**

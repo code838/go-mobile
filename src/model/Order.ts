@@ -12,7 +12,8 @@ export enum OrderType {
   RECHARGE = 2, // 充值
   WITHDRAW = 3, // 提现
   EXCHANGE = 4, // 闪兑
-  COMMISSION = 5 // 返佣
+  COMMISSION = 5, // 返佣
+  FREE_RECIVE = 6 // 免费领取
 }
 
 // 返佣类型

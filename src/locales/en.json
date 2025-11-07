@@ -1,8 +1,8 @@
 {
   "tab1": "Home",
-  "tab2": "Trade",
-  "tab3": "Ecosystem",
-  "tab4": "Community",
+  "tab2": "UBuy",
+  "tab3": "Latest Results",
+  "tab4": "Wishlist",
   "tab5": "My",
   "login": {
     "usernamePlaceholder": "Username/Phone/Email",
@@ -55,7 +55,7 @@
     "guestName": "--",
     "pleaseLogin": "Please login to view",
     "loginButton": "Login",
-    "freeReceiveCoin": "Free Coins",
+    "freeReceiveCoin": "Claim Free Coins",
     "balance": "Balance",
     "points": "Points",
     "recharge": "Recharge",
@@ -74,7 +74,10 @@
     "email": "Email",
     "phone": "Phone",
     "addressManagement": "Address Management",
-    "logout": "Logout"
+    "logout": "Logout",
+    "logoutConfirmTitle": "Logout Confirmation",
+    "logoutConfirmMessage": "Are you sure you want to logout?",
+    "logoutError": "Logout failed, please try again"
   },
   "accountSecurity": {
     "title": "Account Security",
@@ -85,7 +88,8 @@
     "deleteConfirmTitle": "Confirm Deletion",
     "deleteConfirmContent": "Your account data will be cleared. Are you sure?",
     "cancel": "Cancel",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "updateSuccess": "Update successful"
   },
   "changePassword": {
     "title": "Change Password",
@@ -212,7 +216,9 @@
     "notice1": "Do not deposit any digital assets other than {{coin}} to the above address.",
     "notice2": "Minimum deposit amount is {{amount}} {{coin}}. Any deposit below the minimum will not be credited.",
     "notice3": "Please ensure your computer and browser are secure and your information is protected from tampering or leakage.",
-    "copySuccess": "Copied successfully"
+    "copySuccess": "Copied successfully",
+    "selectCoin": "Select Coin",
+    "selectNetwork": "Select Network"
   },
   "withdraw": {
     "title": "Withdraw",
@@ -238,7 +244,15 @@
     "done": "Done",
     "errorNoAddress": "Please enter withdrawal address",
     "errorNoAmount": "Please enter withdrawal amount",
-    "errorMinAmount": "Withdrawal amount cannot be less than minimum"
+    "errorMinAmount": "Withdrawal amount cannot be less than minimum",
+    "errorNoCoin": "Please select coin",
+    "errorNoNetwork": "Please select network", 
+    "errorInsufficientBalance": "Insufficient balance",
+    "selectCoin": "Select Coin",
+    "selectNetwork": "Select Network",
+    "submitting": "Submitting...",
+    "submitSuccess": "Withdrawal request submitted successfully",
+    "submitFailed": "Withdrawal request failed"
   },
   "captcha": {
     "sendSuccess": "Verification code sent successfully",
@@ -270,16 +284,53 @@
     "ubuy": "UBuy",
     "lottery": "Lottery",
     "commission": "Commission",
+    "freeReceive": "Free Receive",
     "empty": "No records",
     "status": {
       "pending": "Pending",
       "paid": "Paid",
-      "cancelled": "Cancelled"
+      "cancelled": "Cancelled",
+      "completed": "Completed"
     },
-    "commission": {
+    "return": {
       "register": "Register Commission",
       "ubuy": "UBuy Commission"
-    }
+    },
+    "integral": "Points"
+  },
+  "orderDetail": {
+    "title": "Order",
+    "amount": "Amount",
+    "type": "Type",
+    "orderId": "Order ID",
+    "coin": "Coin",
+    "withdrawCoin": "Withdraw Coin",
+    "withdrawAmount": "Withdraw Amount",
+    "rechargeCoin": "Recharge Coin",
+    "rechargeAmount": "Amount",
+    "network": "Network",
+    "hash": "Hash",
+    "address": "Address",
+    "applyTime": "Apply Time",
+    "completedTime": "Completed Time",
+    "time": "Time",
+    "fee": "Fee",
+    "receiveAmount": "Receive Amount",
+    "fromCoin": "From Coin",
+    "toCoin": "To Coin",
+    "fromAmount": "From Amount",
+    "exchangeAmount": "Exchange Amount",
+    "productName": "Product Name",
+    "productPrice": "Product Price",
+    "quantity": "Quantity",
+    "total": "Total",
+    "productValue": "Product Value",
+    "lotteryCode": "Lottery Code",
+    "copySuccess": "Copied successfully"
+  },
+  "protocol": {
+    "userAgreement": "User Agreement",
+    "privacyPolicy": "Privacy Policy"
   },
   "auth": {
     "third_party_login": "Third Party Login",

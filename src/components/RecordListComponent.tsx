@@ -155,7 +155,7 @@ export default function RecordListComponent({ type }: RecordListComponentProps) 
     return (
       <Pressable
         style={styles.recordItem}
-        onPress={() => router.push(`/account/record/${item.orderId}?type=${item.type}`)}
+        onPress={() => item.type !== OrderType.FREE_RECIVE && router.push(`/account/record/${item.orderId}?type=${item.type}`)}
       >
         <Image
           source={ORDER_TYPE_IMAGES[item.type]}
@@ -191,6 +191,11 @@ export default function RecordListComponent({ type }: RecordListComponentProps) 
             {item.type === OrderType.LOTTERY && (
               <Text style={styles.recordAmount}>
                 {item.productValue}
+              </Text>
+            )}
+            {item.type === OrderType.FREE_RECIVE && (
+              <Text style={styles.recordAmount}>
+                {item.amount} USDT
               </Text>
             )}
             <Text style={styles.recordStatus}>{status}</Text>

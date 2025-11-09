@@ -253,7 +253,8 @@
     "telegram_login_failed": "Telegram 登录失败"
   },
   "common": {
-    "pleaseLogin": "请先登录"
+    "pleaseLogin": "请先登录",
+    "loading": "加载中..."
   },
   "errors": {
     "network": "网络错误，请稍后重试",
@@ -373,5 +374,41 @@
       "q9": "为什么我的闪兑订单失败了？",
       "a9": "可能的原因包括：\n1.可用余额不足；\n2.闪兑数量低于最低限额或超过最高限额；\n3.网络波动导致价格刷新，请重新发起闪兑。"
     }
+  },
+  "lottery": {
+    "title": "助力好友",
+    "luckyWheel": "幸运大转盘",
+    "drawButton": "点击抽奖",
+    "drawn": "已抽",
+    "accumulated": "已累计",
+    "drawText": "抽",
+    "thankYou": "谢谢参与",
+    "drawCountdownEnd": "后抽奖结束",
+    "lotteryRecord": "抽奖记录",
+    "assistRecord": "助力记录",
+    "drawReward": "点点小金手，获得",
+    "assistSuccess": "成功帮你抽奖",
+    "times": "次",
+    "congratulations": "恭喜获得",
+    "claimReward": "收下奖励",
+    "depositToCashAccount": "立即存入您的现金账户",
+    "noDrawChances": "无可用抽奖次数",
+    "noChancesTitle": "抽奖次数已用完！",
+    "anyInvite": "任意邀请",
+    "person": "人",
+    "getMoreChances": {
+      "prefix": "获得",
+      "highlight": "更多次数"
+    },
+    "toBeInvited": "待邀请",
+    "inviteNow": "立即邀请好友",
+    "copySuccess": "邀请链接已复制"
+  },
+  "helpFriends": {
+    "pending": "待提取",
+    "almostSuccess": "我马上就要成功啦",
+    "pleaseHelp": "求求你帮帮我~",
+    "goToApp": "帮他助力",
+    "assistSuccess": "助力成功"
   }
 }

@@ -15,6 +15,12 @@ export const createUtilsSlice: StateCreator<
   coins: [],
   thirdLoginInfo: [],
   hasHydrated: false,
+  showHelpFriendsModal: false,
+  setShowHelpFriendsModal: (show: boolean) => {
+    set(state => {
+      state.showHelpFriendsModal = show;
+    });
+  },
   setHasHydrated: (hasHydrated: boolean) => {
     set(state => {
       state.hasHydrated = hasHydrated;

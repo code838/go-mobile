@@ -343,7 +343,8 @@
     "telegram_login_failed": "Telegram login failed"
   },
   "common": {
-    "pleaseLogin": "Please login first"
+    "pleaseLogin": "Please login first",
+    "loading": "Loading..."
   },
   "services": {
     "title": "Customer Service Center",
@@ -373,5 +374,41 @@
       "q9": "Why did my exchange order fail?",
       "a9": "Possible reasons include:\n1. Insufficient available balance;\n2. Exchange amount below minimum limit or exceeds maximum limit;\n3. Network fluctuations caused price refresh, please initiate exchange again."
     }
+  },
+  "lottery": {
+    "title": "Help Friend",
+    "luckyWheel": "Lucky Wheel",
+    "drawButton": "Click to Draw",
+    "drawn": "Drawn",
+    "accumulated": "Accumulated",
+    "drawText": "Draw",
+    "thankYou": "Thank you for participating",
+    "drawCountdownEnd": "Draw ends in",
+    "lotteryRecord": "Lottery Record",
+    "assistRecord": "Assist Record",
+    "drawReward": "Click the golden hand to get",
+    "assistSuccess": "Successfully helped you draw",
+    "times": "times",
+    "congratulations": "Congratulations! You got",
+    "claimReward": "Claim Reward",
+    "depositToCashAccount": "Instantly deposit to your cash account",
+    "noDrawChances": "No draw chances available",
+    "noChancesTitle": "No Draw Chances Left!",
+    "anyInvite": "Invite any",
+    "person": "person",
+    "getMoreChances": {
+      "prefix": "Get",
+      "highlight": "more chances"
+    },
+    "toBeInvited": "To Be Invited",
+    "inviteNow": "Invite Friends Now",
+    "copySuccess": "Invite link copied"
+  },
+  "helpFriends": {
+    "pending": "Pending",
+    "almostSuccess": "I'm almost successful",
+    "pleaseHelp": "Please help me~",
+    "goToApp": "Help him",
+    "assistSuccess": "Assist successfully"
   }
 }

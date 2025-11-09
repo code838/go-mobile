@@ -1,3 +1,4 @@
+import HelpFriends from '@/components/HelpFriends';
 import '@/config/i18n';
 import { toastConfig } from '@/config/toastConfig';
 import { useBoundStore } from '@/store';
@@ -57,6 +58,7 @@ export default function RootLayout() {
         <StatusBar style="light" backgroundColor="#0E0E10" translucent={false} />
       </GestureHandlerRootView>
       <Toast position={'top'} topOffset={insets.top} config={toastConfig} />
+      <HelpFriends />
     </>
   );
 }

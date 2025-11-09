@@ -163,7 +163,7 @@ export default function ProfilePage() {
           </View>
 
           {user ? (
-            <Pressable onPress={() => console.log('免费领币')} style={styles.freeReceiveButtonBorder}>
+            <Pressable onPress={() => router.push('/account/lottery')} style={styles.freeReceiveButtonBorder}>
               <LinearGradient
                 colors={['#E445C3', '#9074FF']}
                 start={{ x: 0, y: 0 }}

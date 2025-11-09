@@ -160,3 +160,22 @@ export const addressBookApi = {
   }) => 
     request.post(urls.manageAddressBook, data),
 };
+
+// 抽奖相关接口
+export const lotteryApi = {
+  // 初始化抽奖信息
+  init: () => 
+    request.post(urls.lotteryInit, {}),
+  
+  // 抽奖
+  draw: () => 
+    request.post(urls.lotteryDraw, {}),
+  
+  // 获取抽奖记录
+  getRecord: () => 
+    request.post(urls.lotteryRecord, {}),
+  
+  // 获取助力记录
+  getAssistRecord: () => 
+    request.post(urls.lotteryAssistRecord, {}),
+};

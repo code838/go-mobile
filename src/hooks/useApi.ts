@@ -1,4 +1,4 @@
-import { addressBookApi, authApi, financeApi, systemApi, userApi } from '@/services/api';
+import { addressBookApi, authApi, financeApi, lotteryApi, systemApi, userApi } from '@/services/api';
 import { useCallback, useState } from 'react';
 
 // 通用API Hook
@@ -145,4 +145,21 @@ export const usePayOrder = () => {
 
 export const useCancelOrder = () => {
   return useApi(financeApi.cancelOrder);
+};
+
+// 抽奖相关Hook
+export const useLotteryInit = () => {
+  return useApi(lotteryApi.init);
+};
+
+export const useLotteryDraw = () => {
+  return useApi(lotteryApi.draw);
+};
+
+export const useLotteryRecord = () => {
+  return useApi(lotteryApi.getRecord);
+};
+
+export const useLotteryAssistRecord = () => {
+  return useApi(lotteryApi.getAssistRecord);
 };

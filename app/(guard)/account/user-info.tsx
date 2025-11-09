@@ -103,8 +103,8 @@ export default function UserInfoPage() {
   async function handleConfirmLogout() {
     setShowLogoutModal(false);
     try {
-      router.back();
       await logout();
+      router.back();
     } catch (error: any) {
       console.error('Logout failed:', error);
       toast.error(error.message);

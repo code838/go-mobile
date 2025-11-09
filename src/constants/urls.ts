@@ -82,4 +82,8 @@ export const urls = {
   // getInviteRecord: `${apiUrl}/invite/record`,
   getThirdLoginInfo: `${apiUrl}/thirdlogin/info`,
   thirdLogin: `${apiUrl}/thirdlogin/login`,
+  lotteryInit: `${apiUrl}/lottery/init`,
+  lotteryDraw: `${apiUrl}/lottery/draw`,
+  lotteryRecord: `${apiUrl}/lottery/record/draw`,
+  lotteryAssistRecord: `${apiUrl}/lottery/record/assist`,
 }

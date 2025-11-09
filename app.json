@@ -8,6 +8,9 @@
     "scheme": "com.ugo.vip",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "androidNavigationBar": {
+      "backgroundColor": "#0E0E10"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ugo.vip",
@@ -21,6 +24,11 @@
             "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
           }
         ]
+      },
+      "splash": {
+        "image": "./src/assets/images/splash.png",
+        "resizeMode": "cover",
+        "backgroundColor": "#0E0E10"
       }
     },
     "android": {
@@ -35,7 +43,13 @@
       "predictiveBackGestureEnabled": false,
       "permissions": [
         "android.permission.INTERNET"
-      ]
+      ],
+      "splash": {
+        "image": "./src/assets/images/go-logo.png",
+        "resizeMode": "cover",
+        "width": 200,
+        "backgroundColor": "#0E0E10"
+      }
     },
     "plugins": [
       "expo-router",
@@ -58,15 +72,7 @@
           "iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
         }
       ],
-      [
-        "expo-splash-screen",
-        {
-          "image": "./src/assets/images/go-logo.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#0E0E10"
-        }
-      ],
+      "expo-splash-screen",
       "expo-web-browser",
       "react-native-fbsdk-next"
     ],

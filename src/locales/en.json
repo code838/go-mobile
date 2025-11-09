@@ -298,36 +298,6 @@
     },
     "integral": "Points"
   },
-  "orderDetail": {
-    "title": "Order",
-    "amount": "Amount",
-    "type": "Type",
-    "orderId": "Order ID",
-    "coin": "Coin",
-    "withdrawCoin": "Withdraw Coin",
-    "withdrawAmount": "Withdraw Amount",
-    "rechargeCoin": "Recharge Coin",
-    "rechargeAmount": "Amount",
-    "network": "Network",
-    "hash": "Hash",
-    "address": "Address",
-    "applyTime": "Apply Time",
-    "completedTime": "Completed Time",
-    "time": "Time",
-    "fee": "Fee",
-    "receiveAmount": "Receive Amount",
-    "fromCoin": "From Coin",
-    "toCoin": "To Coin",
-    "fromAmount": "From Amount",
-    "exchangeAmount": "Exchange Amount",
-    "productName": "Product Name",
-    "productPrice": "Product Price",
-    "quantity": "Quantity",
-    "total": "Total",
-    "productValue": "Product Value",
-    "lotteryCode": "Lottery Code",
-    "copySuccess": "Copied successfully"
-  },
   "protocol": {
     "userAgreement": "User Agreement",
     "privacyPolicy": "Privacy Policy"
@@ -379,7 +349,8 @@
     "telegram_login_failed": "Telegram login failed"
   },
   "common": {
-    "pleaseLogin": "Please login first"
+    "pleaseLogin": "Please login first",
+    "loading": "Loading..."
   },
   "home": {
     "search": "Search",
@@ -613,5 +584,41 @@
     "typePromotion": "Promotion",
     "typeSecurity": "Security",
     "loading": "Loading..."
+  },
+  "lottery": {
+    "title": "Help Friend",
+    "luckyWheel": "Lucky Wheel",
+    "drawButton": "Click to Draw",
+    "drawn": "Drawn",
+    "accumulated": "Accumulated",
+    "drawText": "Go",
+    "thankYou": "Thank you for participating",
+    "drawCountdownEnd": "Draw ends in",
+    "lotteryRecord": "Lottery Record",
+    "assistRecord": "Assist Record",
+    "drawReward": "Click the golden hand to get",
+    "assistSuccess": "Successfully helped you draw",
+    "times": "times",
+    "congratulations": "Congratulations! You got",
+    "claimReward": "Claim Reward",
+    "depositToCashAccount": "Instantly deposit to your cash account",
+    "noDrawChances": "No draw chances available",
+    "noChancesTitle": "No Draw Chances Left!",
+    "anyInvite": "Invite any",
+    "person": "person",
+    "getMoreChances": {
+      "prefix": "Get",
+      "highlight": "more chances"
+    },
+    "toBeInvited": "To Be Invited",
+    "inviteNow": "Invite Friends Now",
+    "copySuccess": "Invite link copied"
+  },
+  "helpFriends": {
+    "pending": "Pending",
+    "almostSuccess": "I'm almost successful",
+    "pleaseHelp": "Please help me~",
+    "goToApp": "Help him",
+    "assistSuccess": "Assist successfully"
   }
 }

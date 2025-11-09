@@ -24,6 +24,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const setUser = useBoundStore(state => state.setUser);
   const setToken = useBoundStore(state => state.setToken);
+  const setShowHelpFriendsModal = useBoundStore(state => state.setShowHelpFriendsModal);
   const { execute: register, loading: isRegisterLoading } = useRegister();
   const { execute: sendCaptcha } = useSendCaptcha();
   const [state, setState] = useImmer({
@@ -124,6 +125,9 @@ export default function RegisterPage() {
         // 注册成功，保存用户信息到store
         setUser(response.data);
         setToken(response.data.token);
+        if (response.data.isLotteryInvite === 1) {
+          setShowHelpFriendsModal(true);
+        }
         toast.success(t('register.success'));
         // 跳转到tab首页
         router.replace('/');

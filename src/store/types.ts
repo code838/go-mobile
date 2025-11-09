@@ -46,6 +46,8 @@ export type UtilsSlice = {
   getThirdLoginInfo: () => Promise<void>;
   socialLoginLoading: boolean;
   setSocialLoginLoading: (loading: boolean) => void;
+  showHelpFriendsModal: boolean;
+  setShowHelpFriendsModal: (show: boolean) => void;
 }
 
 export type Store = AccountSlice & UtilsSlice;

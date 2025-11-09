@@ -140,6 +140,7 @@ const styles = StyleSheet.create({
     minWidth: 28,
     justifyContent: 'center',
     alignItems: 'flex-end',
+    marginLeft: 'auto',
   },
 });
 

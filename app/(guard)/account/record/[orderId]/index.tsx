@@ -2,21 +2,21 @@ import { format } from 'date-fns';
 import * as Clipboard from 'expo-clipboard';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    ActivityIndicator,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from 'react-native';
 
 import NavigationBar from '@/components/NavigationBar';
 import PageDecoration from '@/components/PageDecoration';
 import { Colors } from '@/constants/colors';
-import { useOrderDetail } from '@/hooks/useApi';
+import { useCancelOrder, useOrderDetail, usePayOrder } from '@/hooks/useApi';
 import { OrderItem, OrderStatus, OrderType } from '@/model/Order';
 import { useBoundStore } from '@/store';
 import { toast } from '@/utils/toast';
@@ -29,6 +29,9 @@ export default function OrderDetailPage() {
 
   const user = useBoundStore((state) => state.user);
   const { data, loading, execute } = useOrderDetail();
+  const { execute: executePay, loading: payLoading } = usePayOrder();
+  const { execute: executeCancel, loading: cancelLoading } = useCancelOrder();
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     if (orderId && user?.userId) {
@@ -48,6 +51,63 @@ export default function OrderDetailPage() {
   async function handleCopy(text: string) {
     await Clipboard.setStringAsync(text);
     toast.success(t('orderDetail.copySuccess'));
+  }
+
+  /**
+   * 取消订单
+   */
+  async function handleCancelOrder() {
+    if (!user?.userId || !orderId) return;
+    
+    try {
+      setIsProcessing(true);
+      await executeCancel({
+        userId: user.userId,
+        orderId,
+      });
+      toast.success(t('orderDetail.cancelSuccess'));
+      // 刷新订单详情
+      await execute({
+        userId: user.userId,
+        orderId,
+        isOwner: type === '0' ? true : false,
+      });
+    } catch (error) {
+      toast.error(t('orderDetail.cancelFailed'));
+    } finally {
+      setIsProcessing(false);
+    }
+  }
+
+  /**
+   * 去支付
+   */
+  async function handleGoToPay() {
+    if (!user?.userId || !orderId) return;
+    
+    try {
+      setIsProcessing(true);
+      await executePay({
+        userId: user.userId,
+        orderId,
+      });
+      toast.success(t('orderDetail.paymentSuccess'));
+      // 刷新订单详情
+      await execute({
+        userId: user.userId,
+        orderId,
+        isOwner: type === '0' ? true : false,
+      });
+      // 跳转到支付成功页面
+      router.push({
+        pathname: '/(guard)/payment-result',
+        params: { orderId },
+      });
+    } catch (error) {
+      toast.error(t('orderDetail.paymentFailed'));
+    } finally {
+      setIsProcessing(false);
+    }
   }
 
   /**
@@ -459,6 +519,30 @@ export default function OrderDetailPage() {
           })}
         </View>
 
+        {/* 待支付状态下的按钮 */}
+        {orderDetail.status === OrderStatus.PENDING && (
+          <View style={styles.buttonContainer}>
+            <Pressable
+              style={[styles.button, styles.cancelButton]}
+              onPress={handleCancelOrder}
+              disabled={isProcessing || cancelLoading}
+            >
+              <Text style={[styles.buttonText, styles.cancelButtonText]}>
+                {t('orderDetail.cancelOrder')}
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[styles.button, styles.payButton]}
+              onPress={handleGoToPay}
+              disabled={isProcessing || payLoading}
+            >
+              <Text style={[styles.buttonText, styles.payButtonText]}>
+                {t('orderDetail.goToPay')}
+              </Text>
+            </Pressable>
+          </View>
+        )}
+
       </ScrollView>
     </View>
   );
@@ -557,6 +641,36 @@ const styles = StyleSheet.create({
   copyIcon: {
     width: 20,
     height: 20,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    gap: 12,
+    paddingTop: 24,
+  },
+  button: {
+    flex: 1,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cancelButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: Colors.gold,
+  },
+  payButton: {
+    backgroundColor: Colors.gold,
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  cancelButtonText: {
+    color: Colors.gold,
+  },
+  payButtonText: {
+    color: '#000',
   },
 });
 

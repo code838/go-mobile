@@ -88,11 +88,6 @@
     },
     "owner": "galactic-heroes",
     "build": {
-      "preview": {
-        "ios": {
-          "simulator": true
-        }
-      },
       "production": {
         "android": {
           "buildType": "apk"

@@ -5,9 +5,12 @@ import LoginTypeSwitch, { LoginType } from '@/components/LoginTypeSwitch';
 import SocialLoginLoading from '@/components/SocialLoginLoading';
 import { Colors } from '@/constants/colors';
 import { useLogin } from '@/hooks/useApi';
+import { useFacebookAuth } from '@/hooks/useFacebookAuth';
+import { useGoogleAuth } from '@/hooks/useGoogleAuth';
+import { useTelegramAuth } from '@/hooks/useTelegramAuth';
 import { useBoundStore } from '@/store';
 import { generateLoginSign, generateNonce, hashPassword } from '@/utils/crypto';
-import { facebookLogin, googleLogin, handleThirdPartyLogin } from '@/utils/socialAuth';
+import { handleThirdPartyLogin } from '@/utils/socialAuth';
 import { toast } from '@/utils/toast';
 import { isValidEmail, isValidPhone } from '@/utils/validation';
 import { Image } from 'expo-image';
@@ -46,6 +49,65 @@ export default function LoginPage() {
   useEffect(() => {
     getThirdLoginInfo();
   }, [getThirdLoginInfo]);
+
+  // 第三方登录成功处理函数
+  const handleThirdPartyLoginSuccess = async (loginType: number, token: string) => {
+    try {
+      await handleThirdPartyLogin(
+        loginType,
+        token,
+        (userData) => {
+          setUser(userData);
+          setToken(userData.token);
+          getAllRechargeAddresses();
+          toast.success(t('login.success'));
+          router.back();
+        },
+        (error) => {
+          toast.error(error);
+        }
+      );
+    } finally {
+      setSocialLoginLoading(false);
+    }
+  };
+
+  // 第三方登录hooks
+  const googleAuth = useGoogleAuth({
+    onSuccess: (token) => handleThirdPartyLoginSuccess(1, token),
+    onError: (error) => {
+      console.error('Google auth error:', error);
+      // 如果不是用户取消，才显示错误提示
+      if (error?.message !== 'User cancelled authentication') {
+        toast.error(t('login.loginFailed'));
+      }
+      setSocialLoginLoading(false);
+    },
+  });
+
+  const facebookAuth = useFacebookAuth({
+    onSuccess: (token) => handleThirdPartyLoginSuccess(2, token),
+    onError: (error) => {
+      console.error('Facebook auth error:', error);
+      // 如果不是用户取消，才显示错误提示
+      if (error?.message !== 'User cancelled authentication') {
+        toast.error(t('login.loginFailed'));
+      }
+      setSocialLoginLoading(false);
+    },
+  });
+
+  const telegramAuth = useTelegramAuth({
+    onSuccess: (token) => handleThirdPartyLoginSuccess(3, token),
+    onError: (error) => {
+      console.error('Telegram auth error:', error);
+      // 如果不是用户取消，才显示错误提示
+      if (error?.message !== 'User cancelled authentication') {
+        toast.error(t('login.loginFailed'));
+      }
+      setSocialLoginLoading(false);
+    },
+  });
   
   function setLoginType(loginType: LoginType) {
     setState(draft => {
@@ -162,63 +224,21 @@ export default function LoginPage() {
     router.push('/register' as any);
   }
 
-  async function handleSocialLogin(provider: 'google' | 'facebook' | 'telegram') {
-    if (provider === 'telegram') {
-      console.log('Telegram登录暂未实现');
-      return;
-    }
-
+  function handleSocialLogin(provider: 'google' | 'facebook' | 'telegram') {
     setSocialLoginLoading(true);
 
-    try {
-      let result;
-      let loginType;
-
-      switch (provider) {
-        case 'google':
-          result = await googleLogin();
-          loginType = 1;
-          break;
-        case 'facebook':
-          result = await facebookLogin();
-          loginType = 2;
-          break;
-        default:
-          return;
-      }
-
-      if (result.cancelled) {
-        return;
-      }
-
-      if (!result.success) {
-        if (result.error) {
-          toast.error(result.error);
-        }
-        return;
-      }
-
-      if (result.token) {
-        await handleThirdPartyLogin(
-          loginType,
-          result.token,
-          (userData) => {
-            setUser(userData);
-            setToken(userData.token);
-            getAllRechargeAddresses();
-            toast.success(t('login.success'));
-            router.back();
-          },
-          (error) => {
-            toast.error(error);
-          }
-        );
-      }
-    } catch (error: any) {
-      console.error('Social login error:', error);
-      toast.error(error.message || t('login.loginFailed'));
-    } finally {
-      setSocialLoginLoading(false);
+    switch (provider) {
+      case 'google':
+        googleAuth.login();
+        break;
+      case 'facebook':
+        facebookAuth.login();
+        break;
+      case 'telegram':
+        telegramAuth.login();
+        break;
+      default:
+        setSocialLoginLoading(false);
     }
   }
 

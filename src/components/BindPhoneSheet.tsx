@@ -67,7 +67,7 @@ export default function BindPhoneSheet({ visible, onClose, onConfirm }: BindPhon
    */
   function isValidPhone() {
     // 简单验证：至少8位数字
-    const phoneRegex = /^\d{8,}$/;
+    const phoneRegex = /^\+?\d{6,}$/;
     return phoneRegex.test(phone.trim());
   }
 

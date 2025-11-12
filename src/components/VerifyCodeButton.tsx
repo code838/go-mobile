@@ -51,7 +51,14 @@ export default function VerifyCodeButton({
 
     const timer = setTimeout(() => {
       setState(draft => {
-        draft.remainingTime -= 1;
+        const newTime = draft.remainingTime - 1;
+        if (newTime <= 0) {
+          // 倒计时结束，重置状态
+          draft.isCounting = false;
+          draft.remainingTime = countdown;
+        } else {
+          draft.remainingTime = newTime;
+        }
       });
     }, 1000);
 

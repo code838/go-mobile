@@ -250,6 +250,8 @@
     "errorInsufficientBalance": "余额不足",
     "selectCoin": "选择币种",
     "selectNetwork": "选择网络",
+    "selectFromAddressBook": "从地址本选择",
+    "noAddressInBook": "地址本中暂无地址",
     "submitting": "提交中...",
     "submitSuccess": "提现申请提交成功",
     "submitFailed": "提现申请提交失败"

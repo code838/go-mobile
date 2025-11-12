@@ -200,108 +200,105 @@ export default function ProfilePage() {
           disabled={!user}>
           <View style={styles.assetsContent}>
             <View style={styles.assetsRow}>
-              <Text style={[styles.assetsText, { color: user ? Colors.title : Colors.subtitle }]}>
-              USDT：{getBalance('USDT')} 
-              </Text>
-              <Text style={[styles.assetsText, { color: user ? Colors.title : Colors.subtitle }]}>
-                {t('profile.points')}：{user ? user.points : 0}
-              </Text>
+              <View style={styles.assetsTextContainer}>
+                <Text style={[styles.assetsText, { color: user ? Colors.title : Colors.subtitle }]}>
+                  USDT：{getBalance('USDT')}
+                </Text>
+              </View>
+              <View style={styles.assetsTextContainer}>
+                <Text style={[styles.assetsText, { color: user ? Colors.title : Colors.subtitle }]}>
+                  {t('profile.points')}：{user ? user.points : 0}
+                </Text>
+              </View>
             </View>
-
             {isAssetsExpanded && user && (
-              <>
               <View style={styles.assetsRow}>
-                <Text style={[styles.assetsText, { color: Colors.title }]}>
-                  ETH：{getBalance('ETH')}
-                </Text>
-                <Text style={[styles.assetsText, { color: Colors.title }]}>
-                  BTC：{getBalance('BTC')}
-                </Text>
+                {user.coinsBalance.map(item => (
+                  <View style={styles.assetsTextContainer}>
+                    <Text style={[styles.assetsText, { color: Colors.title }]}>
+                      {item.coinName}：{+item.balance}
+                    </Text>
+                  </View>
+                ))}
               </View>
-              <View style={styles.assetsRow}>
-                <Text style={[styles.assetsText, { color: Colors.title }]}>
-                  TON：{getBalance('TON')}
-                </Text>
-              </View>
-              </>
             )}
           </View>
 
-          {user && (
-            <MotiView
-              animate={{
-                rotate: isAssetsExpanded ? '180deg' : '0deg',
-              }}
-              transition={{
-                type: 'timing',
-                duration: 300,
-              }}
-              style={styles.expandIconContainer}>
-              <Image
-                source={require('@/assets/images/chevron-down.png')}
-                style={styles.expandIcon}
-                contentFit="contain"
-              />
-            </MotiView>
-          )}
-        </Pressable>
-
-        {/* 快捷操作 */}
-        <View style={styles.quickActionsCard}>
-          {quickActions.map((action, index) => (
-            <Pressable
-              key={index}
-              style={styles.quickActionItem}
-              onPress={action.onPress}
-              android_ripple={{ color: 'rgba(255, 255, 255, 0.1)' }}>
-              <View style={styles.quickActionIconContainer}>
-                <Image source={action.icon} style={styles.quickActionIcon} contentFit="contain" />
-              </View>
-              <Text style={styles.quickActionLabel}>{action.label}</Text>
-            </Pressable>
-          ))}
-        </View>
-
-        {/* 邀请有奖 */}
-        <Pressable
-          style={styles.inviteCard}
-          onPress={() => router.push('/account/invite')}
-          android_ripple={{ color: 'rgba(255, 255, 255, 0.1)' }}>
-          <View style={styles.inviteContent}>
+        {user && (
+          <MotiView
+            animate={{
+              rotate: isAssetsExpanded ? '180deg' : '0deg',
+            }}
+            transition={{
+              type: 'timing',
+              duration: 300,
+            }}
+            style={styles.expandIconContainer}>
             <Image
-              source={require('@/assets/images/invite-friends.png')}
-              style={styles.inviteIcon}
+              source={require('@/assets/images/chevron-down.png')}
+              style={styles.expandIcon}
               contentFit="contain"
             />
-            <Text style={styles.inviteText}>{t('profile.inviteFriends')}</Text>
-          </View>
+          </MotiView>
+        )}
+      </Pressable>
+
+      {/* 快捷操作 */}
+      <View style={styles.quickActionsCard}>
+        {quickActions.map((action, index) => (
+          <Pressable
+            key={index}
+            style={styles.quickActionItem}
+            onPress={action.onPress}
+            android_ripple={{ color: 'rgba(255, 255, 255, 0.1)' }}>
+            <View style={styles.quickActionIconContainer}>
+              <Image source={action.icon} style={styles.quickActionIcon} contentFit="contain" />
+            </View>
+            <Text style={styles.quickActionLabel}>{action.label}</Text>
+          </Pressable>
+        ))}
+      </View>
+
+      {/* 邀请有奖 */}
+      <Pressable
+        style={styles.inviteCard}
+        onPress={() => router.push('/account/invite')}
+        android_ripple={{ color: 'rgba(255, 255, 255, 0.1)' }}>
+        <View style={styles.inviteContent}>
           <Image
-            source={require('@/assets/images/chevron-right.png')}
-            style={styles.menuChevron}
+            source={require('@/assets/images/invite-friends.png')}
+            style={styles.inviteIcon}
             contentFit="contain"
           />
-        </Pressable>
-
-        {/* 设置菜单 */}
-        <View style={styles.menuCard}>
-          {menuItems.map((item, index) => (
-            <Pressable
-              key={index}
-              style={[styles.menuItem, index !== menuItems.length - 1 && styles.menuItemBorder]}
-              onPress={item.onPress}
-              android_ripple={{ color: 'rgba(255, 255, 255, 0.1)' }}>
-              <Image source={item.icon} style={styles.menuIcon} contentFit="contain" />
-              <Text style={styles.menuText}>{item.label}</Text>
-              <Image
-                source={require('@/assets/images/chevron-right.png')}
-                style={styles.menuChevron}
-                contentFit="contain"
-              />
-            </Pressable>
-          ))}
+          <Text style={styles.inviteText}>{t('profile.inviteFriends')}</Text>
         </View>
-      </ScrollView>
-    </View>
+        <Image
+          source={require('@/assets/images/chevron-right.png')}
+          style={styles.menuChevron}
+          contentFit="contain"
+        />
+      </Pressable>
+
+      {/* 设置菜单 */}
+      <View style={styles.menuCard}>
+        {menuItems.map((item, index) => (
+          <Pressable
+            key={index}
+            style={[styles.menuItem, index !== menuItems.length - 1 && styles.menuItemBorder]}
+            onPress={item.onPress}
+            android_ripple={{ color: 'rgba(255, 255, 255, 0.1)' }}>
+            <Image source={item.icon} style={styles.menuIcon} contentFit="contain" />
+            <Text style={styles.menuText}>{item.label}</Text>
+            <Image
+              source={require('@/assets/images/chevron-right.png')}
+              style={styles.menuChevron}
+              contentFit="contain"
+            />
+          </Pressable>
+        ))}
+      </View>
+    </ScrollView>
+    </View >
   );
 }
 
@@ -409,19 +406,22 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   assetsContent: {
-    gap: 4,
     alignSelf: 'stretch',
     flexDirection: 'column',
   },
   assetsRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  assetsTextContainer: {
+    width: '50%',
+    marginBottom: 8,
   },
   assetsText: {
     fontSize: 12,
     fontWeight: '500',
-    flex: 1,
   },
   expandIconContainer: {
     width: 20,

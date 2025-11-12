@@ -1,17 +1,17 @@
 import NavigationBar from '@/components/NavigationBar';
 import { financeApi } from '@/services/api';
-import { useAuthStore } from '@/store/auth';
+import { useBoundStore } from '@/store';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-    ActivityIndicator,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
@@ -42,7 +42,7 @@ export default function PaymentResultPage() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const insets = useSafeAreaInsets();
-  const { user } = useAuthStore();
+  const user = useBoundStore((state) => state.user);
 
   const orderId = params.orderId as string;
 
@@ -121,7 +121,7 @@ export default function PaymentResultPage() {
   const products = orderDetail.products || [];
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={styles.container}>
       <NavigationBar title={t('paymentResult.title')} />
 
       <ScrollView

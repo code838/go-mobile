@@ -14,6 +14,7 @@ import NavigationBar from '@/components/NavigationBar';
 import PageDecoration from '@/components/PageDecoration';
 import { Colors } from '@/constants/colors';
 import { systemApi } from '@/services/api';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Category = 'all' | 'recharge' | 'withdraw' | 'swap';
 
@@ -29,6 +30,7 @@ export default function ServicesScreen() {
   const [selectedCategory, setSelectedCategory] = useState<Category>('all');
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const [serviceInfo, setServiceInfo] = useState<{type: number; account: string}[] | null>(null);
+  const insets = useSafeAreaInsets();
 
   const getServiceInfo = async () => {
     const { data } = await systemApi.getServiceInfo();
@@ -265,6 +267,7 @@ export default function ServicesScreen() {
           </View>
         </View>
       </ScrollView>
+      <View style={{ height: insets.bottom + 20 }} />
     </View>
   );
 }

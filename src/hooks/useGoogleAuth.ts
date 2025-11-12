@@ -30,6 +30,10 @@ export function useGoogleAuth({ onSuccess, onError }: UseGoogleAuthProps = {}) {
     } else if (response?.type === 'error') {
       console.error('Google auth error:', response);
       onError?.(response);
+    } else if (response?.type === 'dismiss' || response?.type === 'cancel') {
+      // 用户取消登录
+      console.log('Google auth cancelled');
+      onError?.({ message: 'User cancelled authentication' });
     }
   }, [response, onSuccess, onError]);
 

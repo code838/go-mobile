@@ -1,9 +1,11 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
+import AddressBookSelectSheet from '@/components/AddressBookSelectSheet';
 import Button from '@/components/Button';
 import CoinSelectSheet from '@/components/CoinSelectSheet';
 import NavigationBar from '@/components/NavigationBar';
@@ -32,6 +34,7 @@ export default function WithdrawPage() {
     withdrawAmount: string;
     showCoinSelect: boolean;
     showNetworkSelect: boolean;
+    showAddressBookSelect: boolean;
   }>({
     selectedCoin: null,
     selectedNetwork: null,
@@ -39,6 +42,7 @@ export default function WithdrawPage() {
     withdrawAmount: '',
     showCoinSelect: false,
     showNetworkSelect: false,
+    showAddressBookSelect: false,
   });
 
   // 每次进入页面时获取提现手续费
@@ -100,6 +104,15 @@ export default function WithdrawPage() {
     const balance = getBalanceByCurrency(state.selectedCoin.coinName);
     setState(draft => {
       draft.withdrawAmount = balance.toString();
+    });
+  }
+
+  /**
+   * 从地址本选择地址
+   */
+  function handleSelectAddress(address: string) {
+    setState(draft => {
+      draft.withdrawAddress = address;
     });
   }
 
@@ -223,9 +236,9 @@ export default function WithdrawPage() {
         {/* 提现地址 */}
         <View style={styles.field}>
           <Text style={styles.label}>{t('withdraw.withdrawAddress')}</Text>
-          <View style={styles.input}>
+          <View style={styles.addressInputContainer}>
             <TextInput
-              style={styles.inputField}
+              style={styles.addressInputField}
               placeholder={t('withdraw.addressPlaceholder')}
               placeholderTextColor={Colors.secondary}
               value={state.withdrawAddress}
@@ -233,6 +246,13 @@ export default function WithdrawPage() {
               autoCapitalize="none"
               autoCorrect={false}
             />
+            <Pressable
+              style={styles.addressBookButton}
+              onPress={() => setState(draft => { draft.showAddressBookSelect = true; })}
+              hitSlop={8}
+              android_ripple={{ color: 'rgba(255, 255, 255, 0.1)', radius: 20 }}>
+              <Ionicons name="book-outline" size={20} color={Colors.brand} />
+            </Pressable>
           </View>
         </View>
 
@@ -309,6 +329,15 @@ export default function WithdrawPage() {
           networks={state.selectedCoin?.networks || []}
         />
       )}
+
+      {/* 地址本选择弹窗 */}
+      <AddressBookSelectSheet
+        visible={state.showAddressBookSelect}
+        onClose={() => setState(draft => { draft.showAddressBookSelect = false; })}
+        onSelect={handleSelectAddress}
+        coinId={state.selectedCoin?.coinId}
+        networkId={state.selectedNetwork?.networkId}
+      />
     </View>
   );
 }
@@ -405,6 +434,31 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: Colors.title,
     padding: 0,
+  },
+  addressInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    minHeight: 48,
+    gap: 8,
+  },
+  addressInputField: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: '500',
+    color: Colors.title,
+    padding: 0,
+  },
+  addressBookButton: {
+    width: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   amountContainer: {
     gap: 4,

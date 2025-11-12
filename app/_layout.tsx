@@ -60,7 +60,7 @@ export default function RootLayout() {
 
         <StatusBar style="light" backgroundColor="#0E0E10" translucent={false} />
       </GestureHandlerRootView>
-      <Toast position={'top'} topOffset={insets.top} config={toastConfig} />
+      <Toast position={'bottom'} topOffset={insets.top} config={toastConfig} />
       <HelpFriends />
     </>
   );

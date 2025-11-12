@@ -155,7 +155,7 @@ export default function RecordListComponent({ type }: RecordListComponentProps) 
     return (
       <Pressable
         style={styles.recordItem}
-        onPress={() => item.type !== OrderType.FREE_RECIVE && router.push(`/account/record/${item.orderId}?type=${item.type}`)}
+        onPress={() => item.type !== OrderType.FREE_RECIVE && item.type !== OrderType.COMMISSION && router.push(`/account/record/${item.orderId}?type=${item.type}`)}
       >
         <Image
           source={ORDER_TYPE_IMAGES[item.type]}

@@ -30,6 +30,10 @@ export function useFacebookAuth({ onSuccess, onError }: UseFacebookAuthProps = {
     } else if (response?.type === 'error') {
       console.error('Facebook auth error:', response);
       onError?.(response);
+    } else if (response?.type === 'dismiss' || response?.type === 'cancel') {
+      // 用户取消登录
+      console.log('Facebook auth cancelled');
+      onError?.({ message: 'User cancelled authentication' });
     }
   }, [response, onSuccess, onError]);
 

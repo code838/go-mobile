@@ -19,6 +19,7 @@ import { Colors } from '@/constants/colors';
 import { useCancelOrder, useOrderDetail, usePayOrder } from '@/hooks/useApi';
 import { OrderItem, OrderStatus, OrderType } from '@/model/Order';
 import { useBoundStore } from '@/store';
+import { ORDER_TYPE_IMAGES } from '@/utils/recordUtils';
 import { toast } from '@/utils/toast';
 
 export default function OrderDetailPage() {
@@ -128,16 +129,13 @@ export default function OrderDetailPage() {
   }
 
   /**
-   * 获取订单状态图标
+   * 获取订单类型图标
    */
   function getStatusIcon() {
     if (!orderDetail) return null;
 
-    // 根据订单状态返回不同图标
-    if (orderDetail.status === OrderStatus.PAID) {
-      return require('@/assets/images/record-type0.png'); // 使用完成图标
-    }
-    return null;
+    // 根据订单类型返回对应图标
+    return ORDER_TYPE_IMAGES[orderDetail.type] || null;
   }
 
   /**
@@ -538,7 +536,7 @@ export default function OrderDetailPage() {
         </View>
 
         {/* 待支付状态下的按钮 */}
-        {orderDetail.status === OrderStatus.PENDING && (
+        {orderDetail.type === OrderType.UBUY && orderDetail.status === OrderStatus.PENDING && (
           <View style={styles.buttonContainer}>
             <Pressable
               style={[styles.button, styles.cancelButton]}

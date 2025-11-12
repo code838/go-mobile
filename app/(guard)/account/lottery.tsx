@@ -13,7 +13,6 @@ import LotteryResultModal from '@/components/LotteryResultModal';
 import NavigationBar from '@/components/NavigationBar';
 import NoDrawChancesModal from '@/components/NoDrawChancesModal';
 import { Colors } from '@/constants/colors';
-import { getImageUrl } from '@/constants/urls';
 import { useLotteryDraw, useLotteryInit } from '@/hooks/useApi';
 import { toast } from '@/utils/toast';
 import * as Clipboard from 'expo-clipboard';
@@ -208,7 +207,7 @@ export default function LotteryPage() {
     setShowNoChancesModal(false);
     // 复制邀请链接
     if (!lotteryData?.inviteLink) return;
-    Clipboard.setStringAsync(getImageUrl(lotteryData.inviteLink));
+    Clipboard.setStringAsync(lotteryData.inviteLink);
     toast.success(t('lottery.copySuccess'));
   }
 

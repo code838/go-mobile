@@ -213,7 +213,7 @@ export default function ProfilePage() {
             </View>
             {isAssetsExpanded && user && (
               <View style={styles.assetsRow}>
-                {user.coinsBalance.map(item => (
+                {user.coinsBalance.filter(item => item.coinName !== 'USDT').map(item => (
                   <View style={styles.assetsTextContainer}>
                     <Text style={[styles.assetsText, { color: Colors.title }]}>
                       {item.coinName}：{+item.balance}

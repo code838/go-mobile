@@ -4,8 +4,14 @@
   "tab3": "Latest Results",
   "tab4": "Wishlist",
   "tab5": "My",
+  "loginType": {
+    "phone": "Phone",
+    "email": "Email"
+  },
   "login": {
     "usernamePlaceholder": "Username/Phone/Email",
+    "phonePlaceholder": "Please enter phone number",
+    "emailPlaceholder": "Please enter email",
     "passwordPlaceholder": "Password",
     "rememberMe": "Remember Me",
     "forgotPassword": "Forgot Password?",
@@ -20,7 +26,8 @@
     "socialLoginInProgress": "Social login in progress..."
   },
   "register": {
-    "phonePlaceholder": "Phone/Email",
+    "phonePlaceholder": "Please enter phone number",
+    "emailPlaceholder": "Please enter email",
     "verifyCodePlaceholder": "Verification Code",
     "sendCode": "Send Code",
     "resendCode": "Resend",
@@ -186,7 +193,7 @@
     "rule2Title": "2. Invitation Method",
     "rule2Content": "Go to personal center to get your exclusive invite link",
     "rule3Title": "3. Rewards",
-    "rule3Content": "For each successful invite, the inviter receives XX points",
+    "rule3Content": "For each successful invite, the inviter receives {{points}} points",
     "tipsTitle": "Tips",
     "tip1Title": "1. Where to check my commission",
     "tip1Content": "Check your commission details in [My Profile] > [Commission Details]. Commissions can be used for purchases or withdrawal.",
@@ -203,7 +210,8 @@
     "version": "v1.0.0",
     "privacyPolicy": "Privacy Policy",
     "userAgreement": "User Agreement",
-    "versionUpdate": "Version Update"
+    "versionUpdate": "Version Update",
+    "alreadyLatestVersion": "Already the latest version"
   },
   "recharge": {
     "title": "Recharge",
@@ -336,7 +344,9 @@
     "cancelSuccess": "Order cancelled",
     "cancelFailed": "Failed to cancel order",
     "paymentSuccess": "Payment successful",
-    "paymentFailed": "Payment failed"
+    "paymentFailed": "Payment failed",
+    "fromAddress": "From Address",
+    "toAddress": "To Address"
   },
   "auth": {
     "third_party_login": "Third Party Login",

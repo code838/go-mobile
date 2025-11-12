@@ -1,5 +1,7 @@
+import AreaCodePicker from '@/components/AreaCodePicker';
 import Button from '@/components/Button';
 import CheckBox from '@/components/CheckBox';
+import LoginTypeSwitch, { LoginType } from '@/components/LoginTypeSwitch';
 import VerifyCodeButton from '@/components/VerifyCodeButton';
 import { Colors } from '@/constants/colors';
 import { OS_TYPE } from '@/constants/keys';
@@ -7,7 +9,9 @@ import { useRegister, useSendCaptcha } from '@/hooks/useApi';
 import { useBoundStore } from '@/store';
 import { hashPassword } from '@/utils/crypto';
 import { toast } from '@/utils/toast';
+import { isValidEmail, isValidPhone } from '@/utils/validation';
 import { Image } from 'expo-image';
+import * as Network from 'expo-network';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import {
@@ -28,6 +32,8 @@ export default function RegisterPage() {
   const { execute: register, loading: isRegisterLoading } = useRegister();
   const { execute: sendCaptcha } = useSendCaptcha();
   const [state, setState] = useImmer({
+    loginType: 'phone' as LoginType,
+    areaCode: '+86',
     phone: '',
     verifyCode: '',
     password: '',
@@ -35,6 +41,18 @@ export default function RegisterPage() {
     inviteCode: '',
     agreedToTerms: false,
   });
+
+  function setLoginType(loginType: LoginType) {
+    setState(draft => {
+      draft.loginType = loginType;
+    });
+  }
+
+  function setAreaCode(areaCode: string) {
+    setState(draft => {
+      draft.areaCode = areaCode;
+    });
+  }
 
   function setPhone(phone: string) {
     setState(draft => {
@@ -78,10 +96,27 @@ export default function RegisterPage() {
       return;
     }
 
-    const type = state.phone.includes('@') ? 1 : 2; // 1: email, 2: phone
+
+
+    // 验证输入格式是否匹配登录方式
+    const isEmail = state.loginType === 'email';
+
+    if (isEmail) {
+      if (!isValidEmail(state.phone)) {
+        toast.error(t('register.invalidEmail'));
+        return;
+      }
+    } else {
+      if (!isValidPhone(state.phone)) {
+        toast.error(t('register.invalidPhone'));
+        return;
+      }
+    }
+
+    const type = state.loginType === 'email' ? 1 : 2; // 1: email, 2: phone
 
     try {
-      await sendCaptcha({ content: state.phone, type });
+      await sendCaptcha({ content: isEmail ? state.phone : `${state.areaCode}${state.phone}`, type });
       toast.success(t('captcha.sendSuccess'));
     } catch (error: any) {
       console.error('发送验证码失败:', error);
@@ -90,6 +125,19 @@ export default function RegisterPage() {
   }
 
   async function handleRegister() {
+    // 验证输入格式是否匹配登录方式
+    const isEmail = state.loginType === 'email';
+    if (isEmail) {
+      if (!isValidEmail(state.phone)) {
+        toast.error(t('register.invalidEmail'));
+        return;
+      }
+    } else {
+      if (!isValidPhone(state.phone)) {
+        toast.error(t('register.invalidPhone'));
+        return;
+      }
+    }
 
     if (state.password !== state.confirmPassword) {
       toast.error(t('register.passwordMismatch'));
@@ -98,20 +146,20 @@ export default function RegisterPage() {
 
     try {
       // 获取IP地址
-      // const networkInfo = await Network.getIpAddressAsync();
-      const networkInfo = '127.0.0.1';
+      const networkInfo = await Network.getIpAddressAsync();
+      // const networkInfo = '127.0.0.1';
       const ip = networkInfo || '127.0.0.1';
 
       // 加密密码
       const hashedPassword = await hashPassword(state.password);
       console.log('hashedPassword', hashedPassword);
-      const type = state.phone.includes('@') ? 1 : 2; // 1: email, 2: phone
+      const type = state.loginType === 'email' ? 1 : 2; // 1: email, 2: phone
 
       // 构建注册参数
       const registerData = {
         type,
         osType: OS_TYPE,
-        content: type === 1 ? state.phone : `+86${state.phone}`,
+        content: type === 1 ? state.phone : `${state.areaCode}${state.phone}`,
         password: hashedPassword,
         ip,
         captha: state.verifyCode,
@@ -158,20 +206,45 @@ export default function RegisterPage() {
         contentFit="contain"
       />
 
+      {/* 登录类型切换 */}
+      <LoginTypeSwitch value={state.loginType} onChange={setLoginType} />
+
       {/* 输入框区域 */}
       <View style={styles.inputContainer}>
-        {/* 手机号/邮箱输入框 */}
-        <View style={styles.inputWrapper}>
-          <TextInput
-            style={styles.input}
-            placeholder={t('register.phonePlaceholder')}
-            placeholderTextColor="#6e6e70"
-            value={state.phone}
-            onChangeText={setPhone}
-            autoCapitalize="none"
-            keyboardType="email-address"
-          />
-        </View>
+        {/* 手机号输入 - 地区选择器和输入框分开 */}
+        {state.loginType === 'phone' ? (
+          <View style={styles.phoneInputRow}>
+            {/* 地区选择器 */}
+            <View style={styles.areaCodeContainer}>
+              <AreaCodePicker value={state.areaCode} onChange={setAreaCode} />
+            </View>
+            {/* 手机号输入框 */}
+            <View style={styles.phoneInputWrapper}>
+              <TextInput
+                style={styles.input}
+                placeholder={t('register.phonePlaceholder')}
+                placeholderTextColor="#6e6e70"
+                value={state.phone}
+                onChangeText={setPhone}
+                autoCapitalize="none"
+                keyboardType="phone-pad"
+              />
+            </View>
+          </View>
+        ) : (
+          /* 邮箱输入框 */
+          <View style={styles.inputWrapper}>
+            <TextInput
+              style={styles.input}
+              placeholder={t('register.emailPlaceholder')}
+              placeholderTextColor="#6e6e70"
+              value={state.phone}
+              onChangeText={setPhone}
+              autoCapitalize="none"
+              keyboardType="email-address"
+            />
+          </View>
+        )}
 
         {/* 验证码输入框和发送按钮 */}
         <View style={styles.verifyCodeRow}>
@@ -287,6 +360,23 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: '100%',
     gap: 16,
+  },
+  phoneInputRow: {
+    flexDirection: 'row',
+    gap: 8,
+    width: '100%',
+  },
+  areaCodeContainer: {
+    width: 120,
+  },
+  phoneInputWrapper: {
+    flex: 1,
+    backgroundColor: Colors.card,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 8,
+    height: 48,
+    justifyContent: 'center',
   },
   inputWrapper: {
     backgroundColor: Colors.card,

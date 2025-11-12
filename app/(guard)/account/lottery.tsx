@@ -3,13 +3,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MotiView } from 'moti';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, ImageBackground, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Easing } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import CountdownTimer from '@/components/CountdownTimer';
 import LotteryRecords, { type LotteryRecordsRef } from '@/components/LotteryRecords';
 import LotteryResultModal from '@/components/LotteryResultModal';
+import NavigationBar from '@/components/NavigationBar';
 import NoDrawChancesModal from '@/components/NoDrawChancesModal';
 import { Colors } from '@/constants/colors';
 import { getImageUrl } from '@/constants/urls';
@@ -227,7 +228,7 @@ export default function LotteryPage() {
     <View style={styles.container}>
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + 16 }]}
+        contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}>
         {/* 背景图 - 绝对定位 */}
         <View style={styles.backgroundContainer}>
@@ -239,8 +240,10 @@ export default function LotteryPage() {
           />
         </View>
         
-        {/* 标题 */}
-        <Text style={styles.pageTitle}>{t('lottery.title')}</Text>
+        {/* 导航栏 */}
+        <View style={styles.navigationBarWrapper}>
+          <NavigationBar title={t('profile.freeReceiveCoin')} />
+        </View>
         {/* 转盘区域 */}
         <View style={styles.wheelContainer}>
           {/* 转盘底盘 */}
@@ -338,7 +341,7 @@ export default function LotteryPage() {
             <View style={[
               styles.drawnBadgeContainer,
               {
-                left: `${Math.min(parseFloat(lotteryData.recvAmount) / parseFloat(lotteryData.amount) * 100, 100)}%`
+                left: `${Math.max(Math.min(parseFloat(lotteryData.recvAmount) / parseFloat(lotteryData.amount) * 100, 92), 8)}%`
               }
             ]}>
               <View style={styles.drawnBadge}>
@@ -387,7 +390,7 @@ export default function LotteryPage() {
       {/* 抽奖结果弹窗 */}
       <LotteryResultModal
         visible={showResultModal}
-        amount={drawResult?.amount === '0' ? t('lottery.thankYou') : `${drawResult?.amount || '0'}U`}
+        amount={drawResult?.amount === '0' ? t('lottery.thankYou') : drawResult?.finished ? drawResult.recvAmount : `${drawResult?.amount || '0'}U`}
         onClose={handleCloseModal}
         onConfirm={handleConfirmReward}
       />
@@ -425,11 +428,8 @@ const styles = StyleSheet.create({
   backgroundImageStyle: {
     resizeMode: 'cover',
   },
-  pageTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: Colors.brand,
-    paddingLeft: 16,
+  navigationBarWrapper: {
+    backgroundColor: 'transparent',
     marginBottom: 20,
   },
   scrollView: {
@@ -510,7 +510,7 @@ const styles = StyleSheet.create({
   },
   drawCenterText: {
     position: 'absolute',
-    bottom: 29,
+    bottom: Platform.OS === 'ios' ? 29 : 20,
     left: 0,
     right: 0,
     textAlign: 'center',

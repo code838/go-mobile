@@ -319,7 +319,11 @@ export default function FlashExchangePage() {
         <View style={styles.feeContainer}>
           <View style={styles.feeRow}>
             <Text style={styles.feeLabel}>{t('exchange.fee')}</Text>
-            <Text style={styles.feeValue}>{state.exchangeFee} USDT</Text>
+            <Text style={styles.feeValue}>
+              {state.fromAmount && parseFloat(state.fromAmount) > 0
+                ? (parseFloat(state.fromAmount) * parseFloat(state.exchangeRate) / 100).toFixed(4)
+                : '0'} USDT
+            </Text>
           </View>
           <View style={styles.feeRow}>
             <Text style={styles.feeLabel}>{t('exchange.minExchangeAmount')}</Text>

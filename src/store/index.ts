@@ -24,6 +24,7 @@ export const vanillaStore = createStore<Store>()(
         language: state.language,
         memoizedAccount: state.memoizedAccount,
         thirdLoginInfo: state.thirdLoginInfo,
+        areaInfo: state.areaInfo,
       }),
       version: 1,
       storage: createStorage() as any,

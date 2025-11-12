@@ -13,8 +13,8 @@ import PageDecoration from '@/components/PageDecoration';
 import { Colors } from '@/constants/colors';
 import { CoinMessage, Network } from '@/model/CoinMessage';
 import { useBoundStore } from '@/store';
-import { useImmer } from 'use-immer';
 import { toast } from '@/utils/toast';
+import { useImmer } from 'use-immer';
 
 
 export default function RechargePage() {
@@ -30,8 +30,8 @@ export default function RechargePage() {
     showCoinSelect: boolean;
     showNetworkSelect: boolean;
   }>({
-    selectedCoin: null,
-    selectedNetwork: null,
+    selectedCoin: coins.find(coin => coin.coinName === 'USDT') || null,
+    selectedNetwork: coins.find(coin => coin.coinName === 'USDT')?.networks[0] || null,
     showCoinSelect: false,
     showNetworkSelect: false,
   });
@@ -219,7 +219,7 @@ export default function RechargePage() {
         onClose={() => setState(draft => { draft.showCoinSelect = false; })}
         onSelect={handleSelectCoin}
         selectedCoinId={state.selectedCoin?.coinId}
-        coins={coins}
+        coins={coins.filter(coin => coin.coinName === 'USDT')}
       />
 
       {/* 选择网络弹窗 */}

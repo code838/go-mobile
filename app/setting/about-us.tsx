@@ -5,6 +5,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import NavigationBar from '@/components/NavigationBar';
 import PageDecoration from '@/components/PageDecoration';
 import { Colors } from '@/constants/colors';
+import { toast } from '@/utils/toast';
 import { router } from 'expo-router';
 
 export default function AboutUsScreen() {
@@ -19,6 +20,7 @@ export default function AboutUsScreen() {
   }
 
   function handleVersionUpdate() {
+    toast.success(t('aboutUs.alreadyLatestVersion'));
     // TODO: 检查版本更新
   }
 

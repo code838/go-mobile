@@ -27,22 +27,25 @@ export default function RootLayout() {
   const insets = useSafeAreaInsets();
   const getCoinsMessage = useBoundStore(state => state.getCoinsMessage);
   const getThirdLoginInfo = useBoundStore(state => state.getThirdLoginInfo);
+  const getAreaInfo = useBoundStore(state => state.getAreaInfo);
 
   const initApp = async () => {
     await getCoinsMessage();
     await getThirdLoginInfo();
+    await getAreaInfo();
     SplashScreen.hideAsync();
   }
 
   const setNavigationBarColor = async () => {
     if (Platform.OS === 'android') {
-      await NavigationBar.setBackgroundColorAsync("#0E0E10");
+      await NavigationBar.setBackgroundColorAsync("#ffffff");
       await NavigationBar.setButtonStyleAsync("light");
     }
   }
 
   useEffect(() => {
     setNavigationBarColor();
+    
     initApp();
   }, []);
 
@@ -50,7 +53,7 @@ export default function RootLayout() {
     <>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <SafeAreaProvider>
-          <Stack screenOptions={{ headerShown: false }} >
+          <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#0E0E10' } }} >
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           </Stack>
         </SafeAreaProvider>

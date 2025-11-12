@@ -1,5 +1,5 @@
 import { LANGUAGE_KEY } from '@/constants/keys';
-import { authApi, financeApi } from '@/services/api';
+import { authApi, financeApi, systemApi } from '@/services/api';
 import { Store, UtilsSlice } from '@/store/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import i18next from 'i18next';
@@ -14,6 +14,7 @@ export const createUtilsSlice: StateCreator<
 > = immer(set => ({
   coins: [],
   thirdLoginInfo: [],
+  areaInfo: [],
   hasHydrated: false,
   showHelpFriendsModal: false,
   setShowHelpFriendsModal: (show: boolean) => {
@@ -80,6 +81,18 @@ export const createUtilsSlice: StateCreator<
     if (data.code === 0 && data.data) {
       set(state => {
         state.thirdLoginInfo = data.data;
+      });
+    }
+  },
+
+  /**
+   * 获取地区信息（手机号前缀和国旗）
+   */
+  getAreaInfo: async () => {
+    const { data } = await systemApi.getArea();
+    if (data.code === 0 && data.data) {
+      set(state => {
+        state.areaInfo = data.data;
       });
     }
   }

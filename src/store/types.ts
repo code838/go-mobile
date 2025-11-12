@@ -1,3 +1,4 @@
+import { AreaInfo } from "@/model/AreaInfo";
 import { CoinMessage } from "@/model/CoinMessage";
 import { RechargeAddress } from "@/model/RechargeAddress";
 import { ThirdLoginInfo } from "@/model/ThirdLoginInfo";
@@ -44,6 +45,8 @@ export type UtilsSlice = {
   getCoinsMessage: () => Promise<void>;
   thirdLoginInfo: ThirdLoginInfo[];
   getThirdLoginInfo: () => Promise<void>;
+  areaInfo: AreaInfo[];
+  getAreaInfo: () => Promise<void>;
   socialLoginLoading: boolean;
   setSocialLoginLoading: (loading: boolean) => void;
   showHelpFriendsModal: boolean;

@@ -1,13 +1,15 @@
+import AreaCodePicker from '@/components/AreaCodePicker';
 import Button from '@/components/Button';
 import CheckBox from '@/components/CheckBox';
+import LoginTypeSwitch, { LoginType } from '@/components/LoginTypeSwitch';
 import SocialLoginLoading from '@/components/SocialLoginLoading';
-import TelegramLoginButton from '@/components/TelegramAuth';
 import { Colors } from '@/constants/colors';
 import { useLogin } from '@/hooks/useApi';
 import { useBoundStore } from '@/store';
 import { generateLoginSign, generateNonce, hashPassword } from '@/utils/crypto';
 import { facebookLogin, googleLogin, handleThirdPartyLogin } from '@/utils/socialAuth';
 import { toast } from '@/utils/toast';
+import { isValidEmail, isValidPhone } from '@/utils/validation';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
@@ -33,6 +35,8 @@ export default function LoginPage() {
   const setSocialLoginLoading = useBoundStore(state => state.setSocialLoginLoading);
   const { execute: login, loading: isLoginLoading } = useLogin();
   const [state, setState] = useImmer({
+    loginType: 'phone' as LoginType,
+    areaCode: '+86',
     username: memoizedAccount || '',
     password: '',
     rememberMe: false,
@@ -43,23 +47,35 @@ export default function LoginPage() {
     getThirdLoginInfo();
   }, [getThirdLoginInfo]);
   
-  const setRememberMe = (rememberMe: boolean) => {
-    setState(state => {
-      state.rememberMe = rememberMe;
+  function setLoginType(loginType: LoginType) {
+    setState(draft => {
+      draft.loginType = loginType;
     });
-  };
+  }
 
-  const setPassword = (password: string) => {
-    setState(state => {
-      state.password = password;
+  function setAreaCode(areaCode: string) {
+    setState(draft => {
+      draft.areaCode = areaCode;
     });
-  };
+  }
 
-  const setUsername = (username: string) => {
-    setState(state => {
-      state.username = username;
+  function setRememberMe(rememberMe: boolean) {
+    setState(draft => {
+      draft.rememberMe = rememberMe;
     });
-  };
+  }
+
+  function setPassword(password: string) {
+    setState(draft => {
+      draft.password = password;
+    });
+  }
+
+  function setUsername(username: string) {
+    setState(draft => {
+      draft.username = username;
+    });
+  }
 
 
   async function handleLogin() {
@@ -68,13 +84,26 @@ export default function LoginPage() {
       return;
     }
 
+    // 验证输入格式是否匹配登录方式
+    const isEmail = state.loginType === 'email';
+    if (isEmail) {
+      if (!isValidEmail(state.username)) {
+        toast.error(t('login.invalidEmail'));
+        return;
+      }
+    } else {
+      if (!isValidPhone(state.username)) {
+        toast.error(t('login.invalidPhone'));
+        return;
+      }
+    }
+
     try {
-      // 判断是邮箱还是手机号
-      const isEmail = state.username.includes('@');
+      // 根据选择的类型判断
       const type = isEmail ? 1 : 2; // 1: email, 2: phone
       
-      // 处理手机号，前面拼接+86
-      const content = isEmail ? state.username : `+86${state.username}`;
+      // 处理手机号，前面拼接区号
+      const content = isEmail ? state.username : `${state.areaCode}${state.username}`;
       
       // 生成时间戳和随机数
       const timestamp = Date.now();
@@ -202,19 +231,44 @@ export default function LoginPage() {
         contentFit="contain"
       />
 
+      {/* 登录类型切换 */}
+      <LoginTypeSwitch value={state.loginType} onChange={setLoginType} />
+
       {/* 输入框区域 */}
       <View style={styles.inputContainer}>
         {/* 用户名输入框 */}
-        <View style={styles.inputWrapper}>
-          <TextInput
-            style={styles.input}
-            placeholder={t('login.usernamePlaceholder')}
-            placeholderTextColor="#6e6e70"
-            value={state.username}
-            onChangeText={setUsername}
-            autoCapitalize="none"
-          />
-        </View>
+        {state.loginType === 'phone' ? (
+          <View style={styles.phoneInputRow}>
+            {/* 地区选择器 */}
+            <View style={styles.areaCodeContainer}>
+              <AreaCodePicker value={state.areaCode} onChange={setAreaCode} />
+            </View>
+            {/* 手机号输入框 */}
+            <View style={styles.phoneInputWrapper}>
+              <TextInput
+                style={styles.input}
+                placeholder={t('login.phonePlaceholder')}
+                placeholderTextColor="#6e6e70"
+                value={state.username}
+                onChangeText={setUsername}
+                autoCapitalize="none"
+                keyboardType="phone-pad"
+              />
+            </View>
+          </View>
+        ) : (
+          <View style={styles.inputWrapper}>
+            <TextInput
+              style={styles.input}
+              placeholder={t('login.emailPlaceholder')}
+              placeholderTextColor="#6e6e70"
+              value={state.username}
+              onChangeText={setUsername}
+              autoCapitalize="none"
+              keyboardType="email-address"
+            />
+          </View>
+        )}
 
         {/* 密码输入框 */}
         <View style={styles.inputWrapper}>
@@ -291,7 +345,7 @@ export default function LoginPage() {
         </Text>
       </Pressable>
 
-      <TelegramLoginButton />
+      {/* <TelegramLoginButton /> */}
 
       <SocialLoginLoading />
     </View>
@@ -315,6 +369,23 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: '100%',
     gap: 12,
+  },
+  phoneInputRow: {
+    flexDirection: 'row',
+    gap: 8,
+    width: '100%',
+  },
+  areaCodeContainer: {
+    width: 120,
+  },
+  phoneInputWrapper: {
+    flex: 1,
+    backgroundColor: Colors.card,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 8,
+    height: 48,
+    justifyContent: 'center',
   },
   inputWrapper: {
     backgroundColor: Colors.card,

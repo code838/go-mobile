@@ -1,7 +1,17 @@
 import { AnimatePresence, MotiView } from 'moti';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
-import { Modal, Pressable, StyleSheet, Text, View, type ViewStyle } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  type ViewStyle,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Colors } from '@/constants/colors';
 
@@ -39,6 +49,7 @@ export default function BottomSheet({
   contentStyle,
 }: BottomSheetProps) {
   const [isClosing, setIsClosing] = useState(false);
+  const insets = useSafeAreaInsets();
 
   /**
    * 处理关闭动画
@@ -57,47 +68,54 @@ export default function BottomSheet({
 
   return (
     <Modal visible={visible} transparent animationType="none" onRequestClose={handleClose}>
-      <View style={styles.overlay}>
-        {/* 背景遮罩 - fade 效果 */}
-        <AnimatePresence>
-          {visible && !isClosing && (
-            <MotiView
-              from={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ type: 'timing', duration: 200 }}
-              style={StyleSheet.absoluteFill}>
-              <Pressable style={styles.backdrop} onPress={handleClose} />
-            </MotiView>
-          )}
-        </AnimatePresence>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.flex}>
+        <View style={styles.overlay}>
+          {/* 背景遮罩 - fade 效果 */}
+          <AnimatePresence>
+            {visible && !isClosing && (
+              <MotiView
+                from={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ type: 'timing', duration: 200 }}
+                style={StyleSheet.absoluteFill}>
+                <Pressable style={styles.backdrop} onPress={handleClose} />
+              </MotiView>
+            )}
+          </AnimatePresence>
 
-        {/* 底部内容卡片 - slideUp/slideDown 效果 */}
-        <MotiView
-          from={{ translateY: 500 }}
-          animate={{ translateY: isClosing ? 500 : 0 }}
-          transition={{ type: 'timing', duration: 300 }}
-          style={[styles.container, contentStyle]}>
-          {/* 标题栏 */}
-          <View style={styles.header}>
-            <Text style={styles.title}>{title}</Text>
-            <Pressable style={styles.closeButton} onPress={handleClose} hitSlop={8}>
-              <View style={styles.closeIcon}>
-                <View style={[styles.closeLine, styles.closeLine1]} />
-                <View style={[styles.closeLine, styles.closeLine2]} />
-              </View>
-            </Pressable>
-          </View>
+          {/* 底部内容卡片 - slideUp/slideDown 效果 */}
+          <MotiView
+            from={{ translateY: 500 }}
+            animate={{ translateY: isClosing ? 500 : 0 }}
+            transition={{ type: 'timing', duration: 300 }}
+            style={[styles.container, { paddingBottom: 32 + insets.bottom }, contentStyle]}>
+            {/* 标题栏 */}
+            <View style={styles.header}>
+              <Text style={styles.title}>{title}</Text>
+              <Pressable style={styles.closeButton} onPress={handleClose} hitSlop={8}>
+                <View style={styles.closeIcon}>
+                  <View style={[styles.closeLine, styles.closeLine1]} />
+                  <View style={[styles.closeLine, styles.closeLine2]} />
+                </View>
+              </Pressable>
+            </View>
 
-          {/* 内容区域 */}
-          <View style={styles.content}>{children}</View>
-        </MotiView>
-      </View>
+            {/* 内容区域 */}
+            <View style={styles.content}>{children}</View>
+          </MotiView>
+        </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
   overlay: {
     flex: 1,
     justifyContent: 'flex-end',
@@ -114,7 +132,6 @@ const styles = StyleSheet.create({
     borderTopColor: '#1D1D1D',
     paddingHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: 32,
   },
   header: {
     flexDirection: 'row',

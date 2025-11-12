@@ -6,7 +6,6 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import NavigationBar from '@/components/NavigationBar';
 import PageDecoration from '@/components/PageDecoration';
 import { Colors } from '@/constants/colors';
-import { getImageUrl } from '@/constants/urls';
 import { useBoundStore } from '@/store';
 import { toast } from '@/utils/toast';
 import { Image } from 'expo-image';
@@ -15,8 +14,7 @@ import { Image } from 'expo-image';
 export default function InvitePage() {
   const { t } = useTranslation();
   const user = useBoundStore(state => state.user);
-  const inviteCode = user!.inviteLink.replace('/invite?invite=', '');
-
+  const inviteCode = user!.inviteLink.slice(-6);
   /**
    * 复制邀请码
    */
@@ -29,7 +27,7 @@ export default function InvitePage() {
    * 复制邀请链接
    */
   async function handleCopyLink() {
-    await Clipboard.setStringAsync(getImageUrl(user!.inviteLink));
+    await Clipboard.setStringAsync(user!.inviteLink);
     toast.success(t('invite.copySuccess'));
   }
 
@@ -76,7 +74,7 @@ export default function InvitePage() {
             {/* 邀请码和操作按钮 */}
             <View style={styles.codeRow}>
               <Text style={styles.infoLabel}>{t('invite.inviteCode')}</Text>
-              <Text style={styles.infoValue}>{inviteCode}</Text>
+              <Text style={styles.infoValue}>{user!.inviteLink.slice(-6)}</Text>
               <Pressable style={styles.copyButton} onPress={handleCopyCode}>
                 <Text style={styles.copyButtonText}>{t('invite.copy')}</Text>
               </Pressable>
@@ -113,7 +111,7 @@ export default function InvitePage() {
           <Text style={styles.ruleTitle}>{t('invite.rule2Title')}</Text>
           <Text style={styles.ruleContent}>{t('invite.rule2Content')}</Text>
           <Text style={styles.ruleTitle}>{t('invite.rule3Title')}</Text>
-          <Text style={styles.ruleContent}>{t('invite.rule3Content')}</Text>
+          <Text style={styles.ruleContent}>{t('invite.rule3Content', { points: user!.invitePoints })}</Text>
         </View>
 
         {/* 温馨提示卡片 */}

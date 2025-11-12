@@ -210,6 +210,11 @@ const LotteryRecords = forwardRef<LotteryRecordsRef, LotteryRecordsProps>(functi
       ]}>
         {activeTab === 'lottery' ? (
           // 抽奖记录
+          lotteryRecords.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>{t('lottery.noRecords')}</Text>
+            </View>
+          ) : (
           lotteryRecords.map((item, index) => (
             <View key={item.id} style={styles.lotteryRecordItem}>
               <View style={styles.lotteryRecordRow}>
@@ -227,8 +232,14 @@ const LotteryRecords = forwardRef<LotteryRecordsRef, LotteryRecordsProps>(functi
               {index !== lotteryRecords.length - 1 && <View style={styles.recordDivider} />}
             </View>
           ))
+          )
         ) : (
           // 助力记录
+          assistRecords.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>{t('lottery.noRecords')}</Text>
+            </View>
+          ) : (
           assistRecords.map((item) => (
             <View key={item.id} style={styles.assistRecordItem}>
               <View style={styles.assistRecordRow}>
@@ -253,6 +264,7 @@ const LotteryRecords = forwardRef<LotteryRecordsRef, LotteryRecordsProps>(functi
               )}
             </View>
           ))
+          )
         )}
       </View>
     </View>
@@ -446,6 +458,15 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     color: '#C555D8',
+  },
+  emptyContainer: {
+    paddingVertical: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyText: {
+    fontSize: 14,
+    color: '#6958B1',
   },
 });
 

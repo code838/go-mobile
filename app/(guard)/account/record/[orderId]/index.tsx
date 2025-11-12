@@ -5,12 +5,12 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-    ActivityIndicator,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 
 import NavigationBar from '@/components/NavigationBar';
@@ -219,7 +219,7 @@ export default function OrderDetailPage() {
         {renderDetailItem(t('orderDetail.type'), t('record.withdraw'))}
         {renderDetailItem(
           t('orderDetail.orderId'),
-          `#${orderDetail.orderId}`,
+          `${orderDetail.orderId.slice(0, 6)}...${orderDetail.orderId.slice(-4)}`,
           false,
           true,
           orderDetail.orderId
@@ -277,7 +277,7 @@ export default function OrderDetailPage() {
         {renderDetailItem(t('orderDetail.type'), t('record.recharge'))}
         {renderDetailItem(
           t('orderDetail.orderId'),
-          `#${orderDetail.orderId}`,
+          `${orderDetail.orderId.slice(0, 6)}...${orderDetail.orderId.slice(-4)}`,
           false,
           true,
           orderDetail.orderId
@@ -298,7 +298,14 @@ export default function OrderDetailPage() {
             orderDetail.hash
           )}
         {renderDetailItem(
-          t('orderDetail.address'),
+          t('orderDetail.fromAddress'),
+          truncateAddress(orderDetail.fromAddress),
+          false,
+          true,
+          orderDetail.toAddress
+        )}
+        {renderDetailItem(
+          t('orderDetail.toAddress'),
           truncateAddress(orderDetail.toAddress),
           false,
           true,
@@ -320,7 +327,7 @@ export default function OrderDetailPage() {
         {renderDetailItem(t('orderDetail.type'), t('record.exchange'))}
         {renderDetailItem(
           t('orderDetail.orderId'),
-          `#${orderDetail.orderId}`,
+          `${orderDetail.orderId.slice(0, 6)}...${orderDetail.orderId.slice(-4)}`,
           false,
           true,
           orderDetail.orderId
@@ -330,6 +337,11 @@ export default function OrderDetailPage() {
         {renderDetailItem(
           t('orderDetail.fromAmount'),
           `${orderDetail.num || '0'} ${orderDetail.coinName || ''}`
+        )}
+        {renderDetailItem(
+          t('orderDetail.fee'),
+          `${orderDetail.fee || '0'} USDT`,
+          false
         )}
         {renderDetailItem(
           t('orderDetail.exchangeAmount'),
@@ -352,7 +364,7 @@ export default function OrderDetailPage() {
         {renderDetailItem(t('orderDetail.type'), t('record.ubuy'))}
         {renderDetailItem(
           t('orderDetail.orderId'),
-          `#${orderDetail.orderId}`,
+          `${orderDetail.orderId.slice(0, 6)}...${orderDetail.orderId.slice(-4)}`,
           false,
           true,
           orderDetail.orderId
@@ -368,6 +380,11 @@ export default function OrderDetailPage() {
         {renderDetailItem(
           t('orderDetail.total'),
           `${orderDetail.amount} USDT`,
+          true
+        )}
+        {orderDetail.products?.length === 1 &&renderDetailItem(
+          t('orderDetail.productValue'),
+          `${orderDetail.products?.[0]?.productValue || '0'}`,
           true
         )}
         {renderDetailItem(t('orderDetail.time'), formatTimestamp(orderDetail.createTime))}
@@ -386,7 +403,7 @@ export default function OrderDetailPage() {
         {renderDetailItem(t('orderDetail.type'), t('record.lottery'))}
         {renderDetailItem(
           t('orderDetail.orderId'),
-          `#${orderDetail.orderId}`,
+          `${orderDetail.orderId.slice(0, 6)}...${orderDetail.orderId.slice(-4)}`,
           false,
           true,
           orderDetail.orderId
@@ -511,6 +528,7 @@ export default function OrderDetailPage() {
             return (
               <View key={`product-${index}`} style={styles.detailsCard}>
                 {renderDetailItem(t('orderDetail.productName'), product.productName)}
+                {renderDetailItem(t('orderDetail.productValue'), `${product.productValue}`, false)}
                 {renderDetailItem(t('orderDetail.productPrice'), `${product.price}`)}
                 {renderDetailItem(t('orderDetail.quantity'), `x ${product.productNum}`)}
                 {renderDetailItem(t('orderDetail.total'), `${product.productAmount} USDT`, true)}

@@ -146,7 +146,7 @@ export default function ProfilePage() {
               source={
                 user
                   ? { uri: getImageUrl(user.photo) }
-                  : require('@/assets/images/inactive-tab5.png')
+                  : require('@/assets/images/default-avatar.png')
               }
               style={styles.avatar}
               contentFit="cover"
@@ -158,7 +158,7 @@ export default function ProfilePage() {
               {user ? user.nickName : t('profile.guestName')}
             </Text>
             <Text style={styles.userId}>
-              {user ? `#${user.userId}` : t('profile.pleaseLogin')}
+              {user ? `ID:${user.userId}` : t('profile.pleaseLogin')}
             </Text>
           </View>
 
@@ -201,14 +201,15 @@ export default function ProfilePage() {
           <View style={styles.assetsContent}>
             <View style={styles.assetsRow}>
               <Text style={[styles.assetsText, { color: user ? Colors.title : Colors.subtitle }]}>
-                {t('profile.balance')}：{getBalance('USDT')} USDT
+              USDT：{getBalance('USDT')} 
               </Text>
               <Text style={[styles.assetsText, { color: user ? Colors.title : Colors.subtitle }]}>
-                {t('profile.points')}：{user ? user.points : 0} POINTS
+                {t('profile.points')}：{user ? user.points : 0}
               </Text>
             </View>
 
             {isAssetsExpanded && user && (
+              <>
               <View style={styles.assetsRow}>
                 <Text style={[styles.assetsText, { color: Colors.title }]}>
                   ETH：{getBalance('ETH')}
@@ -217,6 +218,12 @@ export default function ProfilePage() {
                   BTC：{getBalance('BTC')}
                 </Text>
               </View>
+              <View style={styles.assetsRow}>
+                <Text style={[styles.assetsText, { color: Colors.title }]}>
+                  TON：{getBalance('TON')}
+                </Text>
+              </View>
+              </>
             )}
           </View>
 
@@ -349,7 +356,7 @@ const styles = StyleSheet.create({
     color: Colors.secondary,
   },
   freeReceiveButtonBorder: {
-    backgroundColor: 'rgba(82, 63, 148, 0.3)',
+    // backgroundColor: 'rgba(82, 63, 148, 0.3)',
     padding: 4,
     borderRadius: 8,
   },

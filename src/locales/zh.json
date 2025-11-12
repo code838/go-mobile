@@ -4,8 +4,14 @@
   "tab3": "最新揭晓",
   "tab4": "心愿单",
   "tab5": "我的",
+  "loginType": {
+    "phone": "手机号",
+    "email": "邮箱"
+  },
   "login": {
     "usernamePlaceholder": "用户名/手机号/邮箱",
+    "phonePlaceholder": "请输入手机号",
+    "emailPlaceholder": "请输入邮箱",
     "passwordPlaceholder": "密码",
     "rememberMe": "记住账户",
     "forgotPassword": "忘记密码？",
@@ -17,10 +23,13 @@
     "success": "登录成功",
     "loginFailed": "登录失败",
     "getAccessTokenFailed": "获取 Access Token 失败",
-    "socialLoginInProgress": "第三方登录中..."
+    "socialLoginInProgress": "第三方登录中...",
+    "invalidPhone": "请输入有效的手机号",
+    "invalidEmail": "请输入有效的邮箱地址"
   },
   "register": {
-    "phonePlaceholder": "手机号/邮箱",
+    "phonePlaceholder": "请输入手机号",
+    "emailPlaceholder": "请输入邮箱",
     "verifyCodePlaceholder": "验证码",
     "sendCode": "发送验证码",
     "resendCode": "重新发送",
@@ -39,7 +48,9 @@
     "success": "注册成功",
     "welcomeMessage": "欢迎加入我们！",
     "registrationFailed": "注册失败",
-    "networkError": "网络错误，请稍后重试"
+    "networkError": "网络错误，请稍后重试",
+    "invalidPhone": "请输入有效的手机号",
+    "invalidEmail": "请输入有效的邮箱地址"
   },
   "forgetPassword": {
     "phonePlaceholder": "手机号/邮箱",
@@ -174,7 +185,7 @@
     "rule2Title": "2、邀请方式",
     "rule2Content": "进入个人中心获取专属邀请链接",
     "rule3Title": "3、奖励说明",
-    "rule3Content": "每成功邀请 1 位好友，邀请人可获得 XX 积分",
+    "rule3Content": "每成功邀请 1 位好友，邀请人可获得 {{points}} 积分",
     "tipsTitle": "温馨提示",
     "tip1Title": "1、在哪里可以看到我的佣金",
     "tip1Content": "在【我的个人中心】的【佣金明细】里可看到您的每次返现记录。佣金可充值到云购帐户参与购买商品或提现。",
@@ -191,7 +202,8 @@
     "version": "v1.0.0",
     "privacyPolicy": "隐私政策",
     "userAgreement": "用户协议",
-    "versionUpdate": "版本更新"
+    "versionUpdate": "版本更新",
+    "alreadyLatestVersion": "已是最新版本"
   },
   "recharge": {
     "title": "充值",
@@ -255,6 +267,10 @@
   "common": {
     "pleaseLogin": "请先登录",
     "loading": "加载中..."
+  },
+  "areaCode": {
+    "selectCountry": "选择国家/地区",
+    "searchPlaceholder": "搜索区号"
   },
   "errors": {
     "network": "网络错误，请稍后重试",
@@ -346,7 +362,9 @@
     "cancelSuccess": "订单已取消",
     "cancelFailed": "取消订单失败",
     "paymentSuccess": "支付成功",
-    "paymentFailed": "支付失败"
+    "paymentFailed": "支付失败",
+    "fromAddress": "发送地址",
+    "toAddress": "接收地址"
   },
   "protocol": {
     "userAgreement": "用户协议",
@@ -612,7 +630,8 @@
     },
     "toBeInvited": "待邀请",
     "inviteNow": "立即邀请好友",
-    "copySuccess": "邀请链接已复制"
+    "copySuccess": "邀请链接已复制",
+    "noRecords": "暂无记录"
   },
   "helpFriends": {
     "pending": "待提取",

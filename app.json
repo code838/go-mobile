@@ -4,12 +4,15 @@
     "slug": "1uvip",
     "version": "1.0.0",
     "orientation": "portrait",
+    "backgroundColor": "#0E0E10",
     "icon": "./src/assets/images/go-logo.png",
     "scheme": "com.ugo.vip",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "androidNavigationBar": {
-      "backgroundColor": "#0E0E10"
+      "backgroundColor": "#00000000",
+      "barStyle": "light-content",
+      "visible": "immersive"
     },
     "ios": {
       "supportsTablet": true,
@@ -39,8 +42,6 @@
         "backgroundImage": "./src/assets/images/go-logo.png",
         "monochromeImage": "./src/assets/images/go-logo.png"
       },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
       "permissions": [
         "android.permission.INTERNET"
       ],

@@ -93,14 +93,14 @@ export default function InvitePage() {
           </View>
 
           {/* 记录链接 */}
-          <View style={styles.recordLinks}>
+          {/* <View style={styles.recordLinks}>
             <Pressable style={styles.underlineLink} onPress={handleInviteRecord}>
               <Text style={styles.recordLink}>{t('invite.inviteRecord')}</Text>
             </Pressable>
             <Pressable style={styles.underlineLink} onPress={handleCommissionRecord}>
               <Text style={styles.recordLink}>{t('invite.commissionRecord')}</Text>
             </Pressable>
-          </View>
+          </View> */}
         </View>
 
         {/* 邀请规则卡片 */}

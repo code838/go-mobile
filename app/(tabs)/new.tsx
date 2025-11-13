@@ -16,6 +16,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LatestPage() {
   const { t } = useTranslation();
@@ -128,11 +129,11 @@ export default function LatestPage() {
   // 初始加载时显示加载状态
   if (initialLoading) {
     return (
-      <View style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#6741FF" />
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 

@@ -1,9 +1,12 @@
 import Countdown from '@/components/Countdown';
 import NavigationBar from '@/components/NavigationBar';
 import { IMG_BASE_URL } from '@/constants/api';
+import { Colors } from '@/constants/colors';
 import { urls } from '@/constants/urls';
 import { useBoundStore } from '@/store';
 import { request } from '@/utils/request';
+import { format } from 'date-fns';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -66,6 +69,7 @@ interface CalcResultItem {
   productImage?: string;
   nickName: string;
   userImage?: string;
+  serialNumber: number;
 }
 
 interface CalcResult {
@@ -490,30 +494,35 @@ export default function ProductDetailPage() {
   const remainingSlots = productDetail.totalPerson - productDetail.joinPerson;
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={['rgba(103, 65, 255, 0.1)', 'rgba(103, 65, 255, 0)', Colors.background]}
+      locations={[0, 0.43, 0.43]}
+      style={styles.container}>
       {/* 导航栏 */}
-      <NavigationBar 
-        title={t('productDetail.title')}
-        rightContent={
-          <TouchableOpacity 
-            onPress={() => {
-              console.log(`商品详情 点击爱心按钮 - 当前 isInCart: ${isInCart}, 图片: ${isInCart ? 'icon-heart-filled.png' : 'icon-heart.png'}`);
-              handleToggleCart();
-            }} 
-            style={styles.heartButton}
-          >
-            <Image
-              source={
-                isInCart
-                  ? require('@/assets/images/icon-heart-filled.png')
-                  : require('@/assets/images/icon-heart.png')
-              }
-              style={styles.heartIcon}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-        }
-      />
+      <View style={{ paddingTop: insets.top }}>
+        <NavigationBar 
+          title={t('productDetail.title')}
+          rightContent={
+            <TouchableOpacity 
+              onPress={() => {
+                console.log(`商品详情 点击爱心按钮 - 当前 isInCart: ${isInCart}, 图片: ${isInCart ? 'icon-heart-filled.png' : 'icon-heart.png'}`);
+                handleToggleCart();
+              }} 
+              style={styles.heartButton}
+            >
+              <Image
+                source={
+                  isInCart
+                    ? require('@/assets/images/icon-heart-filled.png')
+                    : require('@/assets/images/icon-heart.png')
+                }
+                style={styles.heartIcon}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+          }
+        />
+      </View>
       
       <ScrollView 
         style={styles.scrollView} 
@@ -759,10 +768,10 @@ export default function ProductDetailPage() {
                 {calcResultData.buyList.map((item, idx) => (
                   <View key={idx} style={styles.tableRow}>
                     <View style={styles.calcTimeCell}>
-                      <Text style={styles.calcTimeText}>
-                        {new Date(item.buyTime).toLocaleString()}
+                      <Text style={styles.calcTimeText}>  
+                        {format(new Date(item.buyTime), 'yyyy/MM/dd HH:mm:ss')}
                       </Text>
-                      <Text style={styles.calcTimestamp}>（{formatTimestampToHMS(item.timeStamp)}）</Text>
+                      <Text style={styles.calcTimestamp}>（{item.timeStamp}）</Text>
                     </View>
                     <View style={styles.userCell}>
                       <Image
@@ -773,8 +782,14 @@ export default function ProductDetailPage() {
                         }}
                         style={styles.avatar}
                       />
-                      <Text style={styles.userNameText} numberOfLines={1}>
-                        {item.productName}
+                      <Text
+                        style={styles.userNameText}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                      >
+                        {item.serialNumber !== undefined
+                          ? `(${t('productDetail.periodNumber', { number: item.serialNumber })}) ${item.productName}`
+                          : item.productName}
                       </Text>
                     </View>
                     <View style={styles.userCell}>
@@ -889,20 +904,21 @@ export default function ProductDetailPage() {
           </View>
         </View>
       )}
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0E0E10',
+    backgroundColor: Colors.background,
+    position: 'relative',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#0E0E10',
+    backgroundColor: Colors.background,
   },
   loadingText: {
     color: '#FFFFFF',
@@ -933,7 +949,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderRadius: 8,
     marginHorizontal: 16,
-    marginTop: 48,
+    marginTop: 64,
     paddingTop: 64,
     paddingBottom: 12,
     paddingHorizontal: 24,
@@ -1128,6 +1144,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '500',
     color: 'rgba(255, 255, 255, 0.8)',
+    flexShrink: 1,
   },
   emptyState: {
     paddingVertical: 24,

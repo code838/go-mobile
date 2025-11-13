@@ -515,11 +515,12 @@ export default function FavoritePage() {
           headerShown: false,
         }}
       />
-      <KeyboardAvoidingView 
-        style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={0}
-      >
+      <View style={styles.safeArea}>
+        <KeyboardAvoidingView 
+          style={styles.container}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={0}
+        >
           <NavigationBar title={t('wishlist.title')} showBack={false} />
         {/* 内容区域 */}
         {isLoading ? (
@@ -648,10 +649,6 @@ export default function FavoritePage() {
 
                 {/* 总计和结算按钮 */}
                 <View style={styles.checkoutContainer}>
-                  <Text style={styles.totalText}>
-                    {t('wishlist.total')}
-                    <Text style={styles.totalPrice}>{totalPrice.toFixed(0)}U</Text>
-                  </Text>
                   <Pressable
                     onPress={handleCheckout}
                     disabled={isCheckoutSubmitting || selectedCount === 0}
@@ -666,6 +663,10 @@ export default function FavoritePage() {
                       <Text style={styles.checkoutButtonText}>{t('wishlist.checkout')}</Text>
                     )}
                   </Pressable>
+                  <Text style={styles.totalText}>
+                    {t('wishlist.total')}
+                    <Text style={styles.totalPrice}>{totalPrice.toFixed(0)}U</Text>
+                  </Text>
                 </View>
               </View>
             </View>
@@ -682,12 +683,17 @@ export default function FavoritePage() {
           onLeftPress={() => setShowClearDialog(false)}
           onRightPress={handleConfirmClear}
         />
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#0E0E10',
+  },
   container: {
     flex: 1,
     backgroundColor: '#0E0E10',
@@ -835,14 +841,15 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   checkoutContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    gap: 4,
   },
   totalText: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '500',
+    textAlign: 'right',
   },
   totalPrice: {
     color: Colors.gold,
@@ -851,11 +858,11 @@ const styles = StyleSheet.create({
   checkoutButton: {
     backgroundColor: Colors.brand,
     borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
     borderWidth: 3,
     borderColor: 'rgba(255, 255, 255, 0.1)',
-    minWidth: 96,
+    minWidth: 72,
     alignItems: 'center',
   },
   checkoutButtonDisabled: {

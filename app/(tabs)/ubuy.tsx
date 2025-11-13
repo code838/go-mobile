@@ -8,17 +8,18 @@ import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-    ActivityIndicator,
-    Image,
-    Modal,
-    RefreshControl,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Image,
+  Modal,
+  Platform,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Coin {
   coinId: number;
@@ -28,6 +29,7 @@ interface Coin {
 export default function UbuyPage() {
   const { t } = useTranslation();
   const user = useBoundStore(state => state.user);
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ initialTab?: string }>();
   const [mounted, setMounted] = useState(false);
   const [zones, setZones] = useState<Zone[]>([]);
@@ -211,7 +213,12 @@ export default function UbuyPage() {
 
   if (loading && !refreshing) {
     return (
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView
+        style={[
+          styles.safeArea,
+          Platform.OS === 'android' && { paddingTop: insets.top },
+        ]}
+      >
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#6741FF" />
         </View>
@@ -220,7 +227,12 @@ export default function UbuyPage() {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView
+      style={[
+        styles.safeArea,
+        Platform.OS === 'android' && { paddingTop: insets.top },
+      ]}
+    >
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.content}

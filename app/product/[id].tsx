@@ -499,7 +499,7 @@ export default function ProductDetailPage() {
       locations={[0, 0.43, 0.43]}
       style={styles.container}>
       {/* 导航栏 */}
-      <View style={{ paddingTop: insets.top }}>
+      <View style={{  }}>
         <NavigationBar 
           title={t('productDetail.title')}
           rightContent={
@@ -875,6 +875,8 @@ export default function ProductDetailPage() {
                 keyboardType="number-pad"
                 maxLength={4}
                 selectTextOnFocus
+                underlineColorAndroid="transparent"
+                placeholderTextColor="#FFFFFF"
               />
 
               <TouchableOpacity
@@ -1292,6 +1294,13 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     textAlign: 'center',
     paddingHorizontal: 4,
+    paddingVertical: 0,
+    ...Platform.select({
+      android: {
+        includeFontPadding: false,
+        textAlignVertical: 'center',
+      },
+    }),
   },
   joinButton: {
     backgroundColor: '#6741FF',

@@ -616,6 +616,8 @@ export default function FavoritePage() {
                           selectTextOnFocus
                           editable={!isItemLoading}
                           maxLength={3}
+                          underlineColorAndroid="transparent"
+                          placeholderTextColor="#FFFFFF"
                         />
                       </View>
                       <Pressable
@@ -809,7 +811,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     width: '100%',
     padding: 0,
+    paddingVertical: 0,
     margin: 0,
+    ...Platform.select({
+      android: {
+        includeFontPadding: false,
+        textAlignVertical: 'center',
+      },
+    }),
   },
   quantityText: {
     color: '#FFFFFF',

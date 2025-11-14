@@ -618,6 +618,8 @@ export default function FavoritePage() {
                           maxLength={3}
                           underlineColorAndroid="transparent"
                           placeholderTextColor="#FFFFFF"
+                          multiline={false}
+                          numberOfLines={1}
                         />
                       </View>
                       <Pressable
@@ -803,20 +805,36 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'relative',
   },
   quantityInput: {
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '600',
     textAlign: 'center',
-    width: '100%',
+    position: 'absolute',
+    left: 4,
+    right: 4,
     padding: 0,
-    paddingVertical: 0,
     margin: 0,
+    borderWidth: 0,
+    backgroundColor: 'transparent',
     ...Platform.select({
+      ios: {
+        top: 2,
+        height: 20,
+        lineHeight: 20,
+        paddingTop: 0,
+        paddingBottom: 0,
+      },
       android: {
+        top: 5,
+        height: 18,
         includeFontPadding: false,
         textAlignVertical: 'center',
+        paddingTop: 0,
+        paddingBottom: 0,
+        lineHeight: 18,
       },
     }),
   },

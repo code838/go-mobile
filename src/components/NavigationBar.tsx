@@ -58,7 +58,7 @@ export default function NavigationBar({
   }
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={[styles.container, { paddingTop: insets.top + 12 }]}>
       <View style={styles.content}>
         {/* 左侧返回按钮 */}
         {showBack && (

@@ -223,7 +223,7 @@ export default function UbuyPage() {
   return (
     <View style={styles.safeArea}>
       {/* 固定顶部标签切换栏 */}
-      <View style={[styles.fixedTabsContainer, { paddingTop: insets.top }]}>
+      <View style={[styles.fixedTabsContainer, { paddingTop: insets.top + 12 }]}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}

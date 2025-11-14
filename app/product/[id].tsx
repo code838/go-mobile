@@ -1033,7 +1033,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   winnerBox: {
-    width: 220,
+    width: 280,
     gap: 10,
   },
   winnerText: {
@@ -1295,10 +1295,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingHorizontal: 4,
     paddingVertical: 0,
+    borderWidth: 0,
     ...Platform.select({
+      ios: {
+        lineHeight: 20,
+        paddingTop: 2,
+        paddingBottom: 0,
+      },
       android: {
         includeFontPadding: false,
         textAlignVertical: 'center',
+        paddingTop: 5,
+        paddingBottom: 0,
+        lineHeight: 18,
       },
     }),
   },

@@ -100,7 +100,7 @@ export default function OrderDetailPage() {
         isOwner: type === '0' ? true : false,
       });
       // 跳转到支付成功页面
-      router.push({
+      router.replace({
         pathname: '/(guard)/payment-result',
         params: { orderId },
       });
@@ -437,6 +437,29 @@ export default function OrderDetailPage() {
       </>
     );
   }
+  /**
+   * 渲染中奖订单详情
+   */
+  function renderCommissionDetails() {
+    if (!orderDetail) return null;
+
+    return (
+      <>
+        {renderDetailItem(t('orderDetail.type'), t('record.commission'))}
+        {renderDetailItem(
+          t('orderDetail.orderId'),
+          `${orderDetail.orderId.slice(0, 6)}...${orderDetail.orderId.slice(-4)}`,
+          false,
+          true,
+          orderDetail.orderId
+        )}
+        {renderDetailItem(t('orderDetail.nickname'), orderDetail.inviteUserName || '-')}
+        {renderDetailItem(t('orderDetail.userId'), String(orderDetail.inviteUserId || '-'))}
+        {renderDetailItem(t('orderDetail.amount'), `${orderDetail.amount} USDT`, true)}
+        {renderDetailItem(t('orderDetail.time'), formatTimestamp(orderDetail.createTime))}
+      </>
+    );
+  }
 
   /**
    * 渲染订单详情内容
@@ -455,6 +478,8 @@ export default function OrderDetailPage() {
         return renderUbuyDetails();
       case OrderType.LOTTERY:
         return renderLotteryDetails();
+      case OrderType.COMMISSION:
+        return renderCommissionDetails();
       default:
         return null;
     }

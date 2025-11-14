@@ -136,6 +136,18 @@
     "english": "English",
     "chinese": "简体中文"
   },
+  "errors": {
+    "network": "网络错误，请稍后重试",
+    "timeout": "请求超时，请检查网络连接",
+    "networkError": "网络连接失败，请检查网络设置",
+    "requestFailed": "请求失败",
+    "unknownError": "未知错误",
+    "unauthorized": "未授权，请重新登录",
+    "forbidden": "权限不足",
+    "notFound": "请求的资源不存在",
+    "serverError": "服务器内部错误",
+    "requestFailedWithStatus": "请求失败 ({{status}})"
+  },
   "addressBook": {
     "title": "地址管理",
     "addAddress": "添加地址",
@@ -274,18 +286,6 @@
     "selectCountry": "选择国家/地区",
     "searchPlaceholder": "搜索区号"
   },
-  "errors": {
-    "network": "网络错误，请稍后重试",
-    "timeout": "请求超时，请检查网络连接",
-    "networkError": "网络连接失败，请检查网络设置",
-    "requestFailed": "请求失败",
-    "unknownError": "未知错误",
-    "unauthorized": "未授权，请重新登录",
-    "forbidden": "权限不足",
-    "notFound": "请求的资源不存在",
-    "serverError": "服务器内部错误",
-    "requestFailedWithStatus": "请求失败 ({{status}})"
-  },
   "captcha": {
     "sendSuccess": "验证码发送成功",
     "sendFailed": "验证码发送失败"
@@ -366,7 +366,9 @@
     "paymentSuccess": "支付成功",
     "paymentFailed": "支付失败",
     "fromAddress": "发送地址",
-    "toAddress": "接收地址"
+    "toAddress": "接收地址",
+    "nickname": "昵称",
+    "userId": "用户ID"
   },
   "protocol": {
     "userAgreement": "用户协议",
@@ -554,7 +556,8 @@
     "noProducts": "此订单暂无商品",
     "loading": "加载中...",
     "backToHome": "返回首页",
-    "viewRecords": "查看记录"
+    "viewRecords": "查看记录",
+    "orderDetail": "订单详情"
   },
   "wishlist": {
     "title": "心愿单",

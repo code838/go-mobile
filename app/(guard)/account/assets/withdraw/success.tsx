@@ -29,6 +29,7 @@ export default function WithdrawSuccessPage() {
    */
   function handleViewOrder() {
     // TODO: 导航到订单列表页面
+    router.push(`/account/record/${orderId}?type=3`);
     console.log('查看订单');
   }
 

@@ -1,4 +1,5 @@
 import NavigationBar from '@/components/NavigationBar';
+import { Colors } from '@/constants/colors';
 import { financeApi } from '@/services/api';
 import { useBoundStore } from '@/store';
 import { Image } from 'expo-image';
@@ -7,6 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -144,6 +146,12 @@ export default function PaymentResultPage() {
           <Text style={styles.successTitle}>{t('paymentResult.successTitle')}</Text>
         </View>
 
+        {/*订单详情 */}
+        <Pressable onPress={() => router.replace(`/account/record/${orderId}?type=2`)}>
+          <View style={styles.orderDetailSection}>
+            <Text style={styles.orderDetailTitle}>{t('paymentResult.orderDetail')}</Text>
+          </View>
+        </Pressable>
         {/* 分隔线 */}
         <View style={styles.divider} />
 
@@ -212,33 +220,6 @@ export default function PaymentResultPage() {
         {/* 分隔线 */}
         <View style={styles.divider} />
       </ScrollView>
-
-      {/* 底部操作栏 - 适配 iOS 安全距离 */}
-      <View
-        style={[
-          styles.bottomBar,
-          {
-            paddingBottom: insets.bottom || 20,
-          },
-        ]}
-      >
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={() => router.replace('/(tabs)')}
-        >
-          <Text style={styles.actionButtonText}>
-            {t('paymentResult.backToHome')}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.actionButton, styles.primaryButton]}
-          onPress={() => router.replace('/(guard)/account/record/shopping')}
-        >
-          <Text style={[styles.actionButtonText, styles.primaryButtonText]}>
-            {t('paymentResult.viewRecords')}
-          </Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }
@@ -378,6 +359,15 @@ const styles = StyleSheet.create({
   },
   primaryButtonText: {
     color: '#FFFFFF',
+  },
+  orderDetailSection: {
+    marginBottom: 24,
+  },
+  orderDetailTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: Colors.brand,
+    textAlign: 'center',
   },
 });
 

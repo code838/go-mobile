@@ -346,7 +346,9 @@
     "paymentSuccess": "Payment successful",
     "paymentFailed": "Payment failed",
     "fromAddress": "From Address",
-    "toAddress": "To Address"
+    "toAddress": "To Address",
+    "nickname": "Nickname",
+    "userId": "User ID"
   },
   "auth": {
     "third_party_login": "Third Party Login",
@@ -515,7 +517,8 @@
     "noProducts": "No products in this order",
     "loading": "Loading...",
     "backToHome": "Back to Home",
-    "viewRecords": "View Records"
+    "viewRecords": "View Records",
+    "orderDetail": "Order Detail"
   },
   "wishlist": {
     "title": "Wishlist",

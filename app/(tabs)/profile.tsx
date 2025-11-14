@@ -4,11 +4,11 @@ import { MotiView } from 'moti';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from 'react-native';
 
 import { Colors } from '@/constants/colors';
@@ -137,7 +137,7 @@ export default function ProfilePage() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + 36 }]}
+        contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top }]}
         showsVerticalScrollIndicator={false}>
         {/* 用户信息卡片 */}
         <View style={styles.userCard}>
@@ -315,7 +315,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingTop: 36,
     paddingHorizontal: 16,
     paddingBottom: 16,
     gap: 24,

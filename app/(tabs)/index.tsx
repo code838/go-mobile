@@ -9,17 +9,16 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  ActivityIndicator,
-  Image,
-  Platform,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Image,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function HomePage() {
   const { t } = useTranslation();
@@ -99,28 +98,18 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <SafeAreaView
-        style={[
-          styles.safeArea,
-          Platform.OS === 'android' && { paddingTop: insets.top },
-        ]}
-      >
+      <View style={styles.safeArea}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#6741FF" />
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView
-      style={[
-        styles.safeArea,
-        Platform.OS === 'android' && { paddingTop: insets.top },
-      ]}
-    >
+    <View style={styles.safeArea}>
       {/* 固定顶部导航 */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top }]}>
         <View style={styles.headerLeft}>
           <Image 
             source={require('@/assets/images/logo.png')} 
@@ -302,7 +291,7 @@ export default function HomePage() {
         </View>
       </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 

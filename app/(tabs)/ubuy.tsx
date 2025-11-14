@@ -11,15 +11,14 @@ import {
   ActivityIndicator,
   Image,
   Modal,
-  Platform,
   RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Coin {
   coinId: number;
@@ -213,26 +212,45 @@ export default function UbuyPage() {
 
   if (loading && !refreshing) {
     return (
-      <SafeAreaView
-        style={[
-          styles.safeArea,
-          Platform.OS === 'android' && { paddingTop: insets.top },
-        ]}
-      >
+      <View style={styles.safeArea}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#6741FF" />
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView
-      style={[
-        styles.safeArea,
-        Platform.OS === 'android' && { paddingTop: insets.top },
-      ]}
-    >
+    <View style={styles.safeArea}>
+      {/* 固定顶部标签切换栏 */}
+      <View style={[styles.fixedTabsContainer, { paddingTop: insets.top }]}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.tabsScrollContent}
+        >
+          {tabsData.map((tab) => {
+            const isActive = selectedTab === tab.key;
+            return (
+              <TouchableOpacity
+                key={tab.key}
+                onPress={() => handleTabChange(tab)}
+                style={styles.tabButton}
+              >
+                <Text
+                  style={[
+                    styles.tabText,
+                    isActive ? styles.tabTextActive : styles.tabTextInactive,
+                  ]}
+                >
+                  {tab.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      </View>
+
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.content}
@@ -240,34 +258,6 @@ export default function UbuyPage() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        {/* 标签切换栏 */}
-        <View style={styles.tabsContainer}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.tabsScrollContent}
-          >
-            {tabsData.map((tab) => {
-              const isActive = selectedTab === tab.key;
-              return (
-                <TouchableOpacity
-                  key={tab.key}
-                  onPress={() => handleTabChange(tab)}
-                  style={styles.tabButton}
-                >
-                  <Text
-                    style={[
-                      styles.tabText,
-                      isActive ? styles.tabTextActive : styles.tabTextInactive,
-                    ]}
-                  >
-                    {tab.label}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
-        </View>
 
         {/* 筛选器部分 */}
         <View style={styles.filterContainer}>
@@ -440,7 +430,7 @@ export default function UbuyPage() {
           </View>
         </TouchableOpacity>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -460,6 +450,14 @@ const styles = StyleSheet.create({
   content: {
     padding: 16,
     paddingBottom: 32,
+  },
+  // 固定标签切换栏样式
+  fixedTabsContainer: {
+    backgroundColor: '#0E0E10',
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.05)',
   },
   // 标签切换栏样式
   tabsContainer: {

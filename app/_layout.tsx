@@ -28,11 +28,13 @@ export default function RootLayout() {
   const getCoinsMessage = useBoundStore(state => state.getCoinsMessage);
   const getThirdLoginInfo = useBoundStore(state => state.getThirdLoginInfo);
   const getAreaInfo = useBoundStore(state => state.getAreaInfo);
+  const getLanguageList = useBoundStore(state => state.getLanguageList);
 
   const initApp = async () => {
     await getCoinsMessage();
     await getThirdLoginInfo();
     await getAreaInfo();
+    await getLanguageList();
     SplashScreen.hideAsync();
   }
 
@@ -45,7 +47,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     setNavigationBarColor();
-    
+
     initApp();
   }, []);
 

@@ -17,32 +17,32 @@ export const urls = {
   register: `${apiUrl}/register`,
   resetPassword: `${apiUrl}/pwd/reset`,
   sendCaptcha: `${apiUrl}/email/send`,
-  
+
   // 用户相关
   getUserInfo: `${apiUrl}/user`,
   updateNickname: `${apiUrl}/user/updateNickName`,
   updateEmailOrPhone: `${apiUrl}/user/updateUserName`,
   deleteAccount: `${apiUrl}/account/delete`,
   getInviteRecord: `${apiUrl}/invite/record`,
-  
+
   // 首页相关
   home: `${apiUrl}/home`,
   homeBuys: `${apiUrl}/home/buys`,
   carousel: `${apiUrl}/carousel`,
   announcement: `${apiUrl}/announcement`,
   message: `${apiUrl}/message`,
-  
+
   // 购物车相关
   getCartList: `${apiUrl}/cart/list`,
   cartManage: `${apiUrl}/cart/manage`,
-  
+
   // 订单相关
   orderBuy: `${apiUrl}/order/buy`,
   getOrderList: `${apiUrl}/order/list`,
   getOrderDetail: `${apiUrl}/order/detail`,
   payOrder: `${apiUrl}/order/pay`,
   cancelOrder: `${apiUrl}/order/cancel`,
-  
+
   // 财务相关
   withdraw: `${apiUrl}/withdraw`,
   getWithdrawFees: `${apiUrl}/withdraw/fee`,
@@ -50,25 +50,26 @@ export const urls = {
   getExchangeConfig: `${apiUrl}/exchange/rate`,
   echange: `${apiUrl}/exchange`,
   getAllRechargeAddresses: `${apiUrl}/user/address`,
-  
+
   // 地址簿相关
   getAddressBookList: `${apiUrl}/address/withdraw/list`,
   manageAddressBook: `${apiUrl}/address/withdraw/manage`,
-  
+
   // 系统信息相关
   getProtocol: `${apiUrl}/protocol`,
   getArea: `${apiUrl}/area`,
   getBasicInfo: `${apiUrl}/basic`,
   getServiceInfo: `${apiUrl}/service`,
-  
+  getLanguageList: `${apiUrl}/language/get`,
+
   // 专区相关
   getZones: `${apiUrl}/zone`,
   getZoneProducts: `${apiUrl}/zone/products`,
   getWillProducts: `${apiUrl}/will/products`,
-  
+
   // 历史揭晓相关
   getHistoryProducts: `${apiUrl}/history/products`,
-  
+
   // 商品详情相关
   productDetail: `${apiUrl}/product/detail`,
   productBuyUsers: `${apiUrl}/product/buyusers`,

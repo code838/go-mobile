@@ -23,7 +23,9 @@
     "success": "Login successful",
     "loginFailed": "Login failed",
     "getAccessTokenFailed": "Failed to get Access Token",
-    "socialLoginInProgress": "Social login in progress..."
+    "socialLoginInProgress": "Social login in progress...",
+    "invalidPhone": "Please enter a valid phone number",
+    "invalidEmail": "Please enter a valid email address"
   },
   "register": {
     "phonePlaceholder": "Please enter phone number",
@@ -46,7 +48,9 @@
     "success": "Registration Successful",
     "welcomeMessage": "Welcome to join us!",
     "registrationFailed": "Registration failed",
-    "networkError": "Network error, please try again later"
+    "networkError": "Network error, please try again later",
+    "invalidPhone": "Please enter a valid phone number",
+    "invalidEmail": "Please enter a valid email address"
   },
   "forgetPassword": {
     "phonePlaceholder": "Phone/Email",
@@ -254,13 +258,15 @@
     "errorNoAmount": "Please enter withdrawal amount",
     "errorMinAmount": "Withdrawal amount cannot be less than minimum",
     "errorNoCoin": "Please select coin",
-    "errorNoNetwork": "Please select network", 
+    "errorNoNetwork": "Please select network",
     "errorInsufficientBalance": "Insufficient balance",
     "selectCoin": "Select Coin",
     "selectNetwork": "Select Network",
     "submitting": "Submitting...",
     "submitSuccess": "Withdrawal request submitted successfully",
-    "submitFailed": "Withdrawal request failed"
+    "submitFailed": "Withdrawal request failed",
+    "selectFromAddressBook": "Select from Address Book",
+    "noAddressInBook": "No address in book"
   },
   "captcha": {
     "sendSuccess": "Verification code sent successfully",
@@ -304,7 +310,8 @@
       "register": "Register Commission",
       "ubuy": "UBuy Commission"
     },
-    "integral": "Points"
+    "integral": "Points",
+    "freeRecive": "Free Receive"
   },
   "protocol": {
     "userAgreement": "User Agreement",
@@ -625,7 +632,8 @@
     },
     "toBeInvited": "To Be Invited",
     "inviteNow": "Invite Friends Now",
-    "copySuccess": "Invite link copied"
+    "copySuccess": "Invite link copied",
+    "noRecords": "No records"
   },
   "helpFriends": {
     "pending": "Pending",
@@ -633,5 +641,9 @@
     "pleaseHelp": "Please help me~",
     "goToApp": "Help him",
     "assistSuccess": "Assist successfully"
+  },
+  "areaCode": {
+    "selectCountry": "Select Country/Region",
+    "searchPlaceholder": "Search Area Code"
   }
 }

@@ -147,6 +147,7 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 12,
     color: '#fff',
+    textAlign: 'center'
   },
 });
 

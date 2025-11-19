@@ -25,6 +25,7 @@ export const vanillaStore = createStore<Store>()(
         memoizedAccount: state.memoizedAccount,
         thirdLoginInfo: state.thirdLoginInfo,
         areaInfo: state.areaInfo,
+        languageList: state.languageList
       }),
       version: 1,
       storage: createStorage() as any,
@@ -43,7 +44,7 @@ export const vanillaStore = createStore<Store>()(
   )
 );
 
-export const {getState, setState, subscribe} = vanillaStore;
+export const { getState, setState, subscribe } = vanillaStore;
 
 // __DEV__ && subscribe(console.log);
 

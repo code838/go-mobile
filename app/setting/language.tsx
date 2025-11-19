@@ -5,12 +5,7 @@ import { useBoundStore } from '@/store';
 import FeatherIcon from '@expo/vector-icons/Feather';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-
-interface LanguageOption {
-  code: string;
-  label: string;
-}
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 /**
  * 语言切换页面
@@ -18,11 +13,8 @@ interface LanguageOption {
 export default function LanguageScreen() {
   const { t } = useTranslation();
   const currentLanguage = useBoundStore(state => state.language);
-  
-  const languages: LanguageOption[] = [
-    { code: 'en_us', label: t('language.english') },
-    { code: 'zh_cn', label: t('language.chinese') },
-  ];
+  const languageList = useBoundStore(state => state.languageList);
+
 
   async function handleLanguageChange(languageCode: string) {
     try {
@@ -38,39 +30,42 @@ export default function LanguageScreen() {
       locations={[0, 0.43, 0.43]}
       style={styles.container}>
       <NavigationBar title={t('language.title')} />
-      
+
       <View style={styles.content}>
-        <View style={styles.languageList}>
-          {languages.map((language, index) => {
-            const isSelected = currentLanguage === language.code;
-            const isFirst = index === 0;
-            const isLast = index === languages.length - 1;
-            
-            return (
-              <Pressable
-                key={language.code}
-                onPress={() => handleLanguageChange(language.code)}
-                style={[
-                  styles.languageItem,
-                  isFirst && styles.languageItemFirst,
-                  isLast && styles.languageItemLast,
-                ]}>
-                <Text style={[
-                  styles.languageText,
-                  isSelected && styles.languageTextSelected,
-                ]}>
-                  {language.label}
-                </Text>
-                
-                {isSelected && (
-                  <View style={styles.checkIcon}>
-                    <FeatherIcon name="check" size={16} color="white" />
-                  </View>
-                )}
-              </Pressable>
-            );
-          })}
-        </View>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.languageList}>
+            {languageList.map((language, index) => {
+              const isSelected = currentLanguage === language.langflag;
+              const isFirst = index === 0;
+              const isLast = index === languageList.length - 1;
+
+              return (
+                <Pressable
+                  key={language.langflag}
+                  onPress={() => handleLanguageChange(language.langflag)}
+                  style={[
+                    styles.languageItem,
+                    isFirst && styles.languageItemFirst,
+                    isLast && styles.languageItemLast,
+                  ]}>
+                  <Text style={[
+                    styles.languageText,
+                    isSelected && styles.languageTextSelected,
+                  ]}>
+                    {language.langname}
+                  </Text>
+
+                  {isSelected && (
+                    <View style={styles.checkIcon}>
+                      <FeatherIcon name="check" size={16} color="white" />
+                    </View>
+                  )}
+                </Pressable>
+              );
+            })}
+          </View>
+          <View style={{ height: 100 }}></View>
+        </ScrollView>
       </View>
     </LinearGradient>
   );

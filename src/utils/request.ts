@@ -33,10 +33,10 @@ class HttpClient {
         config.headers['Content-Type'] = 'application/json';
         config.headers['Accept'] = 'application/json';
         config.headers['OS-Type'] = OS_TYPE;
-        
+
         // 添加Accept-Language头
         if (state.language) {
-          config.headers['Accept-Language'] = state.language.includes('zh') ? 'zh_cn' : state.language.includes('en') ? 'en_us' : state.language;
+          config.headers['Accept-Language'] = state.language || 'zh_cn';
         } else {
           config.headers['Accept-Language'] = 'zh_cn';
         }
@@ -46,7 +46,7 @@ class HttpClient {
           config.headers['Authorization'] = state.token;
         }
 
-        console.log('config', config);
+        // console.log('config', config.headers);
 
         return config;
       },
@@ -59,20 +59,20 @@ class HttpClient {
     this.instance.interceptors.response.use(
       (response: AxiosResponse<ApiResponse>) => {
         const { data } = response;
-        console.log('response', response);
+        // console.log('response', response);
         // 如果后端返回的数据格式是统一的ApiResponse格式
         if (data.code === 0) {
           return response;
         } else {
-          console.log('业务错误处理');
-          console.log(data);
+          // console.log('业务错误处理');
+          // console.log(data);
           return Promise.reject(new Error(data.msg));
         }
-        
+
       },
       (error) => {
-        console.log('error', error);
-        console.log('error.message', error.message);
+        // console.log('error', error);
+        // console.log('error.message', error.message);
         Toast.show({
           type: 'error',
           text1: error.message,

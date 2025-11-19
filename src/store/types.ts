@@ -51,6 +51,13 @@ export type UtilsSlice = {
   setSocialLoginLoading: (loading: boolean) => void;
   showHelpFriendsModal: boolean;
   setShowHelpFriendsModal: (show: boolean) => void;
+  languageList: Language[];
+  getLanguageList: () => Promise<void>;
+}
+
+export interface Language {
+  langname: string;
+  langflag: string;
 }
 
 export type Store = AccountSlice & UtilsSlice;

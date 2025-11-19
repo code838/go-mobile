@@ -1,14 +1,18 @@
+import { changeLanguage } from '@/config/i18n';
+import { useBoundStore } from '@/store';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-    Modal,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
+
 
 export default function LanguageSwitcher() {
   const { i18n } = useTranslation();
@@ -16,15 +20,18 @@ export default function LanguageSwitcher() {
   const [buttonLayout, setButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const currentLang = i18n.language;
 
-  const switchLanguage = async (lang: 'en' | 'zh') => {
+  const languageList = useBoundStore(state => state.languageList);
+
+  const switchLanguage = async (lang: string) => {
     try {
-      await i18n.changeLanguage(lang);
+      await changeLanguage(lang);
       await AsyncStorage.setItem('language', lang);
       setVisible(false);
     } catch (error) {
       console.error('切换语言失败:', error);
     }
   };
+
 
   return (
     <>
@@ -33,7 +40,6 @@ export default function LanguageSwitcher() {
         onPress={() => setVisible(true)}
         onLayout={(event) => {
           const { x, y, width, height } = event.nativeEvent.layout;
-          // 需要获取相对于屏幕的位置
           event.target.measure((fx, fy, w, h, px, py) => {
             setButtonLayout({ x: px, y: py, width: w, height: h });
           });
@@ -60,42 +66,31 @@ export default function LanguageSwitcher() {
                 position: 'absolute',
                 top: buttonLayout.y + buttonLayout.height + 4,
                 right: 16,
+                maxHeight: 300
               },
             ]}
           >
-            <TouchableOpacity
-              style={[
-                styles.option,
-                currentLang === 'en' && styles.optionActive,
-              ]}
-              onPress={() => switchLanguage('en')}
-            >
-              <Text
-                style={[
-                  styles.optionText,
-                  currentLang === 'en' && styles.optionTextActive,
-                ]}
-              >
-                English
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.option,
-                currentLang === 'zh' && styles.optionActive,
-              ]}
-              onPress={() => switchLanguage('zh')}
-            >
-              <Text
-                style={[
-                  styles.optionText,
-                  currentLang === 'zh' && styles.optionTextActive,
-                ]}
-              >
-                简体中文
-              </Text>
-            </TouchableOpacity>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {languageList.map((item) => (
+                <TouchableOpacity
+                  key={item.langflag}
+                  style={[
+                    styles.option,
+                    currentLang === item.langflag && styles.optionActive,
+                  ]}
+                  onPress={() => switchLanguage(item.langflag)}
+                >
+                  <Text
+                    style={[
+                      styles.optionText,
+                      currentLang === item.langflag && styles.optionTextActive,
+                    ]}
+                  >
+                    {item.langname}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
           </View>
         </TouchableOpacity>
       </Modal>
@@ -121,7 +116,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.1)',
-    width: 120,
+    width: 160,
     padding: 4,
     shadowColor: '#000',
     shadowOffset: {
@@ -133,12 +128,20 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   option: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderRadius: 6,
+    gap: 8,
   },
   optionActive: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  flagIcon: {
+    width: 24,
+    height: 16,
+    borderRadius: 2,
   },
   optionText: {
     color: '#FFFFFF',

@@ -13,30 +13,30 @@ interface UseTelegramAuthProps {
 
 export function useTelegramAuth({ onSuccess, onError }: UseTelegramAuthProps = {}) {
   const thirdLoginInfo = useBoundStore(state => state.thirdLoginInfo);
-  
+
   // 获取Telegram登录配置
   const telegramInfo = thirdLoginInfo.find(info => info.type === 3);
-  
+
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
-      clientId: telegramInfo?.clientId || '8421744377',
+      clientId: telegramInfo?.clientId || '8511838219',
       redirectUri: REDIRECT_URI,
       responseType: AuthSession.ResponseType.Token,
       extraParams: {
-        bot_id: telegramInfo?.clientId || '8421744377',
-        origin: 'liberty7788.top',
+        bot_id: telegramInfo?.clientId || '8511838219',
+        origin: 'ugo.liberty7788.top',
         request_access: 'write',
-        return_to: 'liberty7788.top',
+        return_to: 'ugo.liberty7788.top',
       },
     },
-    { 
-      authorizationEndpoint: 'https://oauth.telegram.org/auth' 
+    {
+      authorizationEndpoint: 'https://oauth.telegram.org/auth'
     }
   );
 
   useEffect(() => {
     console.log('telegram response', response);
-    
+
     if (response?.type === 'success') {
       const { access_token } = response.params;
       console.log('Telegram Access Token:', access_token);

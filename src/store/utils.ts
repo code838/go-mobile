@@ -33,7 +33,21 @@ export const createUtilsSlice: StateCreator<
       state.socialLoginLoading = loading;
     });
   },
-  language: 'zh',
+
+  languageList: [],
+  /**
+   * 获取语言列表
+   */
+  getLanguageList: async () => {
+    const response = await systemApi.getLanguageList();
+    if (response.data.code === 0) {
+      set(state => {
+        state.languageList = response.data.data;
+      });
+    }
+  },
+
+  language: 'zh_cn',
   setLanguage: async (language: string) => {
     await i18next.changeLanguage(language);
     await AsyncStorage.setItem(LANGUAGE_KEY, language);
@@ -95,5 +109,5 @@ export const createUtilsSlice: StateCreator<
         state.areaInfo = data.data;
       });
     }
-  }
+  },
 }));

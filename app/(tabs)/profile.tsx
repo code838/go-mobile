@@ -154,7 +154,7 @@ export default function ProfilePage() {
           </View>
 
           <View style={styles.userInfo}>
-            <Text style={styles.username}>
+            <Text style={styles.username} numberOfLines={1}>
               {user ? user.nickName : t('profile.guestName')}
             </Text>
             <Text style={styles.userId}>

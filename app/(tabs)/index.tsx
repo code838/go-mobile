@@ -1,5 +1,4 @@
 import Carousel from '@/components/Carousel';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ProductCard from '@/components/ProductCard';
 import WinnerAnnouncement from '@/components/WinnerAnnouncement';
 import { getCarousel, getHome, getHomeBuys } from '@/services/home';
@@ -118,7 +117,7 @@ export default function HomePage() {
           <Text style={styles.appName}>1U.VIP</Text>
         </View>
         <View style={styles.headerRight}>
-          <LanguageSwitcher />
+          {/* <LanguageSwitcher /> */}
           <TouchableOpacity
             style={styles.notificationButton}
             onPress={() => router.push('/notifications' as any)}

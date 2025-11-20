@@ -1,7 +1,7 @@
 {
   "tab1": "Strona główna",
   "tab2": "UBuy",
-  "tab3": "Najnowsze wyniki",
+  "tab3": "Najnowsze",
   "tab4": "Lista życzeń",
   "tab5": "Ja",
   "loginType": {
@@ -66,7 +66,7 @@
     "guestName": "--",
     "pleaseLogin": "Zaloguj się, aby zobaczyć",
     "loginButton": "Zaloguj się",
-    "freeReceiveCoin": "Odbierz darmowe monety",
+    "freeReceiveCoin": "Odbierz",
     "balance": "Saldo",
     "points": "Punkty",
     "recharge": "Doładuj",

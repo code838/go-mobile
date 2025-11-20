@@ -1,7 +1,7 @@
 {
   "tab1": "Галоўная",
   "tab2": "UBuy",
-  "tab3": "Апошнія вынікі",
+  "tab3": "Апошнія",
   "tab4": "Спіс жаданняў",
   "tab5": "Я",
   "loginType": {
@@ -66,7 +66,7 @@
     "guestName": "--",
     "pleaseLogin": "Калі ласка, увайдзіце, каб праглядзець",
     "loginButton": "Увайсці",
-    "freeReceiveCoin": "Атрымаць бясплатныя манеты",
+    "freeReceiveCoin": "Атрымаць",
     "balance": "Баланс",
     "points": "Балы",
     "recharge": "Папоўніць",

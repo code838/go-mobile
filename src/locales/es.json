@@ -1,7 +1,7 @@
 {
   "tab1": "Inicio",
   "tab2": "UBuy",
-  "tab3": "Últimos Resultados",
+  "tab3": "Últimos",
   "tab4": "Lista de Deseos",
   "tab5": "Yo",
   "loginType": {
@@ -66,7 +66,7 @@
     "guestName": "--",
     "pleaseLogin": "Por favor inicie sesión para ver",
     "loginButton": "Iniciar Sesión",
-    "freeReceiveCoin": "Reclamar Monedas Gratis",
+    "freeReceiveCoin": "Reclamar",
     "balance": "Saldo",
     "points": "Puntos",
     "recharge": "Recargar",

@@ -1,7 +1,7 @@
 {
   "tab1": "Početna",
   "tab2": "UBuy",
-  "tab3": "Najnoviji Rezultati",
+  "tab3": "Najnoviji",
   "tab4": "Lista Želja",
   "tab5": "Ja",
   "loginType": {
@@ -66,7 +66,7 @@
     "guestName": "--",
     "pleaseLogin": "Molimo prijavite se za pregled",
     "loginButton": "Prijavi se",
-    "freeReceiveCoin": "Preuzmi Besplatne Novčiće",
+    "freeReceiveCoin": "Preuzmi",
     "balance": "Stanje",
     "points": "Bodovi",
     "recharge": "Nadopuni",

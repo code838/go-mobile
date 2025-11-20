@@ -1,8 +1,8 @@
 {
   "tab1": "Башкы бет",
   "tab2": "UBuy",
-  "tab3": "Акыркы жыйынтыктар",
-  "tab4": "Каалоолор тизмеси",
+  "tab3": "Акыркы",
+  "tab4": "Каалоолор",
   "tab5": "Мен",
   "loginType": {
     "phone": "Телефон",
@@ -66,7 +66,7 @@
     "guestName": "--",
     "pleaseLogin": "Көрүү үчүн кириңиз",
     "loginButton": "Кирүү",
-    "freeReceiveCoin": "Акысыз монеталарды алуу",
+    "freeReceiveCoin": "Акысыз",
     "balance": "Баланс",
     "points": "Упайлар",
     "recharge": "Толуктоо",

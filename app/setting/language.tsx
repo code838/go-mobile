@@ -4,6 +4,7 @@ import { Colors } from '@/constants/colors';
 import { useBoundStore } from '@/store';
 import FeatherIcon from '@expo/vector-icons/Feather';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -14,11 +15,13 @@ export default function LanguageScreen() {
   const { t } = useTranslation();
   const currentLanguage = useBoundStore(state => state.language);
   const languageList = useBoundStore(state => state.languageList);
+  const router = useRouter();
 
 
   async function handleLanguageChange(languageCode: string) {
     try {
       await changeLanguage(languageCode);
+      router.back();
     } catch (error) {
       console.error('切换语言失败:', error);
     }

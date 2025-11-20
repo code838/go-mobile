@@ -1,7 +1,7 @@
 {
   "tab1": "Startseite",
   "tab2": "UBuy",
-  "tab3": "Neueste Ergebnisse",
+  "tab3": "Neueste",
   "tab4": "Wunschliste",
   "tab5": "Ich",
   "loginType": {
@@ -66,7 +66,7 @@
     "guestName": "--",
     "pleaseLogin": "Bitte anmelden zum Anzeigen",
     "loginButton": "Anmelden",
-    "freeReceiveCoin": "Kostenlose Münzen anfordern",
+    "freeReceiveCoin": "Kostenlose",
     "balance": "Guthaben",
     "points": "Punkte",
     "recharge": "Aufladen",

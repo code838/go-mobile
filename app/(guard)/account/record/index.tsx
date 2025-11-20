@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
   LayoutChangeEvent,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -69,34 +70,40 @@ export default function RecordsPage() {
       <View style={styles.content}>
         {/* Tab 切换 */}
         <View style={styles.tabContainer}>
-          <View style={styles.tabWrapper}>
-            {TABS.map((tab, index) => (
-              <Pressable
-                key={tab.key}
-                style={styles.tabItem}
-                onPress={() => handleTabPress(index)}
-                onLayout={(e) => handleTabLayout(index, e)}>
-                <Text style={[styles.tabText, activeTabIndex === index && styles.tabTextActive]}>
-                  {t(tab.label)}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}>
+            <View style={styles.tabWrapper}>
+              {TABS.map((tab, index) => (
+                <Pressable
+                  key={tab.key}
+                  style={styles.tabItem}
+                  onPress={() => handleTabPress(index)}
+                  onLayout={(e) => handleTabLayout(index, e)}>
+                  <Text
+                    style={[styles.tabText, activeTabIndex === index && styles.tabTextActive]}
+                    numberOfLines={1}>
+                    {t(tab.label)}
+                  </Text>
+                </Pressable>
+              ))}
 
-          {/* 下划线动画 */}
-          {tabLayouts.every((layout) => layout !== null) && (
-            <MotiView
-              style={styles.indicator}
-              animate={{
-                left: indicatorStyle.left,
-                width: indicatorStyle.width,
-              }}
-              transition={{
-                type: 'timing',
-                duration: 250,
-              }}
-            />
-          )}
+              {/* 下划线动画 */}
+              {tabLayouts.every((layout) => layout !== null) && (
+                <MotiView
+                  style={styles.indicator}
+                  animate={{
+                    left: indicatorStyle.left,
+                    width: indicatorStyle.width,
+                  }}
+                  transition={{
+                    type: 'timing',
+                    duration: 250,
+                  }}
+                />
+              )}
+            </View>
+          </ScrollView>
         </View>
 
         {/* PagerView */}
@@ -130,13 +137,13 @@ const styles = StyleSheet.create({
   tabContainer: {
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255, 255, 255, 0.05)',
-    position: 'relative',
   },
   tabWrapper: {
     flexDirection: 'row',
+    alignItems: 'center',
+    position: 'relative',
   },
   tabItem: {
-    flex: 1,
     paddingHorizontal: 12,
     paddingTop: 4,
     paddingBottom: 12,

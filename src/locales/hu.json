@@ -1,7 +1,7 @@
 {
   "tab1": "Főoldal",
   "tab2": "UBuy",
-  "tab3": "Legfrissebb Eredmények",
+  "tab3": "Legfrissebb",
   "tab4": "Kívánságlista",
   "tab5": "Én",
   "loginType": {
@@ -66,7 +66,7 @@
     "guestName": "--",
     "pleaseLogin": "Kérjük, jelentkezzen be a megtekintéshez",
     "loginButton": "Bejelentkezés",
-    "freeReceiveCoin": "Ingyenes Érmék Igénylése",
+    "freeReceiveCoin": "Ingyenes",
     "balance": "Egyenleg",
     "points": "Pontok",
     "recharge": "Feltöltés",

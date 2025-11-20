@@ -1,8 +1,8 @@
 {
   "tab1": "Acasă",
   "tab2": "UBuy",
-  "tab3": "Ultimele rezultate",
-  "tab4": "Lista de dorințe",
+  "tab3": "Ultimele",
+  "tab4": "Lista de",
   "tab5": "Eu",
   "loginType": {
     "phone": "Telefon",
@@ -66,7 +66,7 @@
     "guestName": "--",
     "pleaseLogin": "Vă rugăm să vă autentificați pentru a vizualiza",
     "loginButton": "Autentificare",
-    "freeReceiveCoin": "Primește monede gratuite",
+    "freeReceiveCoin": "Primește",
     "balance": "Sold",
     "points": "Puncte",
     "recharge": "Reîncărcare",

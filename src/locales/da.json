@@ -1,7 +1,7 @@
 {
   "tab1": "Hjem",
   "tab2": "UBuy",
-  "tab3": "Seneste Resultater",
+  "tab3": "Seneste",
   "tab4": "Ønskeliste",
   "tab5": "Mig",
   "loginType": {
@@ -66,7 +66,7 @@
     "guestName": "--",
     "pleaseLogin": "Log ind for at se",
     "loginButton": "Log ind",
-    "freeReceiveCoin": "Gør krav på gratis mønter",
+    "freeReceiveCoin": "Gør krav",
     "balance": "Saldo",
     "points": "Point",
     "recharge": "Genopfyld",

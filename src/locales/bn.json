@@ -1,7 +1,7 @@
 {
   "tab1": "হোম",
   "tab2": "ইউবাই",
-  "tab3": "সর্বশেষ ফলাফল",
+  "tab3": "সর্বশেষ",
   "tab4": "উইশলিস্ট",
   "tab5": "আমার",
   "loginType": {
@@ -66,7 +66,7 @@
     "guestName": "--",
     "pleaseLogin": "দেখতে লগইন করুন",
     "loginButton": "লগইন",
-    "freeReceiveCoin": "বিনামূল্যে কয়েন দাবি করুন",
+    "freeReceiveCoin": "কয়েন দাবি করুন",
     "balance": "ব্যালেন্স",
     "points": "পয়েন্ট",
     "recharge": "রিচার্জ",

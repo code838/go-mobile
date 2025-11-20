@@ -1,7 +1,7 @@
 {
   "tab1": "Home",
   "tab2": "UBuy",
-  "tab3": "Latest Results",
+  "tab3": "Latest",
   "tab4": "Wishlist",
   "tab5": "My",
   "loginType": {
@@ -66,7 +66,7 @@
     "guestName": "--",
     "pleaseLogin": "Please login to view",
     "loginButton": "Login",
-    "freeReceiveCoin": "Claim Free Coins",
+    "freeReceiveCoin": "Free Coins",
     "balance": "Balance",
     "points": "Points",
     "recharge": "Recharge",

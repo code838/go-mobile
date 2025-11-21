@@ -399,7 +399,7 @@
     "minutes": "MENIT",
     "seconds": "DETIK",
     "view": "Lihat",
-    "joinNow": "Gabung Sekarang",
+    "joinNow": "Beli",
     "joinNowShort": "Gabung",
     "details": "Detail",
     "submitting": "Mengirim...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "Pilih Negara/Wilayah",
     "searchPlaceholder": "Cari kode area"
+  },
+  "ubuy": {
+    "all": "Semua"
   }
 }

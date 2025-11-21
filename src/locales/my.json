@@ -399,7 +399,7 @@
     "minutes": "မိနစ်",
     "seconds": "စက္ကန့်",
     "view": "ကြည့်ရှုရန်",
-    "joinNow": "ယခု ပါဝင်ရန်",
+    "joinNow": "ဝယ်ယူမည်",
     "joinNowShort": "ပါဝင်ရန်",
     "details": "အသေးစိတ်",
     "submitting": "တင်ပြနေသည်...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "နိုင်ငံ/ဒေသ ရွေးချယ်ရန်",
     "searchPlaceholder": "ဒေသကုဒ် ရှာဖွေရန်"
+  },
+  "ubuy": {
+    "all": "အားလုံး"
   }
 }

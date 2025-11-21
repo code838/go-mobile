@@ -399,7 +399,7 @@
     "minutes": "MIN",
     "seconds": "SEK",
     "view": "Poglej",
-    "joinNow": "Sodeluj",
+    "joinNow": "Kupi",
     "joinNowShort": "Sodeluj",
     "details": "Podrobnosti",
     "submitting": "Pošiljanje...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "Izberite državo/regijo",
     "searchPlaceholder": "Išči kodo območja"
+  },
+  "ubuy": {
+    "all": "Vse"
   }
 }

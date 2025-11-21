@@ -399,7 +399,7 @@
     "minutes": "MINÚTY",
     "seconds": "SEKUNDY",
     "view": "Zobraziť",
-    "joinNow": "Pridať sa",
+    "joinNow": "Kúpiť",
     "joinNowShort": "Pridať sa",
     "details": "Podrobnosti",
     "submitting": "Odosielanie...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "Vyberte krajinu/región",
     "searchPlaceholder": "Hľadať predvoľbu"
+  },
+  "ubuy": {
+    "all": "Všetko"
   }
 }

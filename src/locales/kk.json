@@ -399,7 +399,7 @@
     "minutes": "МИНУТ",
     "seconds": "СЕКУНД",
     "view": "Көру",
-    "joinNow": "Қазір қосылу",
+    "joinNow": "Сатып алу",
     "joinNowShort": "Қосылу",
     "details": "Мәліметтер",
     "submitting": "Жіберілуде...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "Елді/Аймақты таңдау",
     "searchPlaceholder": "Аймақ кодын іздеу"
+  },
+  "ubuy": {
+    "all": "Барлығы"
   }
 }

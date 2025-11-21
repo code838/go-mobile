@@ -399,7 +399,7 @@
     "minutes": "MINUTE",
     "seconds": "SEKUNDE",
     "view": "Pogledaj",
-    "joinNow": "Pridruži se Sada",
+    "joinNow": "Kupi",
     "joinNowShort": "Pridruži se",
     "details": "Detalji",
     "submitting": "Slanje...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "Odaberi Državu/Regiju",
     "searchPlaceholder": "Pretraži pozivni broj"
+  },
+  "ubuy": {
+    "all": "Sve"
   }
 }

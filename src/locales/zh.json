@@ -431,7 +431,7 @@
     "minutes": "分钟",
     "seconds": "秒",
     "view": "查看",
-    "joinNow": "立即参与",
+    "joinNow": "立即购买",
     "joinNowShort": "参与",
     "details": "详情",
     "submitting": "提交中...",
@@ -607,6 +607,9 @@
     "typePromotion": "活动消息",
     "typeSecurity": "安全消息",
     "loading": "加载中..."
+  },
+  "ubuy": {
+    "all": "全部"
   },
   "lottery": {
     "title": "助力好友",

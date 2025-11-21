@@ -399,7 +399,7 @@
     "minutes": "MINUTEN",
     "seconds": "SEKUNDEN",
     "view": "Ansehen",
-    "joinNow": "Jetzt beitreten",
+    "joinNow": "Kaufen",
     "joinNowShort": "Beitreten",
     "details": "Details",
     "submitting": "Senden...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "Land/Region auswählen",
     "searchPlaceholder": "Nach Vorwahl suchen"
+  },
+  "ubuy": {
+    "all": "Alle"
   }
 }

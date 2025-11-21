@@ -399,7 +399,7 @@
     "minutes": "МИНУТ",
     "seconds": "СЕКУНД",
     "view": "Көрүү",
-    "joinNow": "Азыр кошулуу",
+    "joinNow": "Сатып алуу",
     "joinNowShort": "Кошулуу",
     "details": "Чоо-жайы",
     "submitting": "Жөнөтүлүүдө...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "Өлкөнү/Аймакты тандоо",
     "searchPlaceholder": "Аймак кодун издөө"
+  },
+  "ubuy": {
+    "all": "Баары"
   }
 }

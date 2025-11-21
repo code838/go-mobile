@@ -399,7 +399,7 @@
     "minutes": "MINUTOS",
     "seconds": "SEGUNDOS",
     "view": "Ver",
-    "joinNow": "Unirse Ahora",
+    "joinNow": "Comprar",
     "joinNowShort": "Unirse",
     "details": "Detalles",
     "submitting": "Enviando...",
@@ -604,6 +604,9 @@
     "typePromotion": "Promoción",
     "typeSecurity": "Seguridad",
     "loading": "Cargando..."
+  },
+  "ubuy": {
+    "all": "Todos"
   },
   "lottery": {
     "title": "Ayudar a un Amigo",

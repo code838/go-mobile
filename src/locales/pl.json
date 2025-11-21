@@ -399,7 +399,7 @@
     "minutes": "MIN",
     "seconds": "SEK",
     "view": "Zobacz",
-    "joinNow": "Dołącz teraz",
+    "joinNow": "Kup",
     "joinNowShort": "Dołącz",
     "details": "Szczegóły",
     "submitting": "Przesyłanie...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "Wybierz kraj/region",
     "searchPlaceholder": "Szukaj kodu regionu"
+  },
+  "ubuy": {
+    "all": "Wszystkie"
   }
 }

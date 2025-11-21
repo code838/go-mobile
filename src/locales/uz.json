@@ -399,7 +399,7 @@
     "minutes": "DAQ",
     "seconds": "SON",
     "view": "Ko'rish",
-    "joinNow": "Qo'shilish",
+    "joinNow": "Sotib olish",
     "joinNowShort": "Qo'shilish",
     "details": "Tafsilotlar",
     "submitting": "Yuborilmoqda...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "Mamlakat/Hududni tanlang",
     "searchPlaceholder": "Hudud kodini qidirish"
+  },
+  "ubuy": {
+    "all": "Hammasi"
   }
 }

@@ -399,7 +399,7 @@
     "minutes": "ХВІЛІНЫ",
     "seconds": "СЕКУНДЫ",
     "view": "Прагляд",
-    "joinNow": "Далучыцца",
+    "joinNow": "Купіць",
     "joinNowShort": "Далучыцца",
     "details": "Дэталі",
     "submitting": "Адпраўка...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "Выберыце краіну/рэгіён",
     "searchPlaceholder": "Пошук кода рэгіёна"
+  },
+  "ubuy": {
+    "all": "Усе"
   }
 }

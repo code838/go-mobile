@@ -399,7 +399,7 @@
     "minutes": "MIN",
     "seconds": "SEK",
     "view": "Visa",
-    "joinNow": "Gå med",
+    "joinNow": "Köp",
     "joinNowShort": "Gå med",
     "details": "Detaljer",
     "submitting": "Skickar...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "Välj land/region",
     "searchPlaceholder": "Sök landskod"
+  },
+  "ubuy": {
+    "all": "Alla"
   }
 }

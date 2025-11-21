@@ -399,7 +399,7 @@
     "minutes": "MINUTES",
     "seconds": "SECONDS",
     "view": "View",
-    "joinNow": "Join Now",
+    "joinNow": "Buy",
     "joinNowShort": "Join",
     "details": "Details",
     "submitting": "Submitting...",
@@ -604,6 +604,9 @@
     "typePromotion": "Promotion",
     "typeSecurity": "Security",
     "loading": "Loading..."
+  },
+  "ubuy": {
+    "all": "All"
   },
   "lottery": {
     "title": "Help Friend",

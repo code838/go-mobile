@@ -35,7 +35,7 @@ export default function UbuyPage() {
   const [coins, setCoins] = useState<Coin[]>([]);
   const [selectedTab, setSelectedTab] = useState<string>('');
   const [selectedZoneId, setSelectedZoneId] = useState<number | undefined>(undefined);
-  const [selectedCoin, setSelectedCoin] = useState<string>('全部');
+  const [selectedCoin, setSelectedCoin] = useState<string>('');
   const [selectedCoinId, setSelectedCoinId] = useState<number | undefined>(undefined);
   const [sortBy, setSortBy] = useState<'1' | '2'>('1');
   const [products, setProducts] = useState<Product[]>([]);
@@ -49,9 +49,9 @@ export default function UbuyPage() {
 
   // 构建币种选项列表
   const coinOptions = useMemo(() => {
-    const allOption = { coinId: 0, coinName: '全部' };
+    const allOption = { coinId: 0, coinName: t('ubuy.all') };
     return [allOption, ...coins];
-  }, [coins]);
+  }, [coins, t]);
 
   // 排序选项
   const sortOptions = useMemo(
@@ -65,7 +65,8 @@ export default function UbuyPage() {
   // 确保在客户端挂载后再获取数据
   useEffect(() => {
     setMounted(true);
-  }, []);
+    setSelectedCoin(t('ubuy.all'));
+  }, [t]);
 
   // 加载初始数据
   const loadInitialData = async () => {

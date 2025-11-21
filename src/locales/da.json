@@ -399,7 +399,7 @@
     "minutes": "MINUTTER",
     "seconds": "SEKUNDER",
     "view": "Se",
-    "joinNow": "Deltag nu",
+    "joinNow": "Køb",
     "joinNowShort": "Deltag",
     "details": "Detaljer",
     "submitting": "Indsender...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "Vælg land/region",
     "searchPlaceholder": "Søg efter områdekode"
+  },
+  "ubuy": {
+    "all": "Alle"
   }
 }

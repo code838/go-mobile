@@ -399,7 +399,7 @@
     "minutes": "ΛΕΠΤΑ",
     "seconds": "ΔΕΥΤΕΡΟΛΕΠΤΑ",
     "view": "Προβολή",
-    "joinNow": "Συμμετοχή Τώρα",
+    "joinNow": "Αγορά",
     "joinNowShort": "Συμμετοχή",
     "details": "Λεπτομέρειες",
     "submitting": "Υποβολή...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "Επιλογή Χώρας/Περιοχής",
     "searchPlaceholder": "Αναζήτηση κωδικού περιοχής"
+  },
+  "ubuy": {
+    "all": "Όλα"
   }
 }

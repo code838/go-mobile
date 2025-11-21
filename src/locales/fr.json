@@ -399,8 +399,8 @@
     "minutes": "MINUTES",
     "seconds": "SECONDES",
     "view": "Voir",
-    "joinNow": "Rejoindre maintenant",
-    "joinNowShort": "Rejoindre",
+    "joinNow": "Acheter",
+    "joinNowShort": "Acheter",
     "details": "Détails",
     "submitting": "Soumission en cours...",
     "maxParticipantLimit": "La limite d'achat maximale est de {count}",
@@ -616,5 +616,8 @@
   "areaCode": {
     "selectCountry": "Sélectionner le pays/la région",
     "searchPlaceholder": "Rechercher le code régional"
+  },
+  "ubuy": {
+    "all": "Tous"
   }
 }

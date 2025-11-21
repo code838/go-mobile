@@ -399,7 +399,7 @@
     "minutes": "PHÚT",
     "seconds": "GIÂY",
     "view": "Xem",
-    "joinNow": "Tham gia",
+    "joinNow": "Mua",
     "joinNowShort": "Tham gia",
     "details": "Chi tiết",
     "submitting": "Đang gửi...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "Chọn Quốc gia/Vùng",
     "searchPlaceholder": "Tìm mã vùng"
+  },
+  "ubuy": {
+    "all": "Tất cả"
   }
 }

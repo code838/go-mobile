@@ -399,7 +399,7 @@
     "minutes": "分",
     "seconds": "秒",
     "view": "表示",
-    "joinNow": "今すぐ参加",
+    "joinNow": "購入",
     "joinNowShort": "参加",
     "details": "詳細",
     "submitting": "送信中...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "国/地域を選択",
     "searchPlaceholder": "エリアコードを検索"
+  },
+  "ubuy": {
+    "all": "すべて"
   }
 }

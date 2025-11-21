@@ -399,7 +399,7 @@
     "minutes": "PERC",
     "seconds": "MÁSODPERC",
     "view": "Megtekintés",
-    "joinNow": "Csatlakozás Most",
+    "joinNow": "Vásárlás",
     "joinNowShort": "Csatlakozás",
     "details": "Részletek",
     "submitting": "Küldés...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "Ország/Régió Kiválasztása",
     "searchPlaceholder": "Körzetszám keresése"
+  },
+  "ubuy": {
+    "all": "Összes"
   }
 }

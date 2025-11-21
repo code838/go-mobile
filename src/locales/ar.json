@@ -399,7 +399,7 @@
     "minutes": "دقائق",
     "seconds": "ثواني",
     "view": "عرض",
-    "joinNow": "انضم الآن",
+    "joinNow": "شراء",
     "joinNowShort": "انضم",
     "details": "التفاصيل",
     "submitting": "جاري الإرسال...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "اختر الدولة/المنطقة",
     "searchPlaceholder": "البحث عن رمز المنطقة"
+  },
+  "ubuy": {
+    "all": "الكل"
   }
 }

@@ -399,7 +399,7 @@
     "minutes": "ນາທີ",
     "seconds": "ວິນາທີ",
     "view": "ເບິ່ງ",
-    "joinNow": "ເຂົ້າຮ່ວມດຽວນີ້",
+    "joinNow": "ຊື້",
     "joinNowShort": "ເຂົ້າຮ່ວມ",
     "details": "ລາຍລະອຽດ",
     "submitting": "ກໍາລັງສົ່ງ...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "ເລືອກປະເທດ/ພາກພື້ນ",
     "searchPlaceholder": "ຄົ້ນຫາລະຫັດພາກພື້ນ"
+  },
+  "ubuy": {
+    "all": "ທັງໝົດ"
   }
 }

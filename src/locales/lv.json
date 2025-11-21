@@ -399,7 +399,7 @@
     "minutes": "MIN",
     "seconds": "SEK",
     "view": "Skatīt",
-    "joinNow": "Pievienoties tagad",
+    "joinNow": "Pirkt",
     "joinNowShort": "Pievienoties",
     "details": "Sīkāka informācija",
     "submitting": "Iesniedz...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "Izvēlēties valsti/reģionu",
     "searchPlaceholder": "Meklēt reģiona kodu"
+  },
+  "ubuy": {
+    "all": "Visi"
   }
 }

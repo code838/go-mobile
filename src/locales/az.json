@@ -399,7 +399,7 @@
     "minutes": "DƏQİQƏ",
     "seconds": "SANİYƏ",
     "view": "Bax",
-    "joinNow": "İndi Qoşul",
+    "joinNow": "Al",
     "joinNowShort": "Qoşul",
     "details": "Təfərrüatlar",
     "submitting": "Göndərilir...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "Ölkə/Region seçin",
     "searchPlaceholder": "Ərazi kodunu axtar"
+  },
+  "ubuy": {
+    "all": "Hamısı"
   }
 }

@@ -399,7 +399,7 @@
     "minutes": "MINUTY",
     "seconds": "SEKUNDY",
     "view": "Zobrazit",
-    "joinNow": "Připojit se nyní",
+    "joinNow": "Koupit",
     "joinNowShort": "Připojit se",
     "details": "Podrobnosti",
     "submitting": "Odesílání...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "Vyberte zemi/region",
     "searchPlaceholder": "Hledat kód oblasti"
+  },
+  "ubuy": {
+    "all": "Vše"
   }
 }

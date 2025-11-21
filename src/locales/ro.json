@@ -399,7 +399,7 @@
     "minutes": "MIN",
     "seconds": "SEC",
     "view": "Vezi",
-    "joinNow": "Alătură-te acum",
+    "joinNow": "Cumpără",
     "joinNowShort": "Alătură-te",
     "details": "Detalii",
     "submitting": "Se trimite...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "Selectează țara/regiunea",
     "searchPlaceholder": "Caută codul regiunii"
+  },
+  "ubuy": {
+    "all": "Toate"
   }
 }

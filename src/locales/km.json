@@ -399,7 +399,7 @@
     "minutes": "នាទី",
     "seconds": "វិនាទី",
     "view": "មើល",
-    "joinNow": "ចូលរួមឥឡូវនេះ",
+    "joinNow": "ទិញ",
     "joinNowShort": "ចូលរួម",
     "details": "ព័ត៌មានលម្អិត",
     "submitting": "កំពុងដាក់ស្នើ...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "ជ្រើសរើសប្រទេស/តំបន់",
     "searchPlaceholder": "ស្វែងរកលេខកូដតំបន់"
+  },
+  "ubuy": {
+    "all": "ទាំងអស់"
   }
 }

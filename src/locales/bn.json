@@ -399,7 +399,7 @@
     "minutes": "মিনিট",
     "seconds": "সেকেন্ড",
     "view": "দেখুন",
-    "joinNow": "এখনই যোগ দিন",
+    "joinNow": "কিনুন",
     "joinNowShort": "যোগ দিন",
     "details": "বিস্তারিত",
     "submitting": "জমা দেওয়া হচ্ছে...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "দেশ/অঞ্চল নির্বাচন করুন",
     "searchPlaceholder": "এরিয়া কোড অনুসন্ধান করুন"
+  },
+  "ubuy": {
+    "all": "সব"
   }
 }

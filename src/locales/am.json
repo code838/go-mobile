@@ -399,7 +399,7 @@
     "minutes": "ደቂቃዎች",
     "seconds": "ሰከንዶች",
     "view": "ይመልከቱ",
-    "joinNow": "አሁን ይቀላቀሉ",
+    "joinNow": "ግዛ",
     "joinNowShort": "ይቀላቀሉ",
     "details": "ዝርዝሮች",
     "submitting": "በማስገባት ላይ...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "ሀገር/ክልል ይምረጡ",
     "searchPlaceholder": "የአካባቢ ኮድ ይፈልጉ"
+  },
+  "ubuy": {
+    "all": "ሁሉም"
   }
 }

@@ -399,7 +399,7 @@
     "minutes": "MINUTI",
     "seconds": "SECONDI",
     "view": "Vedi",
-    "joinNow": "Partecipa Ora",
+    "joinNow": "Acquista",
     "joinNowShort": "Partecipa",
     "details": "Dettagli",
     "submitting": "Invio in corso...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "Seleziona Paese/Regione",
     "searchPlaceholder": "Cerca prefisso"
+  },
+  "ubuy": {
+    "all": "Tutti"
   }
 }

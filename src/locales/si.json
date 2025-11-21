@@ -399,7 +399,7 @@
     "minutes": "මිනිත්තු",
     "seconds": "තත්පර",
     "view": "බලන්න",
-    "joinNow": "දැන් එක්වන්න",
+    "joinNow": "මිලදී ගන්න",
     "joinNowShort": "එක්වන්න",
     "details": "විස්තර",
     "submitting": "ඉදිරිපත් කරමින්...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "රට/කලාපය තෝරන්න",
     "searchPlaceholder": "ප්‍රදේශ කේතය සොයන්න"
+  },
+  "ubuy": {
+    "all": "සියල්ල"
   }
 }

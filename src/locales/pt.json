@@ -399,7 +399,7 @@
     "minutes": "MIN",
     "seconds": "SEG",
     "view": "Ver",
-    "joinNow": "Participar Agora",
+    "joinNow": "Comprar",
     "joinNowShort": "Participar",
     "details": "Detalhes",
     "submitting": "Enviando...",
@@ -645,5 +645,8 @@
   "areaCode": {
     "selectCountry": "Selecionar País/Região",
     "searchPlaceholder": "Pesquisar código de região"
+  },
+  "ubuy": {
+    "all": "Todos"
   }
 }

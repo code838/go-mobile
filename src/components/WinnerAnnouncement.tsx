@@ -45,15 +45,15 @@ export default function WinnerAnnouncement({ winners }: WinnerAnnouncementProps)
         <Text style={styles.icon}>📢</Text>
         <View style={styles.textContainer}>
           <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">
-            {t('winnerAnnouncementPrefix', { defaultValue: '恭喜' })}{' '}
+            {t('home.winnerAnnouncementPrefix', { defaultValue: '恭喜' })}{' '}
             <Text style={styles.userName}>
-              {t('announcementUser', { defaultValue: '用户' })}
+              {t('home.announcementUser', { defaultValue: '用户' })}
             </Text>{' '}
-            {t('winnerAnnouncementMiddle', { defaultValue: '获得' })}{' '}
+            {t('home.winnerAnnouncementMiddle', { defaultValue: '获得' })}{' '}
             <Text style={styles.value}>
-              ${t('announcementValue', { defaultValue: '100' })}
+              ${t('home.announcementValue', { defaultValue: '100' })}
             </Text>{' '}
-            {t('winnerAnnouncementSuffix', { defaultValue: '商品' })}
+            {t('home.winnerAnnouncementSuffix', { defaultValue: '商品' })}
           </Text>
         </View>
       </View>
@@ -67,15 +67,15 @@ export default function WinnerAnnouncement({ winners }: WinnerAnnouncementProps)
   const renderWinnerText = (winner: WinnerInfo) => (
     <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">
       <Text style={styles.prefix}>
-        {t('winnerAnnouncementPrefix', { defaultValue: '恭喜' })}
+        {t('home.winnerAnnouncementPrefix', { defaultValue: '恭喜' })}
       </Text>{' '}
       <Text style={styles.userName}>{winner.nickName}</Text>{' '}
       <Text style={styles.prefix}>
-        {t('winnerAnnouncementMiddle', { defaultValue: '获得' })}
+        {t('home.winnerAnnouncementMiddle', { defaultValue: '获得' })}
       </Text>{' '}
       <Text style={styles.value}>${winner.productValue}</Text>{' '}
       <Text style={styles.prefix}>
-        {t('winnerAnnouncementSuffix', { defaultValue: '商品' })}
+        {t('home.winnerAnnouncementSuffix', { defaultValue: '商品' })}
       </Text>
     </Text>
   );

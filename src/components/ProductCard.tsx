@@ -27,7 +27,7 @@ export default function ProductCard({
   showCountdownLabels = true,
   onRefresh,
 }: ProductCardProps) {
-  const { t } = useTranslation();
+  const { t, ready } = useTranslation();
   const router = useRouter();
   const user = useBoundStore(state => state.user);
   const [quantity, setQuantity] = useState(1);
@@ -112,7 +112,7 @@ export default function ProductCard({
         if (!orderId) {
           Toast.show({
             type: 'error',
-            text1: t('orderFailed', { defaultValue: '下单失败' }),
+            text1: t('productCard.orderFailed', { defaultValue: '下单失败' }),
           });
           return;
         }
@@ -127,13 +127,13 @@ export default function ProductCard({
         console.log('订单创建失败 - code:', response?.data?.code, 'msg:', response?.data?.msg);
         Toast.show({
           type: 'error',
-          text1: response?.data?.msg || t('orderFailed', { defaultValue: '下单失败' }),
+          text1: response?.data?.msg || t('productCard.orderFailed', { defaultValue: '下单失败' }),
         });
       }
     } catch (error: any) {
       console.error('下单失败:', error);
       // 优先显示服务器返回的错误信息，然后是错误消息，最后是默认文本
-      const errorMsg = error?.response?.data?.msg || error?.message || t('orderFailed', { defaultValue: '下单失败' });
+      const errorMsg = error?.response?.data?.msg || error?.message || t('productCard.orderFailed', { defaultValue: '下单失败' });
       Toast.show({
         type: 'error',
         text1: errorMsg,
@@ -164,7 +164,7 @@ export default function ProductCard({
         console.error('handleToggleCart - userId 无效:', user.userId);
         Toast.show({
           type: 'error',
-          text1: t('invalidUserId', { defaultValue: '用户信息无效，请重新登录' }),
+          text1: t('productCard.invalidUserId', { defaultValue: '用户信息无效，请重新登录' }),
         });
         return;
       }
@@ -196,12 +196,12 @@ export default function ProductCard({
       if (newCartState) {
         Toast.show({
           type: 'success',
-          text1: t('addedToWishlist', { defaultValue: '已添加到心愿单' }),
+          text1: t('productCard.addedToWishlist', { defaultValue: '已添加到心愿单' }),
         });
       } else {
         Toast.show({
           type: 'info',
-          text1: t('removedFromWishlist', { defaultValue: '已从心愿单移除' }),
+          text1: t('productCard.removedFromWishlist', { defaultValue: '已从心愿单移除' }),
         });
       }
     } catch (error: any) {
@@ -218,7 +218,7 @@ export default function ProductCard({
         });
       } else {
         // 其他错误
-        const errorMsg = error?.message || error?.response?.data?.msg || t('operationFailed', { defaultValue: '操作失败' });
+        const errorMsg = error?.message || error?.response?.data?.msg || t('productCard.operationFailed', { defaultValue: '操作失败' });
         console.log('操作失败:', errorMsg);
         Toast.show({
           type: 'error',
@@ -241,6 +241,11 @@ export default function ProductCard({
       params,
     } as any);
   };
+
+  // Wait for i18n to be ready
+  if (!ready) {
+    return null;
+  }
 
   return (
     <TouchableOpacity
@@ -277,13 +282,13 @@ export default function ProductCard({
         <View style={styles.infoItem}>
           <Text style={styles.priceText}>{product.price} USDT</Text>
           <Text style={styles.infoLabel}>
-            {t('productPrice', { defaultValue: '价格' })}
+            {t('productCard.productPrice', { defaultValue: '价格' })}
           </Text>
         </View>
         <View style={styles.infoItem}>
           <Text style={styles.valueText}>{product.productValue}</Text>
           <Text style={styles.infoLabel}>
-            {t('productValue', { defaultValue: '价值' })}
+            {t('productCard.productValue', { defaultValue: '价值' })}
           </Text>
         </View>
       </View>
@@ -313,10 +318,10 @@ export default function ProductCard({
           </View>
           <View style={styles.progressInfo}>
             <Text style={styles.progressSubLabel}>
-              {t('participants', { defaultValue: '参与人次' })}
+              {t('productCard.participants', { defaultValue: '参与人次' })}
             </Text>
             <Text style={styles.progressSubLabel}>
-              {t('maxParticipants', { defaultValue: '最大人次' })}
+              {t('productCard.maxParticipants', { defaultValue: '最大人次' })}
             </Text>
           </View>
         </View>
@@ -330,7 +335,7 @@ export default function ProductCard({
             onPress={handleCardPress}
           >
             <Text style={styles.buttonText}>
-              {t('view', { defaultValue: '查看' })}
+              {t('productCard.view', { defaultValue: '查看' })}
             </Text>
           </TouchableOpacity>
         ) : (
@@ -343,7 +348,7 @@ export default function ProductCard({
               <ActivityIndicator size="small" color="#FFFFFF" />
             ) : (
               <Text style={styles.buttonText}>
-                {t('joinNow', { defaultValue: '立即参与' })}
+                {t('productCard.joinNow', { defaultValue: '立即参与' })}
               </Text>
             )}
           </TouchableOpacity>

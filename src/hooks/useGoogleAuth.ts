@@ -1,6 +1,5 @@
-import { useBoundStore } from '@/store';
-import * as Google from 'expo-auth-session/providers/google';
-import { useEffect } from 'react';
+import { googleLogin } from '@/utils/socialAuth';
+import { useState } from 'react';
 
 interface UseGoogleAuthProps {
   onSuccess?: (idToken: string) => void;
@@ -8,46 +7,36 @@ interface UseGoogleAuthProps {
 }
 
 export function useGoogleAuth({ onSuccess, onError }: UseGoogleAuthProps = {}) {
-  const thirdLoginInfo = useBoundStore(state => state.thirdLoginInfo);
-  
-  // 获取Google登录配置
-  const googleInfo = thirdLoginInfo.find(info => info.type === 1);
-  
-  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    // iosClientId: '1030552561232-1bmj85vvvee5tgpbai9cpatohhumtl79.apps.googleusercontent.com',
-    iosClientId: googleInfo?.clientId,
-    androidClientId: googleInfo?.clientId,
-    scopes: googleInfo?.scope ? googleInfo.scope.split(' ') : ['openid', 'profile', 'email'],
-    redirectUri: 'com.ugo.vip:/',
-  });
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    console.log('google response', response);
+  const login = async () => {
+    setIsLoading(true);
     
-    if (response?.type === 'success') {
-      const { access_token } = response.params;
-      console.log('Google ID Token:', access_token);
-      onSuccess?.(access_token);
-    } else if (response?.type === 'error') {
-      console.error('Google auth error:', response);
-      onError?.(response);
-    } else if (response?.type === 'dismiss' || response?.type === 'cancel') {
-      // 用户取消登录
-      console.log('Google auth cancelled');
-      onError?.({ message: 'User cancelled authentication' });
-    }
-  }, [response, onSuccess, onError]);
+    try {
+      console.log('Google login start');
+      const result = await googleLogin();
 
-  const login = () => {
-    if (request) {
-      promptAsync();
+      console.log('Google login result:', result);
+      if (result.success && result.token) {
+        console.log('Google login success:', result.token);
+        onSuccess?.(result.token);
+      } else if (result.cancelled) {
+        console.log('Google login cancelled');
+        onError?.({ message: 'User cancelled authentication' });
+      } else {
+        console.error('Google login failed:', result.error);
+        onError?.({ message: result.error || 'Google登录失败' });
+      }
+    } catch (error: any) {
+      console.error('Google login error:', error);
+      onError?.({ message: error.message || 'Google登录失败' });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return {
     login,
-    request,
-    response,
-    isLoading: !request,
+    isLoading,
   };
 }

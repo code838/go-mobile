@@ -29,6 +29,7 @@ export async function googleLogin(): Promise<SocialLoginResult> {
     
     // 执行登录
     const response = await GoogleSignin.signIn();
+    console.log('Google login response:', response);
     if (response.type === 'cancelled') {
       return {
         success: false,
@@ -37,7 +38,6 @@ export async function googleLogin(): Promise<SocialLoginResult> {
     }
     const token = await GoogleSignin.getTokens();
     
-    console.log('Google login response:', response);
     console.log('Google token:', token);
     
     return {

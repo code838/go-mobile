@@ -196,8 +196,8 @@ export default function ConfirmOrderPage() {
           type: 'success',
           text1: t('confirmOrder.paymentSuccess'),
         });
-        // 跳转到记录页面
-        router.replace('/(guard)/account/record');
+        // 跳转到支付成功页面
+        router.replace(`/(guard)/payment-result?orderId=${orderId}`);
       } else {
         Toast.show({
           type: 'error',
@@ -551,11 +551,6 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     minWidth: 24,
     alignItems: 'center',
-  },
-  quantityText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '600',
   },
   iconContainer: {
     width: 20,

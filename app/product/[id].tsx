@@ -556,7 +556,7 @@ export default function ProductDetailPage() {
 
           {/* 标题 */}
           <Text style={styles.productTitle}>
-            （第 {productDetail.serialNumber} 期）{productDetail.title}
+            （{t('productDetail.periodNumber', { number: productDetail.serialNumber })}）{productDetail.title}
           </Text>
           
           {/* 副标题 */}
@@ -846,7 +846,10 @@ export default function ProductDetailPage() {
       {!isWinnerView && !isProgressComplete && (
         <View style={[
           styles.bottomBar,
-          { bottom: keyboardHeight > 0 ? keyboardHeight : (insets.bottom > 0 ? insets.bottom : 0) }
+          { 
+            bottom: keyboardHeight > 0 ? keyboardHeight : 0,
+            paddingBottom: keyboardHeight > 0 ? 0 : (insets.bottom || 12)
+          }
         ]}>
           <View style={styles.totalSection}>
             <Text style={styles.totalLabel}>{t('productDetail.total')}</Text>
@@ -1231,17 +1234,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 12,
-    paddingVertical: 12,
+    paddingTop: 12,
     gap: 8,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.1)',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: -2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
+        shadowOffset: { width: 0, height: -4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
       },
       android: {
-        elevation: 8,
+        elevation: 12,
       },
     }),
   },
@@ -1298,16 +1303,16 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     ...Platform.select({
       ios: {
-        lineHeight: 20,
-        paddingTop: 2,
+        lineHeight: 16,
+        paddingTop: 3,
         paddingBottom: 0,
       },
       android: {
         includeFontPadding: false,
-        textAlignVertical: 'center',
-        paddingTop: 5,
+        textAlignVertical: 'top',
+        paddingTop: 4,
         paddingBottom: 0,
-        lineHeight: 18,
+        lineHeight: 16,
       },
     }),
   },

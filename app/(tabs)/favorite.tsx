@@ -530,7 +530,7 @@ export default function FavoritePage() {
           </View>
         ) : cartItems.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <Feather name="heart" size={64} color={Colors.secondary} />
+            <Image source={require('@/assets/images/cart.png')} style={styles.emptyImage} />
             <Text style={styles.emptyText}>{t('wishlist.emptyMessage')}</Text>
           </View>
         ) : (
@@ -739,6 +739,11 @@ const styles = StyleSheet.create({
     gap: 8,
     position: 'relative',
   },
+
+  emptyImage: {
+    width: 64,
+    height: 64,
+  },
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
@@ -821,20 +826,20 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     ...Platform.select({
       ios: {
-        top: 2,
-        height: 20,
-        lineHeight: 20,
+        top: 3,
+        height: 16,
+        lineHeight: 16,
         paddingTop: 0,
         paddingBottom: 0,
       },
       android: {
-        top: 5,
-        height: 18,
+        top: 4,
+        height: 16,
         includeFontPadding: false,
-        textAlignVertical: 'center',
+        textAlignVertical: 'top',
         paddingTop: 0,
         paddingBottom: 0,
-        lineHeight: 18,
+        lineHeight: 16,
       },
     }),
   },
